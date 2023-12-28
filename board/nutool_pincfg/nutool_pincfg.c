@@ -1,0 +1,416 @@
+/****************************************************************************
+ * @file     nutool_pincfg.c
+ * @version  V1.27.0002
+ * @Date     Mon Nov 20 2023 17:13:40 GMT+0800 (Taipei Standard Time)
+ * @brief    NuMicro generated code file
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Copyright (C) 2013-2023 Nuvoton Technology Corp. All rights reserved.
+*****************************************************************************/
+
+/********************
+MCU:MA35H04F767C(LQFP216)
+********************/
+
+#include "NuMicro.h"
+
+void nutool_pincfg_init_adc0(void)
+{
+// #define USE_VSENSE
+#if defined(USE_VSENSE)
+    // For 5-Wire touching
+    SYS->GPB_MFPH &= ~(SYS_GPB_MFPH_PB15MFP_Msk | SYS_GPB_MFPH_PB14MFP_Msk | SYS_GPB_MFPH_PB13MFP_Msk | SYS_GPB_MFPH_PB12MFP_Msk | SYS_GPB_MFPH_PB11MFP_Msk);
+    SYS->GPB_MFPH |= (SYS_GPB_MFPH_PB15MFP_ADC0_CH7 | SYS_GPB_MFPH_PB14MFP_ADC0_CH6 | SYS_GPB_MFPH_PB13MFP_ADC0_CH5 | SYS_GPB_MFPH_PB12MFP_ADC0_CH4 | SYS_GPB_MFPH_PB11MFP_ADC0_CH3);
+
+    PB->MODE &= ~(GPIO_MODE_MODE11_Msk | GPIO_MODE_MODE12_Msk | GPIO_MODE_MODE13_Msk | GPIO_MODE_MODE14_Msk | GPIO_MODE_MODE15_Msk);
+    GPIO_DISABLE_DIGITAL_PATH(PB, BIT11 | BIT12 | BIT13 | BIT14 | BIT15);
+#else
+    // For 4-Wire touching
+    SYS->GPB_MFPH &= ~(SYS_GPB_MFPH_PB15MFP_Msk | SYS_GPB_MFPH_PB14MFP_Msk | SYS_GPB_MFPH_PB13MFP_Msk | SYS_GPB_MFPH_PB12MFP_Msk);
+    SYS->GPB_MFPH |= (SYS_GPB_MFPH_PB15MFP_ADC0_CH7 | SYS_GPB_MFPH_PB14MFP_ADC0_CH6 | SYS_GPB_MFPH_PB13MFP_ADC0_CH5 | SYS_GPB_MFPH_PB12MFP_ADC0_CH4);
+
+    PB->MODE &= ~(GPIO_MODE_MODE12_Msk | GPIO_MODE_MODE13_Msk | GPIO_MODE_MODE14_Msk | GPIO_MODE_MODE15_Msk);
+    GPIO_DISABLE_DIGITAL_PATH(PB, BIT12 | BIT13 | BIT14 | BIT15);
+#endif
+
+    return;
+}
+
+void nutool_pincfg_deinit_adc0(void)
+{
+#if defined(USE_VSENSE)
+    SYS->GPB_MFPH &= ~(SYS_GPB_MFPH_PB15MFP_Msk | SYS_GPB_MFPH_PB14MFP_Msk | SYS_GPB_MFPH_PB13MFP_Msk | SYS_GPB_MFPH_PB12MFP_Msk | SYS_GPB_MFPH_PB11MFP_Msk);
+
+    GPIO_ENABLE_DIGITAL_PATH(PB, BIT11 | BIT12 | BIT13 | BIT14 | BIT15);
+#else
+    SYS->GPB_MFPH &= ~(SYS_GPB_MFPH_PB15MFP_Msk | SYS_GPB_MFPH_PB14MFP_Msk | SYS_GPB_MFPH_PB13MFP_Msk | SYS_GPB_MFPH_PB12MFP_Msk);
+
+    GPIO_ENABLE_DIGITAL_PATH(PB, BIT12 | BIT13 | BIT14 | BIT15);
+#endif
+
+    return;
+}
+
+void nutool_pincfg_init_can0(void)
+{
+    SYS->GPN_MFPL &= ~(SYS_GPN_MFPL_PN3MFP_Msk | SYS_GPN_MFPL_PN2MFP_Msk);
+    SYS->GPN_MFPL |= (SYS_GPN_MFPL_PN3MFP_CAN0_TXD | SYS_GPN_MFPL_PN2MFP_CAN0_RXD);
+
+    return;
+}
+
+void nutool_pincfg_deinit_can0(void)
+{
+    SYS->GPN_MFPL &= ~(SYS_GPN_MFPL_PN3MFP_Msk | SYS_GPN_MFPL_PN2MFP_Msk);
+
+    return;
+}
+
+void nutool_pincfg_init_epwm1(void)
+{
+    SYS->GPM_MFPH &= ~(SYS_GPM_MFPH_PM11MFP_Msk);
+    SYS->GPM_MFPH |= (SYS_GPM_MFPH_PM11MFP_EPWM1_CH3);
+
+    return;
+}
+
+void nutool_pincfg_deinit_epwm1(void)
+{
+    SYS->GPM_MFPH &= ~(SYS_GPM_MFPH_PM11MFP_Msk);
+
+    return;
+}
+
+void nutool_pincfg_init_hsusb0(void)
+{
+    SYS->GPF_MFPH &= ~(SYS_GPF_MFPH_PF15MFP_Msk);
+    SYS->GPF_MFPH |= (SYS_GPF_MFPH_PF15MFP_HSUSB0_VBUSVLD);
+
+    return;
+}
+
+void nutool_pincfg_deinit_hsusb0(void)
+{
+    SYS->GPF_MFPH &= ~(SYS_GPF_MFPH_PF15MFP_Msk);
+
+    return;
+}
+
+void nutool_pincfg_init_hsusbh(void)
+{
+    SYS->GPL_MFPH &= ~(SYS_GPL_MFPH_PL13MFP_Msk | SYS_GPL_MFPH_PL12MFP_Msk);
+    SYS->GPL_MFPH |= (SYS_GPL_MFPH_PL13MFP_HSUSBH_OVC | SYS_GPL_MFPH_PL12MFP_HSUSBH_PWREN);
+
+    return;
+}
+
+void nutool_pincfg_deinit_hsusbh(void)
+{
+    SYS->GPL_MFPH &= ~(SYS_GPL_MFPH_PL13MFP_Msk | SYS_GPL_MFPH_PL12MFP_Msk);
+
+    return;
+}
+
+void nutool_pincfg_init_i2c0(void)
+{
+    SYS->GPM_MFPH &= ~(SYS_GPM_MFPH_PM9MFP_Msk | SYS_GPM_MFPH_PM8MFP_Msk);
+    SYS->GPM_MFPH |= (SYS_GPM_MFPH_PM9MFP_I2C0_SCL | SYS_GPM_MFPH_PM8MFP_I2C0_SDA);
+
+    return;
+}
+
+void nutool_pincfg_deinit_i2c0(void)
+{
+    SYS->GPM_MFPH &= ~(SYS_GPM_MFPH_PM9MFP_Msk | SYS_GPM_MFPH_PM8MFP_Msk);
+
+    return;
+}
+
+void nutool_pincfg_init_i2c4(void)
+{
+    SYS->GPM_MFPL &= ~(SYS_GPM_MFPL_PM1MFP_Msk | SYS_GPM_MFPL_PM0MFP_Msk);
+    SYS->GPM_MFPL |= (SYS_GPM_MFPL_PM1MFP_I2C4_SCL | SYS_GPM_MFPL_PM0MFP_I2C4_SDA);
+
+    return;
+}
+
+void nutool_pincfg_deinit_i2c4(void)
+{
+    SYS->GPM_MFPL &= ~(SYS_GPM_MFPL_PM1MFP_Msk | SYS_GPM_MFPL_PM0MFP_Msk);
+
+    return;
+}
+
+void nutool_pincfg_init_i2c5(void)
+{
+    SYS->GPM_MFPL &= ~(SYS_GPM_MFPL_PM5MFP_Msk | SYS_GPM_MFPL_PM4MFP_Msk);
+    SYS->GPM_MFPL |= (SYS_GPM_MFPL_PM5MFP_I2C5_SCL | SYS_GPM_MFPL_PM4MFP_I2C5_SDA);
+
+    return;
+}
+
+void nutool_pincfg_deinit_i2c5(void)
+{
+    SYS->GPM_MFPL &= ~(SYS_GPM_MFPL_PM5MFP_Msk | SYS_GPM_MFPL_PM4MFP_Msk);
+
+    return;
+}
+
+void nutool_pincfg_init_i2s0(void)
+{
+    SYS->GPG_MFPH &= ~(SYS_GPG_MFPH_PG15MFP_Msk | SYS_GPG_MFPH_PG14MFP_Msk | SYS_GPG_MFPH_PG13MFP_Msk | SYS_GPG_MFPH_PG12MFP_Msk | SYS_GPG_MFPH_PG11MFP_Msk);
+    SYS->GPG_MFPH |= (SYS_GPG_MFPH_PG15MFP_I2S0_DO | SYS_GPG_MFPH_PG14MFP_I2S0_DI | SYS_GPG_MFPH_PG13MFP_I2S0_BCLK | SYS_GPG_MFPH_PG12MFP_I2S0_LRCK | SYS_GPG_MFPH_PG11MFP_I2S0_MCLK);
+
+    return;
+}
+
+void nutool_pincfg_deinit_i2s0(void)
+{
+    SYS->GPG_MFPH &= ~(SYS_GPG_MFPH_PG15MFP_Msk | SYS_GPG_MFPH_PG14MFP_Msk | SYS_GPG_MFPH_PG13MFP_Msk | SYS_GPG_MFPH_PG12MFP_Msk | SYS_GPG_MFPH_PG11MFP_Msk);
+
+    return;
+}
+
+void nutool_pincfg_init_lcm(void)
+{
+    SYS->GPC_MFPH &= ~(SYS_GPC_MFPH_PC15MFP_Msk | SYS_GPC_MFPH_PC14MFP_Msk | SYS_GPC_MFPH_PC13MFP_Msk | SYS_GPC_MFPH_PC12MFP_Msk);
+    SYS->GPC_MFPH |= (SYS_GPC_MFPH_PC15MFP_LCM_DATA19 | SYS_GPC_MFPH_PC14MFP_LCM_DATA18 | SYS_GPC_MFPH_PC13MFP_LCM_DATA17 | SYS_GPC_MFPH_PC12MFP_LCM_DATA16);
+    SYS->GPG_MFPH &= ~(SYS_GPG_MFPH_PG10MFP_Msk | SYS_GPG_MFPH_PG9MFP_Msk | SYS_GPG_MFPH_PG8MFP_Msk);
+    SYS->GPG_MFPH |= (SYS_GPG_MFPH_PG10MFP_LCM_CLK | SYS_GPG_MFPH_PG9MFP_LCM_HSYNC | SYS_GPG_MFPH_PG8MFP_LCM_VSYNC);
+    SYS->GPH_MFPH &= ~(SYS_GPH_MFPH_PH15MFP_Msk | SYS_GPH_MFPH_PH14MFP_Msk | SYS_GPH_MFPH_PH13MFP_Msk | SYS_GPH_MFPH_PH12MFP_Msk);
+    SYS->GPH_MFPH |= (SYS_GPH_MFPH_PH15MFP_LCM_DATA23 | SYS_GPH_MFPH_PH14MFP_LCM_DATA22 | SYS_GPH_MFPH_PH13MFP_LCM_DATA21 | SYS_GPH_MFPH_PH12MFP_LCM_DATA20);
+    SYS->GPH_MFPL &= ~(SYS_GPH_MFPL_PH7MFP_Msk | SYS_GPH_MFPL_PH6MFP_Msk | SYS_GPH_MFPL_PH5MFP_Msk | SYS_GPH_MFPL_PH4MFP_Msk | SYS_GPH_MFPL_PH3MFP_Msk | SYS_GPH_MFPL_PH2MFP_Msk | SYS_GPH_MFPL_PH1MFP_Msk | SYS_GPH_MFPL_PH0MFP_Msk);
+    SYS->GPH_MFPL |= (SYS_GPH_MFPL_PH7MFP_LCM_DATA15 | SYS_GPH_MFPL_PH6MFP_LCM_DATA14 | SYS_GPH_MFPL_PH5MFP_LCM_DATA13 | SYS_GPH_MFPL_PH4MFP_LCM_DATA12 | SYS_GPH_MFPL_PH3MFP_LCM_DATA11 | SYS_GPH_MFPL_PH2MFP_LCM_DATA10 | SYS_GPH_MFPL_PH1MFP_LCM_DATA9 | SYS_GPH_MFPL_PH0MFP_LCM_DATA8);
+    SYS->GPI_MFPH &= ~(SYS_GPI_MFPH_PI15MFP_Msk | SYS_GPI_MFPH_PI14MFP_Msk | SYS_GPI_MFPH_PI13MFP_Msk | SYS_GPI_MFPH_PI12MFP_Msk | SYS_GPI_MFPH_PI11MFP_Msk | SYS_GPI_MFPH_PI10MFP_Msk | SYS_GPI_MFPH_PI9MFP_Msk | SYS_GPI_MFPH_PI8MFP_Msk);
+    SYS->GPI_MFPH |= (SYS_GPI_MFPH_PI15MFP_LCM_DATA7 | SYS_GPI_MFPH_PI14MFP_LCM_DATA6 | SYS_GPI_MFPH_PI13MFP_LCM_DATA5 | SYS_GPI_MFPH_PI12MFP_LCM_DATA4 | SYS_GPI_MFPH_PI11MFP_LCM_DATA3 | SYS_GPI_MFPH_PI10MFP_LCM_DATA2 | SYS_GPI_MFPH_PI9MFP_LCM_DATA1 | SYS_GPI_MFPH_PI8MFP_LCM_DATA0);
+    SYS->GPK_MFPL &= ~(SYS_GPK_MFPL_PK4MFP_Msk);
+    SYS->GPK_MFPL |= (SYS_GPK_MFPL_PK4MFP_LCM_DEN);
+
+    return;
+}
+
+void nutool_pincfg_deinit_lcm(void)
+{
+    SYS->GPC_MFPH &= ~(SYS_GPC_MFPH_PC15MFP_Msk | SYS_GPC_MFPH_PC14MFP_Msk | SYS_GPC_MFPH_PC13MFP_Msk | SYS_GPC_MFPH_PC12MFP_Msk);
+    SYS->GPG_MFPH &= ~(SYS_GPG_MFPH_PG10MFP_Msk | SYS_GPG_MFPH_PG9MFP_Msk | SYS_GPG_MFPH_PG8MFP_Msk);
+    SYS->GPH_MFPH &= ~(SYS_GPH_MFPH_PH15MFP_Msk | SYS_GPH_MFPH_PH14MFP_Msk | SYS_GPH_MFPH_PH13MFP_Msk | SYS_GPH_MFPH_PH12MFP_Msk);
+    SYS->GPH_MFPL &= ~(SYS_GPH_MFPL_PH7MFP_Msk | SYS_GPH_MFPL_PH6MFP_Msk | SYS_GPH_MFPL_PH5MFP_Msk | SYS_GPH_MFPL_PH4MFP_Msk | SYS_GPH_MFPL_PH3MFP_Msk | SYS_GPH_MFPL_PH2MFP_Msk | SYS_GPH_MFPL_PH1MFP_Msk | SYS_GPH_MFPL_PH0MFP_Msk);
+    SYS->GPI_MFPH &= ~(SYS_GPI_MFPH_PI15MFP_Msk | SYS_GPI_MFPH_PI14MFP_Msk | SYS_GPI_MFPH_PI13MFP_Msk | SYS_GPI_MFPH_PI12MFP_Msk | SYS_GPI_MFPH_PI11MFP_Msk | SYS_GPI_MFPH_PI10MFP_Msk | SYS_GPI_MFPH_PI9MFP_Msk | SYS_GPI_MFPH_PI8MFP_Msk);
+    SYS->GPK_MFPL &= ~(SYS_GPK_MFPL_PK4MFP_Msk);
+
+    return;
+}
+
+void nutool_pincfg_init_nand(void)
+{
+    SYS->GPA_MFPH &= ~(SYS_GPA_MFPH_PA14MFP_Msk | SYS_GPA_MFPH_PA13MFP_Msk | SYS_GPA_MFPH_PA12MFP_Msk | SYS_GPA_MFPH_PA11MFP_Msk | SYS_GPA_MFPH_PA10MFP_Msk | SYS_GPA_MFPH_PA9MFP_Msk | SYS_GPA_MFPH_PA8MFP_Msk);
+    SYS->GPA_MFPH |= (SYS_GPA_MFPH_PA14MFP_NAND_nWP | SYS_GPA_MFPH_PA13MFP_NAND_nCS0 | SYS_GPA_MFPH_PA12MFP_NAND_ALE | SYS_GPA_MFPH_PA11MFP_NAND_CLE | SYS_GPA_MFPH_PA10MFP_NAND_nWE | SYS_GPA_MFPH_PA9MFP_NAND_nRE | SYS_GPA_MFPH_PA8MFP_NAND_RDY0);
+    SYS->GPA_MFPL &= ~(SYS_GPA_MFPL_PA7MFP_Msk | SYS_GPA_MFPL_PA6MFP_Msk | SYS_GPA_MFPL_PA5MFP_Msk | SYS_GPA_MFPL_PA4MFP_Msk | SYS_GPA_MFPL_PA3MFP_Msk | SYS_GPA_MFPL_PA2MFP_Msk | SYS_GPA_MFPL_PA1MFP_Msk | SYS_GPA_MFPL_PA0MFP_Msk);
+    SYS->GPA_MFPL |= (SYS_GPA_MFPL_PA7MFP_NAND_DATA7 | SYS_GPA_MFPL_PA6MFP_NAND_DATA6 | SYS_GPA_MFPL_PA5MFP_NAND_DATA5 | SYS_GPA_MFPL_PA4MFP_NAND_DATA4 | SYS_GPA_MFPL_PA3MFP_NAND_DATA3 | SYS_GPA_MFPL_PA2MFP_NAND_DATA2 | SYS_GPA_MFPL_PA1MFP_NAND_DATA1 | SYS_GPA_MFPL_PA0MFP_NAND_DATA0);
+
+    return;
+}
+
+void nutool_pincfg_deinit_nand(void)
+{
+    SYS->GPA_MFPH &= ~(SYS_GPA_MFPH_PA14MFP_Msk | SYS_GPA_MFPH_PA13MFP_Msk | SYS_GPA_MFPH_PA12MFP_Msk | SYS_GPA_MFPH_PA11MFP_Msk | SYS_GPA_MFPH_PA10MFP_Msk | SYS_GPA_MFPH_PA9MFP_Msk | SYS_GPA_MFPH_PA8MFP_Msk);
+    SYS->GPA_MFPL &= ~(SYS_GPA_MFPL_PA7MFP_Msk | SYS_GPA_MFPL_PA6MFP_Msk | SYS_GPA_MFPL_PA5MFP_Msk | SYS_GPA_MFPL_PA4MFP_Msk | SYS_GPA_MFPL_PA3MFP_Msk | SYS_GPA_MFPL_PA2MFP_Msk | SYS_GPA_MFPL_PA1MFP_Msk | SYS_GPA_MFPL_PA0MFP_Msk);
+
+    return;
+}
+
+void nutool_pincfg_init_qspi0(void)
+{
+    SYS->GPD_MFPL &= ~(SYS_GPD_MFPL_PD5MFP_Msk | SYS_GPD_MFPL_PD4MFP_Msk | SYS_GPD_MFPL_PD3MFP_Msk | SYS_GPD_MFPL_PD2MFP_Msk | SYS_GPD_MFPL_PD1MFP_Msk | SYS_GPD_MFPL_PD0MFP_Msk);
+    SYS->GPD_MFPL |= (SYS_GPD_MFPL_PD5MFP_QSPI0_MISO1 | SYS_GPD_MFPL_PD4MFP_QSPI0_MOSI1 | SYS_GPD_MFPL_PD3MFP_QSPI0_MISO0 | SYS_GPD_MFPL_PD2MFP_QSPI0_MOSI0 | SYS_GPD_MFPL_PD1MFP_QSPI0_CLK | SYS_GPD_MFPL_PD0MFP_QSPI0_SS0);
+
+    GPIO_SetDrivingCtl(PD, (BIT0 | BIT1 | BIT2 | BIT3 | BIT4 | BIT5), 4);
+
+    return;
+}
+
+void nutool_pincfg_deinit_qspi0(void)
+{
+    SYS->GPD_MFPL &= ~(SYS_GPD_MFPL_PD5MFP_Msk | SYS_GPD_MFPL_PD4MFP_Msk | SYS_GPD_MFPL_PD3MFP_Msk | SYS_GPD_MFPL_PD2MFP_Msk | SYS_GPD_MFPL_PD1MFP_Msk | SYS_GPD_MFPL_PD0MFP_Msk);
+
+    return;
+}
+
+void nutool_pincfg_init_rmii0(void)
+{
+    SYS->GPE_MFPH &= ~(SYS_GPE_MFPH_PE9MFP_Msk | SYS_GPE_MFPH_PE8MFP_Msk);
+    SYS->GPE_MFPH |= (SYS_GPE_MFPH_PE9MFP_RMII0_RXERR | SYS_GPE_MFPH_PE8MFP_RMII0_RXD1);
+    SYS->GPE_MFPL &= ~(SYS_GPE_MFPL_PE7MFP_Msk | SYS_GPE_MFPL_PE6MFP_Msk | SYS_GPE_MFPL_PE5MFP_Msk | SYS_GPE_MFPL_PE4MFP_Msk | SYS_GPE_MFPL_PE3MFP_Msk | SYS_GPE_MFPL_PE2MFP_Msk | SYS_GPE_MFPL_PE1MFP_Msk | SYS_GPE_MFPL_PE0MFP_Msk);
+    SYS->GPE_MFPL |= (SYS_GPE_MFPL_PE7MFP_RMII0_RXD0 | SYS_GPE_MFPL_PE6MFP_RMII0_CRSDV | SYS_GPE_MFPL_PE5MFP_RMII0_REFCLK | SYS_GPE_MFPL_PE4MFP_RMII0_TXD1 | SYS_GPE_MFPL_PE3MFP_RMII0_TXD0 | SYS_GPE_MFPL_PE2MFP_RMII0_TXEN | SYS_GPE_MFPL_PE1MFP_RMII0_MDIO | SYS_GPE_MFPL_PE0MFP_RMII0_MDC);
+
+    /* RMII Mode */
+    SYS->GMAC0MISCR |= 1;
+
+    /* Set 3.3v */
+    GPIO_SetPowerMode(PE, 0x3FFF, 1);
+
+    return;
+}
+
+void nutool_pincfg_deinit_rmii0(void)
+{
+    SYS->GPE_MFPH &= ~(SYS_GPE_MFPH_PE9MFP_Msk | SYS_GPE_MFPH_PE8MFP_Msk);
+    SYS->GPE_MFPL &= ~(SYS_GPE_MFPL_PE7MFP_Msk | SYS_GPE_MFPL_PE6MFP_Msk | SYS_GPE_MFPL_PE5MFP_Msk | SYS_GPE_MFPL_PE4MFP_Msk | SYS_GPE_MFPL_PE3MFP_Msk | SYS_GPE_MFPL_PE2MFP_Msk | SYS_GPE_MFPL_PE1MFP_Msk | SYS_GPE_MFPL_PE0MFP_Msk);
+
+    return;
+}
+
+void nutool_pincfg_init_sd0(void)
+{
+    SYS->GPC_MFPL &= ~(SYS_GPC_MFPL_PC7MFP_Msk | SYS_GPC_MFPL_PC6MFP_Msk | SYS_GPC_MFPL_PC5MFP_Msk | SYS_GPC_MFPL_PC4MFP_Msk | SYS_GPC_MFPL_PC3MFP_Msk | SYS_GPC_MFPL_PC2MFP_Msk | SYS_GPC_MFPL_PC1MFP_Msk | SYS_GPC_MFPL_PC0MFP_Msk);
+    SYS->GPC_MFPL |= (SYS_GPC_MFPL_PC7MFP_SD0_WP | SYS_GPC_MFPL_PC6MFP_SD0_nCD | SYS_GPC_MFPL_PC5MFP_SD0_DAT3 | SYS_GPC_MFPL_PC4MFP_SD0_DAT2 | SYS_GPC_MFPL_PC3MFP_SD0_DAT1 | SYS_GPC_MFPL_PC2MFP_SD0_DAT0 | SYS_GPC_MFPL_PC1MFP_SD0_CLK | SYS_GPC_MFPL_PC0MFP_SD0_CMD);
+
+    return;
+}
+
+void nutool_pincfg_deinit_sd0(void)
+{
+    SYS->GPC_MFPL &= ~(SYS_GPC_MFPL_PC7MFP_Msk | SYS_GPC_MFPL_PC6MFP_Msk | SYS_GPC_MFPL_PC5MFP_Msk | SYS_GPC_MFPL_PC4MFP_Msk | SYS_GPC_MFPL_PC3MFP_Msk | SYS_GPC_MFPL_PC2MFP_Msk | SYS_GPC_MFPL_PC1MFP_Msk | SYS_GPC_MFPL_PC0MFP_Msk);
+
+    return;
+}
+
+void nutool_pincfg_init_sd1(void)
+{
+    SYS->GPJ_MFPH &= ~(SYS_GPJ_MFPH_PJ11MFP_Msk | SYS_GPJ_MFPH_PJ10MFP_Msk | SYS_GPJ_MFPH_PJ9MFP_Msk | SYS_GPJ_MFPH_PJ8MFP_Msk);
+    SYS->GPJ_MFPH |= (SYS_GPJ_MFPH_PJ11MFP_SD1_DAT3 | SYS_GPJ_MFPH_PJ10MFP_SD1_DAT2 | SYS_GPJ_MFPH_PJ9MFP_SD1_DAT1 | SYS_GPJ_MFPH_PJ8MFP_SD1_DAT0);
+    SYS->GPJ_MFPL &= ~(SYS_GPJ_MFPL_PJ7MFP_Msk | SYS_GPJ_MFPL_PJ6MFP_Msk | SYS_GPJ_MFPL_PJ5MFP_Msk | SYS_GPJ_MFPL_PJ4MFP_Msk);
+    SYS->GPJ_MFPL |= (SYS_GPJ_MFPL_PJ7MFP_SD1_CLK | SYS_GPJ_MFPL_PJ6MFP_SD1_CMD | SYS_GPJ_MFPL_PJ5MFP_SD1_nCD | SYS_GPJ_MFPL_PJ4MFP_SD1_WP);
+
+    return;
+}
+
+void nutool_pincfg_deinit_sd1(void)
+{
+    SYS->GPJ_MFPH &= ~(SYS_GPJ_MFPH_PJ11MFP_Msk | SYS_GPJ_MFPH_PJ10MFP_Msk | SYS_GPJ_MFPH_PJ9MFP_Msk | SYS_GPJ_MFPH_PJ8MFP_Msk);
+    SYS->GPJ_MFPL &= ~(SYS_GPJ_MFPL_PJ7MFP_Msk | SYS_GPJ_MFPL_PJ6MFP_Msk | SYS_GPJ_MFPL_PJ5MFP_Msk | SYS_GPJ_MFPL_PJ4MFP_Msk);
+
+    return;
+}
+
+void nutool_pincfg_init_uart0(void)
+{
+    SYS->GPE_MFPH &= ~(SYS_GPE_MFPH_PE15MFP_Msk | SYS_GPE_MFPH_PE14MFP_Msk);
+    SYS->GPE_MFPH |= (SYS_GPE_MFPH_PE15MFP_UART0_RXD | SYS_GPE_MFPH_PE14MFP_UART0_TXD);
+
+    return;
+}
+
+void nutool_pincfg_deinit_uart0(void)
+{
+    SYS->GPE_MFPH &= ~(SYS_GPE_MFPH_PE15MFP_Msk | SYS_GPE_MFPH_PE14MFP_Msk);
+
+    return;
+}
+
+void nutool_pincfg_init_uart6(void)
+{
+    SYS->GPN_MFPH &= ~(SYS_GPN_MFPH_PN15MFP_Msk | SYS_GPN_MFPH_PN14MFP_Msk | SYS_GPN_MFPH_PN13MFP_Msk | SYS_GPN_MFPH_PN12MFP_Msk);
+    SYS->GPN_MFPH |= (SYS_GPN_MFPH_PN15MFP_UART6_TXD | SYS_GPN_MFPH_PN14MFP_UART6_RXD | SYS_GPN_MFPH_PN13MFP_UART6_nRTS | SYS_GPN_MFPH_PN12MFP_UART6_nCTS);
+
+    return;
+}
+
+void nutool_pincfg_deinit_uart6(void)
+{
+    SYS->GPN_MFPH &= ~(SYS_GPN_MFPH_PN15MFP_Msk | SYS_GPN_MFPH_PN14MFP_Msk | SYS_GPN_MFPH_PN13MFP_Msk | SYS_GPN_MFPH_PN12MFP_Msk);
+
+    return;
+}
+
+void nutool_pincfg_init_uart16(void)
+{
+    SYS->GPD_MFPH &= ~(SYS_GPD_MFPH_PD11MFP_Msk | SYS_GPD_MFPH_PD10MFP_Msk | SYS_GPD_MFPH_PD9MFP_Msk | SYS_GPD_MFPH_PD8MFP_Msk);
+    SYS->GPD_MFPH |= (SYS_GPD_MFPH_PD11MFP_UART16_TXD | SYS_GPD_MFPH_PD10MFP_UART16_RXD | SYS_GPD_MFPH_PD9MFP_UART16_nRTS | SYS_GPD_MFPH_PD8MFP_UART16_nCTS);
+
+    return;
+}
+
+void nutool_pincfg_deinit_uart16(void)
+{
+    SYS->GPD_MFPH &= ~(SYS_GPD_MFPH_PD11MFP_Msk | SYS_GPD_MFPH_PD10MFP_Msk | SYS_GPD_MFPH_PD9MFP_Msk | SYS_GPD_MFPH_PD8MFP_Msk);
+
+    return;
+}
+
+void nutool_pincfg_init(void)
+{
+    //SYS->GPA_MFPH = 0x06666666UL;
+    //SYS->GPA_MFPL = 0x66666666UL;
+    //SYS->GPB_MFPH = 0x88888000UL;
+    //SYS->GPC_MFPH = 0x66660000UL;
+    //SYS->GPC_MFPL = 0x66666666UL;
+    //SYS->GPD_MFPH = 0x00002222UL;
+    //SYS->GPD_MFPL = 0x00555555UL;
+    //SYS->GPE_MFPH = 0x11000099UL;
+    //SYS->GPE_MFPL = 0x99999999UL;
+    //SYS->GPF_MFPH = 0x10000000UL;
+    //SYS->GPF_MFPL = 0x00000000UL;
+    //SYS->GPG_MFPH = 0x55555666UL;
+    //SYS->GPG_MFPL = 0x00000000UL;
+    //SYS->GPH_MFPH = 0x66660000UL;
+    //SYS->GPH_MFPL = 0x66666666UL;
+    //SYS->GPI_MFPH = 0x66666666UL;
+    //SYS->GPJ_MFPH = 0x00006666UL;
+    //SYS->GPJ_MFPL = 0x66660000UL;
+    //SYS->GPK_MFPH = 0x00000000UL;
+    //SYS->GPK_MFPL = 0x00060000UL;
+    //SYS->GPL_MFPH = 0x00990000UL;
+    //SYS->GPM_MFPH = 0x00001044UL;
+    //SYS->GPM_MFPL = 0x00440044UL;
+    //SYS->GPN_MFPH = 0x22220000UL;
+    //SYS->GPN_MFPL = 0x00003300UL;
+
+    nutool_pincfg_init_adc0();
+    nutool_pincfg_init_can0();
+    nutool_pincfg_init_epwm1();
+    nutool_pincfg_init_hsusb0();
+    nutool_pincfg_init_hsusbh();
+    nutool_pincfg_init_i2c0();
+    nutool_pincfg_init_i2c4();
+    nutool_pincfg_init_i2c5();
+    nutool_pincfg_init_i2s0();
+    nutool_pincfg_init_lcm();
+    nutool_pincfg_init_nand();
+    nutool_pincfg_init_qspi0();
+    nutool_pincfg_init_rmii0();
+    nutool_pincfg_init_sd0();
+    nutool_pincfg_init_sd1();
+    nutool_pincfg_init_uart0();
+    nutool_pincfg_init_uart6();
+    nutool_pincfg_init_uart16();
+
+    return;
+}
+
+void nutool_pincfg_deinit(void)
+{
+    nutool_pincfg_deinit_adc0();
+    nutool_pincfg_deinit_can0();
+    nutool_pincfg_deinit_epwm1();
+    nutool_pincfg_deinit_hsusb0();
+    nutool_pincfg_deinit_hsusbh();
+    nutool_pincfg_deinit_i2c0();
+    nutool_pincfg_deinit_i2c4();
+    nutool_pincfg_deinit_i2c5();
+    nutool_pincfg_deinit_i2s0();
+    nutool_pincfg_deinit_lcm();
+    nutool_pincfg_deinit_nand();
+    nutool_pincfg_deinit_qspi0();
+    nutool_pincfg_deinit_rmii0();
+    nutool_pincfg_deinit_sd0();
+    nutool_pincfg_deinit_sd1();
+    nutool_pincfg_deinit_uart0();
+    nutool_pincfg_deinit_uart6();
+    nutool_pincfg_deinit_uart16();
+
+    return;
+}
+
+/*** (C) COPYRIGHT 2013-2023 Nuvoton Technology Corp. ***/
