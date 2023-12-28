@@ -1,0 +1,111 @@
+board:
+  buy_url_cn: https://direct.nuvoton.com/en/numaker-hmi-ma35h0
+  buy_url_global: https://direct.nuvoton.com/en/numaker-hmi-ma35h0
+  debug_interface: SWD
+  debugger: NU-LINK
+  description_en: The NuMaker-HMI-MA35H0 is an evaluation board for Nuvoton NuMicro MA35H0 series microprocessors, and consists of two parts: a NuMaker-HMI-MA35H04F70 board 
+                  and a NuMaker-TFT-LCD7 board. The NuMaker-HMI-MA35H0 board integrates core components to simplify the system design, based on MA35H04F767C (LQFP216 package,
+                  and stacking a 128 MB DDR), discrete power supply power solution, and one megabit Ethernet PHY. The NuMaker-HMI-MA35H0-A1 has rich peripherals such as 1 set 
+                  of megabit Ethernet, USB2.0 high-speed host and device, 1 set of SD2.0 in Micro SD slot, 1 set of SD3.0 in SD slot, 1 set of CAN FD, SPI, I2C, UART, and 2 sets 
+                  of RS-485/RS-232 serial communication ports for users to facilitate the evaluation in HMI and industrial control, home appliances, 2-wheel cluster, medical device, 
+                  new energy applications, ML (Machine Learning) or your creative applications. The NuMicro MA35H0 series is a multi-core microprocessor targeted to various HMI 
+                  applications in the medium resolution. It is based on dual 64/32-bit Arm Cortex-A35 cores, the high-performance cores run up to 650 MHz and include 32/32 KB I/D L1 
+                  cache for each core, and a 512 KB shared L2 cache. The MA35H0 series has a built-in 128 KB IBR (Internal Boot ROM) and supports secure booting from four modes, 
+                  USB, SD/eMMC, NAND, and SPI Flash (SPI NOR/SPI NAND). In order to provide easy system design and manufacture, the MA35H0 series also offers LQFP package stacked with 
+                  a DDR SDRAM and the size up to 128 MB.
+  description_zh: 
+  emulator_machine: ''
+  large_image: documents/images/large.png
+  name: NUMAKER-HMI-MA35H0
+  price_cn: 2785 CNY
+  price_global: 399 USD
+  sale_contact_cn: https://www.nuvoton.com
+  sale_contact_global: https://www.nuvoton.com
+  small_image: documents/images/small.png
+  vendor: Nuvoton
+  version: v1.0
+chip:
+  chip_name: MA35H04F70
+  clock_source: HXT
+  device_vendor: Nuvoton
+  family_name: NuMicro
+  rx_name: PB12
+  series_name: MA35H0
+  source_freq: '24000000'
+  sub_series_name: MA35H0
+  target_freq: '648000000'
+  tx_name: PB13
+  uart_name: UART0
+docs: []
+example_projects: []
+features:
+- 648MHz CPU frequency
+- 128MB DDR2
+- Ethernet PHY x1
+- USB2.0 HS Host x1, USB2.0 HS Host/Device x1
+- CAN FD x1
+- SD2.0 x2
+- UART x2
+- RS485 x2
+- Audio codec with Mic, Headset Jack
+- 7 inch TFT-LCD with 4-wire resistive touch
+
+features_zh:
+- 648MHz 主频
+- 128MB DDR2
+- 百兆以太网 PHY x2
+- USB2.0 高速主机 x1, 高速主机设备 x1
+- CAN FD x1
+- SD2.0 x2
+- UART x2
+- RS485 x2
+- 带麦克风、耳麦插孔的音频编解码器
+- 4 线电阻式触控
+- 7 吋 TFT-LCD 屏
+pkg_type: Board_Support_Packages
+pkg_vendor: Nuvoton
+pkg_version: 1.0.0
+template_projects:
+- builtin_files:
+  - files_and_folders:
+    - .settings
+    - .cproject
+    - .config
+    - .project
+    - SConstruct
+    - linking_scripts
+    - rtconfig_preinc.h
+    - Kconfig
+    - applications
+    - makefile.targets
+    - board
+    - rt-thread
+    - preload
+    - nuwriter_scripts
+    - README.md
+    - rtconfig.h
+    - SConscript
+    - libraries
+    - packages
+    - rtconfig.py
+    source_path_offset: ''
+    target_path_offset: ''
+  external_files:
+  - package_type: ToolChain_Support_Packages
+    package_name: GNU_Tools_for_ARM_Embedded_Processors
+    package_vendor: 'ARM'
+    package_version: 10.2.1
+    source_path_offset: ''
+    target_path_offset: ''
+    files_and_folders: []
+  - package_type: Debugger_Support_Packages
+    package_name: OpenOCD-Nuvoton
+    package_vendor: 'Nuvoton'
+    package_version: 1.35.0
+    source_path_offset: ''
+    target_path_offset: ''
+    files_and_folders: []    
+  project_description: ''
+  project_name: numaker-hmi-ma35h0
+  project_type: rt-thread|@full|@notUsed
+yaml_version: 3
