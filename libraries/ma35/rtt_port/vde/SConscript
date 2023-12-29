@@ -15,7 +15,7 @@ if GetDepend('BSP_USING_VDE'):
     libpath = [cwd]
 
     if os.path.isfile('libvc8000_gcc.a'):
-        libs += ['libvc8000_gcc']
+        libs += ['vc8000_gcc']
         objs = DefineGroup('Drivers', src, depend = [''], CPPPATH = cpppath, LIBS = libs, LIBPATH = libpath)
     else:
         group = DefineGroup('Drivers', src, depend = [''], CPPPATH = cpppath)
