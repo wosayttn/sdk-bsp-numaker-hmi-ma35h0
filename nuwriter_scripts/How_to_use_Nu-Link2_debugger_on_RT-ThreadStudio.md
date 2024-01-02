@@ -1,6 +1,6 @@
 # **How to use Nu-Link2 debugger on RT-Thread Studio**
 
-In this document, we will explain how to debug MA35D1 series application code using the Nuvoton Nu-Link2 debugger in conjunction with OpenOCD and GDB within rt-thread studio.
+In this document, we will explain how to debug MA35 series application code using the Nuvoton Nu-Link2 debugger in conjunction with OpenOCD and GDB within rt-thread studio.
 
 # **Development process**
 
