@@ -4,7 +4,7 @@ In this document, we will explain how to debug MA35 series application code usin
 
 # **Development process**
 
-The development process is divided into two phases: Release and Debug, which use different "rtthread.bin" files. In the Release process, we integrate the Preloader into the rtthread.bin to serve as the boot loader and execute "nuwriter_program*.bat" scripts to deploy rtthread.bin to various memory storage. While in the Debug process, we do not merge the Preloader into rtthread.bin. When a user needs to debug the program, they should switch the boot mode to the USBD booting mode and reset the board. After resetting, user can run the "nuwriter_debug_aarch32.bat" program to perform basic initialization of the dual-CA35 cores and keep them in the AARCH32 execution state, waiting for the On-Chip debugger and GDB to take over for further processing.
+The development process is divided into two phases: Release and Debug, which use different ``rtthread.bin`` files. In the Release process, we ``integrate the Preloader into the rtthread.bin`` to serve as the boot loader and execute ``nuwriter_program*.bat`` scripts to deploy rtthread.bin to various memory storage. While in the Debug process, we do ``not merge the Preloader into rtthread.bin``. When a user needs to debug the program, they should switch the boot mode to the USBD booting mode and reset the board. After resetting, user can ``run the nuwriter_debug_aarch32.bat`` program to perform basic initialization of the dual-CA35 cores and keep them in the AARCH32 execution state, waiting for the On-Chip debugger and GDB to take over for further processing.
 
 ```mermaid
 graph TD
@@ -31,7 +31,7 @@ graph TD
 ## Hardware
 
 - Nuvoton [Nu-Link2-Pro](https://www.nuvoton.com/tool-and-software/debugger-and-programmer/1-to-1-debugger-and-programmer/nu-link2-pro/) debugger or Nu-Link2-Me daughter board.
-- Nuvoton MA35D1 development board with USBD port.
+- Nuvoton MA35 development board with USBD port.
 
 ## Software
 
@@ -44,7 +44,7 @@ graph TD
 ## Step 1: Cancel Preloader linking
 
 - Open <project>/linking_scripts/aarch32.ld file.
-- Comment the **KEEP(*(.text.entrypoint))** line to cancel Preloader linking as below:
+- Comment the ``KEEP(*(.text.entrypoint))`` line to cancel Preloader linking as below:
 
 ```c
     ...
@@ -63,11 +63,11 @@ To modify debugger configuration of project as below:
 
 - Debugger tab
   - OpenOCD Setup
-    - Start OpenOCD locally: Enable
-    - Specify OpenOCD program path for your environment .
-    - GDB port: 3333
-    - Telnet port: 4444
-    - Tcl port: 6666
+    - Start OpenOCD locally: ``Enable``
+    - **Specify OpenOCD program path for your environment**.
+    - GDB port: ``3333``
+    - Telnet port: ``4444``
+    - Tcl port: ``6666``
     - Config option
 
         ```bash
@@ -75,8 +75,8 @@ To modify debugger configuration of project as below:
         ```
 
   - GDB Client Setup
-    - Start OpenOCD locally: Enable
-    - Specify OpenOCD program path for your environment .
+    - Start OpenOCD locally: ``Enable``
+    - **Specify OpenOCD program path for your environment** .
     - Commands
 
         ```bash
@@ -89,10 +89,10 @@ To modify debugger configuration of project as below:
 
 - Startup tab
   - Load Symbols and Executable
-    - Load symbols: Enable
-      - Use Project binary: Enable
+    - Load symbols: ``Enable``
+      - Use Project binary: ``Enable``
     - Load Executable
-      - Use project binary: Enable
+      - Use project binary: ``Enable``
 
 <p align="center">
 <img src="./figures/rtt_debugger_start.png" alt="fishy" class="bg-primary" width="500px">
@@ -100,7 +100,7 @@ To modify debugger configuration of project as below:
 
 ## Step 3: Set power-on setting to USBD, then reset board
 
-## Step 4: Execute nuwriter_debug_aarch32.bat
+## Step 4: Execute ``nuwriter_debug_aarch32.bat``
 
 ## Step 5: Start RT-Thread Studio debugging
 
