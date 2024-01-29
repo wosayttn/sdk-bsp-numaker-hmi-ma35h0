@@ -473,7 +473,7 @@ void CLK_SetModuleClock(uint32_t u32ModuleIdx, uint32_t u32ClkSrc, uint32_t u32C
         CLK->CLKDIV4 = (CLK->CLKDIV4 & ~(CLK_CLKDIV4_ADCDIV_Msk)) | u32ClkDiv;
         CLK->APBCLK2 = (CLK->APBCLK2 & ~(CLK_APBCLK2_ADCCKEN_Msk)) | CLK_APBCLK2_ADCCKEN_Msk;
     }
-    else if (u32ModuleIdx == EADC_MODULE)
+    else if (u32ModuleIdx == EADC0_MODULE)
     {
         CLK->CLKDIV4 = (CLK->CLKDIV4 & ~(CLK_CLKDIV4_EADCDIV_Msk)) | u32ClkDiv;
         CLK->APBCLK2 = (CLK->APBCLK2 & ~(CLK_APBCLK2_EADCCKEN_Msk)) | CLK_APBCLK2_EADCCKEN_Msk;
