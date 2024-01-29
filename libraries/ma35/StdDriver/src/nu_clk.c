@@ -462,8 +462,6 @@ void CLK_SetHCLK(uint32_t u32ClkSrc, uint32_t u32ClkDiv)
   */
 void CLK_SetModuleClock(uint32_t u32ModuleIdx, uint32_t u32ClkSrc, uint32_t u32ClkDiv)
 {
-    uint32_t u32sel = 0U, u32div = 0U;
-
     if (u32ModuleIdx == KPI_MODULE)
     {
         CLK->CLKDIV4 = (CLK->CLKDIV4 & ~(CLK_CLKDIV4_KPIDIV_Msk)) | u32ClkDiv;
@@ -475,8 +473,15 @@ void CLK_SetModuleClock(uint32_t u32ModuleIdx, uint32_t u32ClkSrc, uint32_t u32C
         CLK->CLKDIV4 = (CLK->CLKDIV4 & ~(CLK_CLKDIV4_ADCDIV_Msk)) | u32ClkDiv;
         CLK->APBCLK2 = (CLK->APBCLK2 & ~(CLK_APBCLK2_ADCCKEN_Msk)) | CLK_APBCLK2_ADCCKEN_Msk;
     }
+    else if (u32ModuleIdx == EADC_MODULE)
+    {
+        CLK->CLKDIV4 = (CLK->CLKDIV4 & ~(CLK_CLKDIV4_EADCDIV_Msk)) | u32ClkDiv;
+        CLK->APBCLK2 = (CLK->APBCLK2 & ~(CLK_APBCLK2_EADCCKEN_Msk)) | CLK_APBCLK2_EADCCKEN_Msk;
+    }
     else
     {
+        uint32_t u32sel = 0U, u32div = 0U;
+
         if (MODULE_CLKDIV_Msk(u32ModuleIdx) != MODULE_NoMsk)
         {
             /* Get clock divider control register address */

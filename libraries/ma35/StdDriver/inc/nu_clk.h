@@ -329,9 +329,9 @@ extern "C"
 /*---------------------------------------------------------------------------------------------------------*/
 /*  CLKDIV4 constant definitions.                                                                          */
 /*---------------------------------------------------------------------------------------------------------*/
-#define CLK_CLKDIV4_EADC(x)                (((x) - 1UL) << CLK_CLKDIV4_EADCDIV_Pos)   /*!< CLKDIV4 Setting for EADC clock divider. It could be 1~16 \hideinitializer */
-#define CLK_CLKDIV4_ADC(x)                 (((x) - 1UL) << CLK_CLKDIV4_ADCDIV_Pos)    /*!< CLKDIV4 Setting for ADC clock divider. It could be 1~131072 \hideinitializer */
-#define CLK_CLKDIV4_KPI(x)                 (((x) - 1UL) << CLK_CLKDIV4_KPIDIV_Pos)    /*!< CLKDIV4 Setting for KPI clock divider. It could be 1~256 \hideinitializer */
+#define CLK_CLKDIV4_EADC(x)           ((((x) >> 1UL) - 1UL) << CLK_CLKDIV4_EADCDIV_Pos) /*!< CLKDIV4 Setting for EADC clock divider. It could be 2, 4,..., 32 \hideinitializer */
+#define CLK_CLKDIV4_ADC(x)            ((((x) >> 1UL) - 1UL) << CLK_CLKDIV4_ADCDIV_Pos)  /*!< CLKDIV4 Setting for ADC clock divider. It could be 2, 4,..., 262144 \hideinitializer */
+#define CLK_CLKDIV4_KPI(x)            (((x) - 1UL) << CLK_CLKDIV4_KPIDIV_Pos)  /*!< CLKDIV4 Setting for KPI clock divider. It could be 1~256 \hideinitializer */
 
 /*---------------------------------------------------------------------------------------------------------*/
 /*  MODULE constant definitions.                                                                           */

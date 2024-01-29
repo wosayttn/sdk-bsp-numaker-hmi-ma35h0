@@ -16,7 +16,7 @@ board:
   vendor: Nuvoton
   version: v1.0
 chip:
-  chip_name: MA35H04F70
+  chip_name: MA35H04F764C
   clock_source: HXT
   device_vendor: Nuvoton
   family_name: NuMicro
@@ -54,7 +54,7 @@ features_zh:
 - 7 吋 TFT-LCD 屏
 pkg_type: Board_Support_Packages
 pkg_vendor: Nuvoton
-pkg_version: 1.0.0
+pkg_version: 1.0.1
 template_projects:
 - builtin_files:
   - files_and_folders:

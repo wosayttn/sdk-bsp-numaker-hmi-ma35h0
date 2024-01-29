@@ -124,8 +124,8 @@ static rt_err_t _nu_adc_init(rt_device_t dev)
 {
     nu_adc_t psNuAdc = (nu_adc_t)dev;
 
-    /* ADC Engine Clock is set to freq Khz */
-    CLK_SetModuleClock(psNuAdc->modid, 0, CLK_CLKDIV4_ADC(180));  // Set ADC clock rate to 9MHz
+    /* ADC Engine Clock is set to 1MHz. -> 180MHz / (2*(ADCDIV-1)) */
+    CLK_SetModuleClock(psNuAdc->modid, 0, CLK_CLKDIV4_ADC(180));
 
     /* Install interrupt service routine */
     rt_hw_interrupt_install(psNuAdc->irqn, nu_adc_isr, (void *)psNuAdc, psNuAdc->name);

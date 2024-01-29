@@ -119,7 +119,7 @@ For example, the **nuwriter_ddr_download_and_run.bat** modification is as follow
 
 ```bash
 :forever_develop
-NuWriter_MA35.exe -a ddrimg\MA35H04F767C.bin
+NuWriter_MA35.exe -a ddrimg\MA35H04F764C.bin
 IF %ERRORLEVEL% EQU 0 (
    NuWriter_MA35.exe -o execute -w ddr 0x80800000 ..\rtthread.bin
 )
