@@ -413,21 +413,29 @@ static rt_err_t ccap_control(rt_device_t dev, int cmd, void *args)
     case CCAP_CMD_SET_BASEADDR:
     {
         ccap_config_t psCcapConf;
+        uint32_t u32BufPtr;
+
 
         RT_ASSERT(args);
         psCcapConf = (ccap_config_t)args;
 
+        //Force to non-cacheable address.
+        u32BufPtr = (uint32_t)psCcapConf->sPipeInfo_Packet.pu8FarmAddr & ~UNCACHEABLE;
+
         /* Set System Memory Packet Base Address Register */
-        if ((uint32_t)psCcapConf->sPipeInfo_Packet.pu8FarmAddr != 0)
+        if (u32BufPtr != 0)
         {
-            CCAP_SetPacketBuf(psNuCcap->base, (uint32_t)psCcapConf->sPipeInfo_Packet.pu8FarmAddr);
+            CCAP_SetPacketBuf(psNuCcap->base, u32BufPtr);
         }
         else
         {
             CCAP_CLR_CTL(psNuCcap->base, CCAP_CTL_PKTEN_Msk);
         }
 
-        if ((uint32_t)psCcapConf->sPipeInfo_Planar.pu8FarmAddr != 0)
+        //Force to non-cacheable address.
+        u32BufPtr = (uint32_t)psCcapConf->sPipeInfo_Planar.pu8FarmAddr & ~UNCACHEABLE;
+
+        if (u32BufPtr != 0)
         {
             uint32_t u32Div = 0, u32Offset = 0;
 
@@ -447,13 +455,13 @@ static rt_err_t ccap_control(rt_device_t dev, int cmd, void *args)
             }
 
             /* Set System Memory Planar Y Base Address Register */
-            CCAP_SetPlanarYBuf(psNuCcap->base, (uint32_t)psCcapConf->sPipeInfo_Planar.pu8FarmAddr + u32Offset);
+            CCAP_SetPlanarYBuf(psNuCcap->base, u32BufPtr + u32Offset);
             u32Offset = psCcapConf->sPipeInfo_Planar.u32Height * psCcapConf->sPipeInfo_Planar.u32Width;
             /* Set System Memory Planar U Base Address Register */
-            CCAP_SetPlanarUBuf(psNuCcap->base, (uint32_t)psCcapConf->sPipeInfo_Planar.pu8FarmAddr + u32Offset);
+            CCAP_SetPlanarUBuf(psNuCcap->base, u32BufPtr + u32Offset);
             u32Offset += ((psCcapConf->sPipeInfo_Planar.u32Height * psCcapConf->sPipeInfo_Planar.u32Width) / u32Div);
             /* Set System Memory Planar V Base Address Register */
-            CCAP_SetPlanarVBuf(psNuCcap->base, (uint32_t)psCcapConf->sPipeInfo_Planar.pu8FarmAddr + u32Offset);
+            CCAP_SetPlanarVBuf(psNuCcap->base, u32BufPtr + u32Offset);
         }
         else
         {

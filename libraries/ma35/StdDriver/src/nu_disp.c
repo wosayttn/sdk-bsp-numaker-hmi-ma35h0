@@ -67,24 +67,59 @@ static uint32_t DISP_GetBitPerPixel(E_FB_FMT eFbFmt)
     return u32bpp;
 }
 
-uint64_t DISP_GeneratePixelClk(uint32_t u32PixClkInHz)
+const DISP_LCD_TIMING *DISP_GetLCDTimingCtx(void)
 {
-    uint64_t u64PixClkOut;
-
-    /* Set new VPLL clock frequency. */
-    u32PixClkInHz <<= 1U;
-    u64PixClkOut = CLK_SetPLLFreq(VPLL, PLL_OPMODE_INTEGER, __HXT, (uint64_t)u32PixClkInHz);
-
-    /* Waiting clock ready */
-    CLK_WaitClockReady(CLK_STATUS_VPLLSTB_Msk);
-
-    return u64PixClkOut;
+    return (g_psDispLcdInfo_Curr != NULL) ?
+           (const DISP_LCD_TIMING *)&g_psDispLcdInfo_Curr->sLcdTiming :
+           NULL;
 }
 
 void DISP_SuspendPixelClk(void)
 {
     /* Stop VPLL forcely. */
     CLK_SetPLLPowerDown(VPLL);
+}
+
+uint64_t DISP_GeneratePixelClk(uint32_t u32PixClkInHz)
+{
+#define DEF_VPLL_MIN_FREQ    85700000ull
+
+    uint32_t i;
+
+    for (i = 0; i < 8; i++)
+    {
+        uint64_t u64PixClkOut;
+
+        /* Find divider for minimal frequency of VPLL. */
+        if ((u64PixClkOut = (u32PixClkInHz * (2 * (i + 1)))) >= DEF_VPLL_MIN_FREQ)
+        {
+            uint64_t u64RealPixClkOut;
+            uint32_t u32RegLockLevel = SYS_IsRegLocked();
+
+            /* Unlock protected registers */
+            if (u32RegLockLevel)
+                SYS_UnlockReg();
+
+            /* Set VPLL clock frequency. */
+            u64RealPixClkOut = CLK_SetPLLFreq(VPLL, PLL_OPMODE_INTEGER, __HXT, u64PixClkOut);
+
+            /* Apply new divider */
+            CLK->CLKDIV0 = (CLK->CLKDIV0 & ~(CLK_CLKDIV0_DCUPDIV_Msk)) | (i << CLK_CLKDIV0_DCUPDIV_Pos);
+
+            /* Lock protected registers */
+            if (u32RegLockLevel)
+                SYS_LockReg();
+
+            /* Waiting clock ready */
+            CLK_WaitClockReady(CLK_STATUS_VPLLSTB_Msk);
+
+            return u64RealPixClkOut;
+        }
+    }
+
+    DISP_SuspendPixelClk();
+
+    return 0ull;
 }
 
 void DISP_SetTiming(DISP_LCD_TIMING *psLCDTiming)
@@ -421,12 +456,33 @@ int DISP_SetFBFmt(E_DISP_LAYER eLayer, E_FB_FMT eFbFmt, uint32_t u32Pitch)
     {
     case eLayer_Video:
     {
+        uint32_t u32ResWidth, u32ResHeight;
         uint32_t u32FBConf = DISP->FrameBufferConfig0;
+
+        u32ResWidth = (DISP->FrameBufferSize0 & DISP_FrameBufferSize0_WIDTH_Msk) >> DISP_FrameBufferSize0_WIDTH_Pos;
+        u32ResHeight = (DISP->FrameBufferSize0 & DISP_FrameBufferSize0_HEIGHT_Msk) >> DISP_FrameBufferSize0_HEIGHT_Pos;
+
         DISP->FrameBufferConfig0 = 0;
-        DISP->FrameBufferStride0 = u32Pitch;
         u32FBConf = (u32FBConf & ~DISP_FrameBufferConfig0_FORMAT_Msk) |
                     (eFbFmt << DISP_FrameBufferConfig0_FORMAT_Pos) |
                     DISP_FrameBufferConfig0_RESET_Msk;
+
+        /* Set frame buffer address registers */
+        DISP->FrameBufferSize0 = (u32ResHeight << DISP_FrameBufferSize0_HEIGHT_Pos) |
+                                 (u32Pitch << DISP_FrameBufferSize0_WIDTH_Pos);
+
+        /* Set frame buffer address registers */
+        // Y, RGB
+        //DISP->FrameBufferAddress0;
+        DISP->FrameBufferStride0 = u32Pitch;
+
+        // U
+        DISP->FrameBufferUPlanarAddress0 = DISP->FrameBufferAddress0 + u32Pitch * u32ResHeight;
+        DISP->FrameBufferUStride0 = u32Pitch;
+
+        // V
+        DISP->FrameBufferVPlanarAddress0 = DISP->FrameBufferUPlanarAddress0 + u32Pitch * u32ResHeight / 2;
+        DISP->FrameBufferVStride0 = u32Pitch;
 
         DISP->FrameBufferConfig0 = u32FBConf;
 
@@ -438,7 +494,6 @@ int DISP_SetFBFmt(E_DISP_LAYER eLayer, E_FB_FMT eFbFmt, uint32_t u32Pitch)
 
     return 0;
 }
-
 
 int DISP_SetFBConfig(E_DISP_LAYER eLayer, E_FB_FMT eFbFmt, uint32_t u32ResWidth, uint32_t u32ResHeight, uint32_t u32DMAFBStartAddr)
 {
@@ -454,19 +509,22 @@ int DISP_SetFBConfig(E_DISP_LAYER eLayer, E_FB_FMT eFbFmt, uint32_t u32ResWidth,
     {
     case eLayer_Video:
 
-        DISP->FrameBufferUPlanarAddress0 = u32DMAFBStartAddr + u32ResWidth * u32ResHeight;
-        DISP->FrameBufferVPlanarAddress0 = DISP->FrameBufferUPlanarAddress0 + u32ResWidth * u32ResHeight / 2;
-        DISP->FrameBufferUStride0 = u32ResWidth;
-        DISP->FrameBufferVStride0 = u32ResWidth / 2;
-        DISP->IndexColorTableIndex0 = 0U;
-
         DISP->FrameBufferSize0 = (u32ResHeight << DISP_FrameBufferSize0_HEIGHT_Pos) |
                                  (u32ResWidth << DISP_FrameBufferSize0_WIDTH_Pos);
 
-        DISP->FrameBufferStride0 = u32ResWidth * (u32bpp >> 3U);
-
         /* Set frame buffer address registers */
         DISP->FrameBufferAddress0 = u32DMAFBStartAddr;
+        DISP->FrameBufferStride0 = u32ResWidth * (u32bpp >> 3U);
+
+        // U
+        DISP->FrameBufferUPlanarAddress0 = u32DMAFBStartAddr + u32ResWidth * u32ResHeight;
+        DISP->FrameBufferUStride0 = u32ResWidth;
+
+        // V
+        DISP->FrameBufferVPlanarAddress0 = DISP->FrameBufferUPlanarAddress0 + u32ResWidth * u32ResHeight / 2;
+        DISP->FrameBufferVStride0 = u32ResWidth / 2;
+
+        DISP->IndexColorTableIndex0 = 0U;
 
         DISP->FrameBufferConfig0 = (eFbFmt << DISP_FrameBufferConfig0_FORMAT_Pos) |
                                    (eYUV_709_BT709 << DISP_FrameBufferConfig0_YUV_Pos) |

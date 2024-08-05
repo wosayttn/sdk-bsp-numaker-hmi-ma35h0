@@ -8,8 +8,8 @@ cwd = GetCurrentDir()
 objs = []
 libs = []
 group = []
-if GetDepend('BSP_USING_VDE'):
 
+if GetDepend('BSP_USING_VDE'):
     src = Glob('*.c') + Glob('*.cpp')
     cpppath = [cwd]
     libpath = [cwd]

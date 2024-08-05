@@ -1596,11 +1596,11 @@ typedef struct
 #define CANFD_RXF1S_F1FL_Pos             (0)                                               /*!< CANFD_T::RXF1S: F1FL Position          */
 #define CANFD_RXF1S_F1FL_Msk             (0x7ful << CANFD_RXF1S_F1FL_Pos)                  /*!< CANFD_T::RXF1S: F1FL Mask              */
 
-#define CANFD_RXF1S_F1G_Pos              (8)                                               /*!< CANFD_T::RXF1S: F1G Position           */
-#define CANFD_RXF1S_F1G_Msk              (0x3ful << CANFD_RXF1S_F1G_Pos)                   /*!< CANFD_T::RXF1S: F1G Mask               */
+#define CANFD_RXF1S_F1GI_Pos             (8)                                               /*!< CANFD_T::RXF1S: F1GI Position          */
+#define CANFD_RXF1S_F1GI_Msk             (0x3ful << CANFD_RXF1S_F1GI_Pos)                  /*!< CANFD_T::RXF1S: F1GI Mask              */
 
-#define CANFD_RXF1S_F1P_Pos              (16)                                              /*!< CANFD_T::RXF1S: F1P Position           */
-#define CANFD_RXF1S_F1P_Msk              (0x3ful << CANFD_RXF1S_F1P_Pos)                   /*!< CANFD_T::RXF1S: F1P Mask               */
+#define CANFD_RXF1S_F1PI_Pos             (16)                                              /*!< CANFD_T::RXF1S: F1PI Position          */
+#define CANFD_RXF1S_F1PI_Msk             (0x3ful << CANFD_RXF1S_F1PI_Pos)                  /*!< CANFD_T::RXF1S: F1PI Mask              */
 
 #define CANFD_RXF1S_F1F_Pos              (24)                                              /*!< CANFD_T::RXF1S: F1F Position           */
 #define CANFD_RXF1S_F1F_Msk              (0x1ul << CANFD_RXF1S_F1F_Pos)                    /*!< CANFD_T::RXF1S: F1F Mask               */
@@ -1611,8 +1611,8 @@ typedef struct
 #define CANFD_RXF1S_DMS_Pos              (30)                                              /*!< CANFD_T::RXF1S: DMS Position           */
 #define CANFD_RXF1S_DMS_Msk              (0x3ul << CANFD_RXF1S_DMS_Pos)                    /*!< CANFD_T::RXF1S: DMS Mask               */
 
-#define CANFD_RXF1A_F1A_Pos              (0)                                               /*!< CANFD_T::RXF1A: F1A Position           */
-#define CANFD_RXF1A_F1A_Msk              (0x3ful << CANFD_RXF1A_F1A_Pos)                   /*!< CANFD_T::RXF1A: F1A Mask               */
+#define CANFD_RXF1A_F1AI_Pos             (0)                                               /*!< CANFD_T::RXF1A: F1AI Position          */
+#define CANFD_RXF1A_F1AI_Msk             (0x3ful << CANFD_RXF1A_F1AI_Pos)                  /*!< CANFD_T::RXF1A: F1AI Mask              */
 
 #define CANFD_RXESC_F0DS_Pos             (0)                                               /*!< CANFD_T::RXESC: F0DS Position          */
 #define CANFD_RXESC_F0DS_Msk             (0x7ul << CANFD_RXESC_F0DS_Pos)                   /*!< CANFD_T::RXESC: F0DS Mask              */
@@ -1638,11 +1638,11 @@ typedef struct
 #define CANFD_TXFQS_TFFL_Pos             (0)                                               /*!< CANFD_T::TXFQS: TFFL Position          */
 #define CANFD_TXFQS_TFFL_Msk             (0x3ful << CANFD_TXFQS_TFFL_Pos)                  /*!< CANFD_T::TXFQS: TFFL Mask              */
 
-#define CANFD_TXFQS_TFG_Pos              (8)                                               /*!< CANFD_T::TXFQS: TFG Position           */
-#define CANFD_TXFQS_TFG_Msk              (0x1ful << CANFD_TXFQS_TFG_Pos)                   /*!< CANFD_T::TXFQS: TFG Mask               */
+#define CANFD_TXFQS_TFGI_Pos             (8)                                               /*!< CANFD_T::TXFQS: TFGI Position          */
+#define CANFD_TXFQS_TFGI_Msk             (0x1ful << CANFD_TXFQS_TFGI_Pos)                  /*!< CANFD_T::TXFQS: TFGI Mask              */
 
-#define CANFD_TXFQS_TFQP_Pos             (16)                                              /*!< CANFD_T::TXFQS: TFQP Position          */
-#define CANFD_TXFQS_TFQP_Msk             (0x1ful << CANFD_TXFQS_TFQP_Pos)                  /*!< CANFD_T::TXFQS: TFQP Mask              */
+#define CANFD_TXFQS_TFQPI_Pos            (16)                                              /*!< CANFD_T::TXFQS: TFQPI Position         */
+#define CANFD_TXFQS_TFQPI_Msk            (0x1ful << CANFD_TXFQS_TFQPI_Pos)                 /*!< CANFD_T::TXFQS: TFQPI Mask             */
 
 #define CANFD_TXFQS_TFQF_Pos             (21)                                              /*!< CANFD_T::TXFQS: TFQF Position          */
 #define CANFD_TXFQS_TFQF_Msk             (0x1ul << CANFD_TXFQS_TFQF_Pos)                   /*!< CANFD_T::TXFQS: TFQF Mask              */
@@ -1677,17 +1677,17 @@ typedef struct
 #define CANFD_TXEFC_EFS_Pos              (16)                                              /*!< CANFD_T::TXEFC: EFS Position           */
 #define CANFD_TXEFC_EFS_Msk              (0x3ful << CANFD_TXEFC_EFS_Pos)                   /*!< CANFD_T::TXEFC: EFS Mask               */
 
-#define CANFD_TXEFC_EFWN_Pos             (24)                                              /*!< CANFD_T::TXEFC: EFWN Position          */
-#define CANFD_TXEFC_EFWN_Msk             (0x3ful << CANFD_TXEFC_EFWN_Pos)                  /*!< CANFD_T::TXEFC: EFWN Mask              */
+#define CANFD_TXEFC_EFWM_Pos             (24)                                              /*!< CANFD_T::TXEFC: EFWN Position          */
+#define CANFD_TXEFC_EFWM_Msk             (0x3ful << CANFD_TXEFC_EFWM_Pos)                  /*!< CANFD_T::TXEFC: EFWN Mask              */
 
 #define CANFD_TXEFS_EFFL_Pos             (0)                                               /*!< CANFD_T::TXEFS: EFFL Position          */
 #define CANFD_TXEFS_EFFL_Msk             (0x3ful << CANFD_TXEFS_EFFL_Pos)                  /*!< CANFD_T::TXEFS: EFFL Mask              */
 
-#define CANFD_TXEFS_EFG_Pos              (8)                                               /*!< CANFD_T::TXEFS: EFG Position           */
-#define CANFD_TXEFS_EFG_Msk              (0x1ful << CANFD_TXEFS_EFG_Pos)                   /*!< CANFD_T::TXEFS: EFG Mask               */
+#define CANFD_TXEFS_EFGI_Pos             (8)                                               /*!< CANFD_T::TXEFS: EFGI Position          */
+#define CANFD_TXEFS_EFGI_Msk             (0x1ful << CANFD_TXEFS_EFGI_Pos)                  /*!< CANFD_T::TXEFS: EFGI Mask              */
 
-#define CANFD_TXEFS_EFP_Pos              (16)                                              /*!< CANFD_T::TXEFS: EFP Position           */
-#define CANFD_TXEFS_EFP_Msk              (0x1ful << CANFD_TXEFS_EFP_Pos)                   /*!< CANFD_T::TXEFS: EFP Mask               */
+#define CANFD_TXEFS_EFPI_Pos             (16)                                              /*!< CANFD_T::TXEFS: EFPI Position          */
+#define CANFD_TXEFS_EFPI_Msk             (0x1ful << CANFD_TXEFS_EFPI_Pos)                  /*!< CANFD_T::TXEFS: EFPI Mask              */
 
 #define CANFD_TXEFS_EFF_Pos              (24)                                              /*!< CANFD_T::TXEFS: EFF Position           */
 #define CANFD_TXEFS_EFF_Msk              (0x1ul << CANFD_TXEFS_EFF_Pos)                    /*!< CANFD_T::TXEFS: EFF Mask               */
@@ -1695,8 +1695,8 @@ typedef struct
 #define CANFD_TXEFS_TEFL_Pos             (25)                                              /*!< CANFD_T::TXEFS: TEFL Position          */
 #define CANFD_TXEFS_TEFL_Msk             (0x1ul << CANFD_TXEFS_TEFL_Pos)                   /*!< CANFD_T::TXEFS: TEFL Mask              */
 
-#define CANFD_TXEFA_EFA_Pos              (0)                                               /*!< CANFD_T::TXEFA: EFA Position           */
-#define CANFD_TXEFA_EFA_Msk              (0x1ful << CANFD_TXEFA_EFA_Pos)                   /*!< CANFD_T::TXEFA: EFA Mask               */
+#define CANFD_TXEFA_EFAI_Pos             (0)                                               /*!< CANFD_T::TXEFA: EFAI Position          */
+#define CANFD_TXEFA_EFAI_Msk             (0x1ful << CANFD_TXEFA_EFAI_Pos)                  /*!< CANFD_T::TXEFA: EFAI Mask              */
 
 /**@}*/ /* CANFD_CONST */
 /**@}*/ /* end of CANFD register group */

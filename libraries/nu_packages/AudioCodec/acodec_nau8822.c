@@ -248,7 +248,7 @@ static rt_err_t nau8822_dsp_config(rt_uint32_t ui32SamplRate, rt_uint8_t u8ChNum
         mClkDiv = 7;
         break;
     default:
-        LOG_E("mclk divider not match!\n");
+        LOG_E("mclk divider(%d) not match!\n", mClkDiv);
         mClkDiv = 0;
         return -RT_ERROR;
     }
@@ -262,6 +262,9 @@ static rt_err_t nau8822_dsp_config(rt_uint32_t ui32SamplRate, rt_uint8_t u8ChNum
         bClkDiv = 1;
         break;
     case 4:
+    case 5:
+    case 6:
+    case 7:
         bClkDiv = 2;
         break;
     case 8:
@@ -274,7 +277,7 @@ static rt_err_t nau8822_dsp_config(rt_uint32_t ui32SamplRate, rt_uint8_t u8ChNum
         bClkDiv = 5;
         break;
     default:
-        LOG_E("bclk divider not match!\n");
+        LOG_E("bclk(%d) divider not match!\n", bClkDiv);
         bClkDiv = 0;
         return -RT_ERROR;
     }
@@ -337,11 +340,15 @@ static rt_err_t nau8822_init(void)
     I2C_WriteNAU8822(0x34, 0x13F);
     I2C_WriteNAU8822(0x35, 0x13F);
 
-    I2C_WriteNAU8822(11,  0x100 | 204); // volume 80%
-    I2C_WriteNAU8822(12,  0x100 | 204); // volume 80%
+    //I2C_WriteNAU8822(11,  0x100 | 204); // volume 80%
+    //I2C_WriteNAU8822(12,  0x100 | 204); // volume 80%
+    //I2C_WriteNAU8822(54,  0x100 | 50);  // volume 80%
+    //I2C_WriteNAU8822(55,  0x100 | 50);  // volume 80%
 
-    I2C_WriteNAU8822(54,  0x100 | 50);  // volume 80%
-    I2C_WriteNAU8822(55,  0x100 | 50);  // volume 80%
+    I2C_WriteNAU8822(11,  0x100 | 255); // volume 95%
+    I2C_WriteNAU8822(12,  0x100 | 255); // volume 95%
+    I2C_WriteNAU8822(54,  0x100 | 0x3F);  // volume 95%
+    I2C_WriteNAU8822(55,  0x100 | 0x3F);  // volume 95%
 
     nu_acodec_ops_nau8822.config.samplerate = 16000;
     nu_acodec_ops_nau8822.config.channels = 2;

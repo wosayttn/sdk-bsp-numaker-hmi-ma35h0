@@ -14,152 +14,14 @@
  ******************************************************************************/
 
 /* Minimum number of time quanta in a bit. */
-#define MIN_TIME_QUANTA    9ul
+#define MIN_TIME_QUANTA    8ul
 /* Maximum number of time quanta in a bit. */
-#define MAX_TIME_QUANTA    20ul
+#define MAX_TIME_QUANTA    25ul
 /* Number of receive FIFOs (1 - 2) */
 #define CANFD_NUM_RX_FIFOS  2ul
 
 /*CANFD max nominal bit rate*/
 #define MAX_NOMINAL_BAUDRATE (1000000UL)
-
-/* Tx Event FIFO Element ESI(Error State Indicator)  */
-#define TX_FIFO_E0_EVENT_ESI_Pos   (31)
-#define TX_FIFO_E0_EVENT_ESI_Msk   (0x1ul << TX_FIFO_E0_EVENT_ESI_Pos)
-
-/* Tx Event FIFO Element XTD(Extended Identifier)    */
-#define TX_FIFO_E0_EVENT_XTD_Pos   (30)
-#define TX_FIFO_E0_EVENT_XTD_Msk   (0x1ul << TX_FIFO_E0_EVENT_XTD_Pos)
-
-/* Tx Event FIFO Element RTR(Remote Transmission Request)    */
-#define TX_FIFO_E0_EVENT_RTR_Pos   (29)
-#define TX_FIFO_E0_EVENT_RTR_Msk   (0x1ul << TX_FIFO_E0_EVENT_RTR_Pos)
-
-/* Tx Event FIFO Element ID(Identifier)    */
-#define TX_FIFO_E0_EVENT_ID_Pos    (0)
-#define TX_FIFO_E0_EVENT_ID_Msk    (0x1FFFFFFFul << TX_FIFO_E0_EVENT_ID_Pos)
-
-/* Tx Event FIFO Element MM(Message Marker)    */
-#define TX_FIFO_E1_EVENT_MM_Pos    (24)
-#define TX_FIFO_E1_EVENT_MM_Msk    (0xFFul << TX_FIFO_E1_EVENT_MM_Pos)
-
-/* Tx Event FIFO Element ET(Event Type)    */
-#define TX_FIFO_E1_EVENT_ET_Pos    (22)
-#define TX_FIFO_E1_EVENT_ET_Msk    (0x3ul << TX_FIFO_E1_EVENT_ET_Pos)
-
-/* Tx Event FIFO Element FDF(FD Format)    */
-#define TX_FIFO_E1_EVENT_FDF_Pos    (21)
-#define TX_FIFO_E1_EVENT_FDF_Msk    (0x1ul << TX_FIFO_E1_EVENT_FDF_Pos)
-
-/* Tx Event FIFO Element BRS(Bit Rate Switch)    */
-#define TX_FIFO_E1_EVENT_BRS_Pos    (20)
-#define TX_FIFO_E1_EVENT_BRS_Msk    (0x1ul << TX_FIFO_E1_EVENT_BRS_Pos)
-
-/* Tx Event FIFO Element DLC(Data Length Code)    */
-#define TX_FIFO_E1_EVENT_DLC_Pos    (16)
-#define TX_FIFO_E1_EVENT_DLC_Msk    (0xFul << TX_FIFO_E1_EVENT_DLC_Pos)
-
-/* Tx Event FIFO Element TXTS(Tx Timestamp)    */
-#define TX_FIFO_E1A_EVENT_TXTS_Pos  (0)
-#define TX_FIFO_E1A_EVENT_TXTS_Msk  (0xFFFFul << TX_FIFO_E1A_EVENT_TXTS_Pos)
-
-/* Tx Event FIFO Element MM(Message Marker)    */
-#define TX_FIFO_E1B_EVENT_MM_Pos    (8)
-#define TX_FIFO_E1B_EVENT_MM_Msk    (0xFFul << TX_FIFO_E1B_EVENT_MM_Pos)
-
-/* Tx Event FIFO Element TSC(Timestamp Captured)    */
-#define TX_FIFO_E1B_EVENT_TSC_Pos   (4)
-#define TX_FIFO_E1B_EVENT_TSC_Msk   (0x1ul << TX_FIFO_E1B_EVENT_TSC_Pos)
-
-/* Tx Event FIFO Element TSC(Timestamp Captured)    */
-#define TX_FIFO_E1B_EVENT_TXTS_Pos   (0)
-#define TX_FIFO_E1B_EVENT_TXTS_Msk   (0xFul << TX_FIFO_E1B_EVENT_TSC_Pos)
-
-/* Rx Buffer and FIFO Element ESI2(Error State Indicator)    */
-#define RX_BUFFER_AND_FIFO_R0_ELEM_ESI_Pos  (31)
-#define RX_BUFFER_AND_FIFO_R0_ELEM_ESI_Msk  (0x1ul << RX_BUFFER_AND_FIFO_R0_ELEM_ESI_Pos)
-
-/* Rx Buffer and FIFO Element XTD(Extended Identifier)    */
-#define RX_BUFFER_AND_FIFO_R0_ELEM_XTD_Pos  (30)
-#define RX_BUFFER_AND_FIFO_R0_ELEM_XTD_Msk  (0x1ul << RX_BUFFER_AND_FIFO_R0_ELEM_XTD_Pos)
-
-/* Rx Buffer and FIFO Element RTR(Remote Transmission Request)    */
-#define RX_BUFFER_AND_FIFO_R0_ELEM_RTR_Pos  (29)
-#define RX_BUFFER_AND_FIFO_R0_ELEM_RTR_Msk  (0x1ul << RX_BUFFER_AND_FIFO_R0_ELEM_RTR_Pos)
-
-/* Rx Buffer and FIFO Element ID(Identifier)    */
-#define RX_BUFFER_AND_FIFO_R0_ELEM_ID_Pos  (0)
-#define RX_BUFFER_AND_FIFO_R0_ELEM_ID_Msk  (0x1FFFFFFFul << RX_BUFFER_AND_FIFO_R0_ELEM_ID_Pos)
-
-/* Rx Buffer and FIFO Element ANMF(Accepted Non-matching Frame)    */
-#define RX_BUFFER_AND_FIFO_R1_ELEM_ANMF_Pos  (31)
-#define RX_BUFFER_AND_FIFO_R1_ELEM_ANMF_Msk  (0x1ul << RX_BUFFER_AND_FIFO_R1_ELEM_ANMF_Pos)
-
-/* Rx Buffer and FIFO Element FIDX(Filter Index)    */
-#define RX_BUFFER_AND_FIFO_R1_ELEM_FIDX_Pos  (24)
-#define RX_BUFFER_AND_FIFO_R1_ELEM_FIDX_Msk  (0x7Ful << RX_BUFFER_AND_FIFO_R1_ELEM_FIDX_Pos)
-
-/* Rx Buffer and FIFO Element FDF(FD Format)    */
-#define RX_BUFFER_AND_FIFO_R1_ELEM_FDF_Pos  (21)
-#define RX_BUFFER_AND_FIFO_R1_ELEM_FDF_Msk  (0x1ul << RX_BUFFER_AND_FIFO_R1_ELEM_FDF_Pos)
-
-/* Rx Buffer and FIFO Element BRS(Bit Rate Swit)    */
-#define RX_BUFFER_AND_FIFO_R1_ELEM_BSR_Pos  (20)
-#define RX_BUFFER_AND_FIFO_R1_ELEM_BSR_Msk  (0x1ul << RX_BUFFER_AND_FIFO_R1_ELEM_BSR_Pos)
-
-/* Rx Buffer and FIFO Element DLC(Bit Rate Swit)    */
-#define RX_BUFFER_AND_FIFO_R1_ELEM_DLC_Pos  (16)
-#define RX_BUFFER_AND_FIFO_R1_ELEM_DLC_Msk  (0xFul << RX_BUFFER_AND_FIFO_R1_ELEM_DLC_Pos)
-
-/* Rx Buffer and FIFO Element RXTS(Rx Timestamp)    */
-#define RX_BUFFER_AND_FIFO_R1_ELEM_RXTS_Pos  (0)
-#define RX_BUFFER_AND_FIFO_R1_ELEM_RXTS_Msk  (0xFFFFul << RX_BUFFER_AND_FIFO_R1_ELEM_RXTS_Pos)
-
-/* Tx Buffer Element ESI(Error State Indicator)    */
-#define TX_BUFFER_T0_ELEM_ESI_Pos  (31)
-#define TX_BUFFER_T0_ELEM_ESI_Msk  (0x1ul << TX_BUFFER_T0_ELEM_ESI_Pos)
-
-/* Tx Buffer Element XTD(Extended Identifier)    */
-#define TX_BUFFER_T0_ELEM_XTD_Pos  (30)
-#define TX_BUFFER_T0_ELEM_XTD_Msk (0x1ul << TX_BUFFER_T0_ELEM_XTD_Pos)
-
-/* Tx Buffer RTR(Remote Transmission Request)    */
-#define TX_BUFFER_T0_ELEM_RTR_Pos  (29)
-#define TX_BUFFER_T0_ELEM_RTR_Msk  (0x1ul << TX_BUFFER_T0_ELEM_RTR_Pos)
-
-/* Tx Buffer Element ID(Identifier)    */
-#define TX_BUFFER_T0_ELEM_ID_Pos  (0)
-#define TX_BUFFER_T0_ELEM_ID_Msk  (0x1FFFFFFFul << TX_BUFFER_T0_ELEM_ID_Pos)
-
-/* Tx Buffer Element MM(Message Marker)    */
-#define TX_BUFFER_T1_ELEM_MM1_Pos  (24)
-#define TX_BUFFER_T1_ELEM_MM1_Msk  (0xFFul << TX_BUFFER_T1_ELEM_MM1_Pos)
-
-/* Tx Buffer Element EFC(Event FIFO Control)    */
-#define TX_BUFFER_T1_ELEM_EFC_Pos  (23)
-#define TX_BUFFER_T1_ELEM_EFC_Msk  (0xFFul << TX_BUFFER_T1_ELEM_EFC_Pos)
-
-/* Tx Buffer Element TSCE(Time Stamp Capture Enable for TSU)    */
-#define TX_BUFFER_T1_ELEM_TSCE_Pos  (22)
-#define TX_BUFFER_T1_ELEM_TSCE_Msk  (0x1ul << TX_BUFFER_T1_ELEM_TSCE_Pos)
-
-/* Tx Buffer Element FDF(FD Format)    */
-#define TX_BUFFER_T1_ELEM_FDF_Pos  (21)
-#define TX_BUFFER_T1_ELEM_FDF_Msk  (0x1ul << TX_BUFFER_T1_ELEM_FDF_Pos)
-
-/* Tx Buffer Element BRS(Bit Rate Swit)    */
-#define TX_BUFFER_T1_ELEM_BSR_Pos  (20)
-#define TX_BUFFER_T1_ELEM_BSR_Msk  (0x1ul << TX_BUFFER_T1_ELEM_BSR_Pos)
-
-/* Tx Buffer Element DLC(Bit Rate Swit)    */
-#define TX_BUFFER_T1_ELEM_DLC_Pos  (16)
-#define TX_BUFFER_T1_ELEM_DLC_Msk  (0xFul << TX_BUFFER_T1_ELEM_DLC_Pos)
-
-/* Tx Buffer Element MM(Message Marker)    */
-#define TX_BUFFER_T1_ELEM_MM0_Pos  (8)
-#define TX_BUFFER_T1_ELEM_MM0_Msk  (0xFFul << TX_BUFFER_T1_ELEM_MM0_Pos)
-
-#define CANFD_RXFS_RFL CANFD_RXF0S_RF0L_Msk
 
 /** @addtogroup Standard_Driver Standard Driver
   @{
@@ -173,30 +35,269 @@
   @{
 */
 
-static void CANFD_InitRxFifo(CANFD_T *canfd, uint32_t u32RxFifoNum, CANFD_RAM_PART_T *psRamConfig, CANFD_ELEM_SIZE_T *psElemSize, uint32_t u32FifoWM, E_CANFD_DATA_FIELD_SIZE eFifoSize);
-static void CANFD_InitRxDBuf(CANFD_T *canfd, CANFD_RAM_PART_T *psRamConfig, CANFD_ELEM_SIZE_T *psElemSize, E_CANFD_DATA_FIELD_SIZE eRxBufSize);
-static void CANFD_InitTxDBuf(CANFD_T *canfd, CANFD_RAM_PART_T *psRamConfig, CANFD_ELEM_SIZE_T *psElemSize, E_CANFD_DATA_FIELD_SIZE eTxBufSize);
-static void CANFD_InitTxEvntFifo(CANFD_T *canfd, CANFD_RAM_PART_T *psRamConfig, CANFD_ELEM_SIZE_T *psElemSize, uint32_t u32FifoWaterLvl);
-static void CANFD_ConfigSIDFC(CANFD_T *canfd, CANFD_RAM_PART_T *psRamConfig, CANFD_ELEM_SIZE_T *psElemSize);
-static void CANFD_ConfigXIDFC(CANFD_T *canfd, CANFD_RAM_PART_T *psRamConfig, CANFD_ELEM_SIZE_T *psElemSize);
-
-uint32_t CANFD_ReadReg(__I uint32_t *pu32RegAddr)
+/**
+ * @brief       Rx FIFO Configuration for RX_FIFO_0 and RX_FIFO_1.
+ *
+ * @param[in]   psCanfd          The pointer to CAN FD module base address.
+ * @param[in]   u32RxFifoNum     0: RX FIFO_0, 1: RX_FIFO_1.
+ * @param[in]   psRamConfig      Rx FIFO Size in number of configuration ram address.
+ * @param[in]   psElemSize       Rx FIFO Size in number of Rx FIFO elements (element number (max. = 64)).
+ * @param[in]   u32FifoWM        Watermark in number of Rx FIFO elements
+ * @param[in]   eFifoSize        Maximum data field size that should be stored in this Rx FIFO
+ *                               (configure BYTE64 if you are unsure, as this is the largest data field allowed in CAN FD)
+ *
+ * @return      None.
+ *
+ * @details     Rx FIFO Configuration for RX_FIFO_0 and RX_FIFO_1.
+ */
+static void CANFD_InitRxFifo(CANFD_T *psCanfd, uint32_t u32RxFifoNum, CANFD_RAM_PART_T *psRamConfig, CANFD_ELEM_SIZE_T *psElemSize, uint32_t u32FifoWM, E_CANFD_DATA_FIELD_SIZE eFifoSize)
 {
-    uint32_t u32ReadReg;
-    uint32_t u32TimeOutCnt = CANFD_READ_REG_TIMEOUT;
-    u32ReadReg = 0UL;
+    CANFD_RX_BUF_T *psHeadAddr;
+    uint32_t u32Size;
 
-    do
+    /* ignore if index is too high */
+    if (u32RxFifoNum > CANFD_NUM_RX_FIFOS) return;
+
+    /* ignore if index is too high */
+    if (psElemSize-> u32RxFifo0 > CANFD_MAX_RX_FIFO0_ELEMS) return;
+
+    /* ignore if index is too high */
+    if (psElemSize-> u32RxFifo1 > CANFD_MAX_RX_FIFO1_ELEMS) return;
+
+    switch (u32RxFifoNum)
     {
-        u32ReadReg = inpw(pu32RegAddr);
-        if (--u32TimeOutCnt == 0UL)
+    case 0:
+        if (psElemSize-> u32RxFifo0)
         {
-            break;
-        }
-    }
-    while (u32ReadReg == 0UL);
+            /* set size of Rx FIFO 0, set offset, blocking mode */
+            psCanfd->RXF0C = (psRamConfig->u32RXF0C_F0SA) |
+                             (psElemSize->u32RxFifo0 << CANFD_RXF0C_F0S_Pos) |
+                             (u32FifoWM << CANFD_RXF0C_F0WM_Pos);
 
-    return u32ReadReg;
+            psCanfd->RXESC = (psCanfd->RXESC & (~CANFD_RXESC_F0DS_Msk)) |
+                             (eFifoSize << CANFD_RXESC_F0DS_Pos);
+
+            /*Get the RX FIFO 0 Start Address in the RAM*/
+            psHeadAddr = CANFD_GET_RF0BUF_ADDR(psCanfd, 0);
+            u32Size = eFifoSize;
+
+            if (u32Size < 5U)
+            {
+                u32Size += 4U;
+            }
+            else
+            {
+                u32Size = u32Size * 4U - 10U;
+            }
+
+            /*Clear the RX FIFO 0 Memory*/
+            memset((void *)psHeadAddr, 0x00, (u32Size * 4 * psElemSize->u32RxFifo0));
+        }
+        else
+        {
+            psCanfd->RXF0C = 0;
+        }
+
+        break;
+
+    case 1:
+        if (psElemSize-> u32RxFifo1)
+        {
+            /* set size of Rx FIFO 1, set offset, blocking mode */
+            psCanfd->RXF1C = (psRamConfig->u32RXF1C_F1SA) |
+                             (psElemSize->u32RxFifo1 << CANFD_RXF1C_F1S_Pos) |
+                             (u32FifoWM << CANFD_RXF1C_F1WM_Pos);
+            psCanfd->RXESC = (psCanfd->RXESC & (~CANFD_RXESC_F1DS_Msk)) |
+                             (eFifoSize << CANFD_RXESC_F1DS_Pos);
+
+            /*Get the RX FIFO 1 Start Address in the RAM*/
+            psHeadAddr = CANFD_GET_RF1BUF_ADDR(psCanfd, 0);
+
+            u32Size = eFifoSize;
+
+            if (u32Size < 5U)
+            {
+                u32Size += 4U;
+            }
+            else
+            {
+                u32Size = u32Size * 4U - 10U;
+            }
+
+            /*Clear the RX FIFO 0 Memory*/
+            memset((uint32_t *)psHeadAddr, 0x00, (u32Size * 4 * psElemSize->u32RxFifo1));
+        }
+        else
+        {
+            psCanfd->RXF1C = 0;
+        }
+
+        break;
+    }
+}
+
+
+/**
+ * @brief       Function configures the data structures used by a dedicated Rx Buffer.
+ *
+ * @param[in]   psCanfd          The pointer to CAN FD module base address.
+ * @param[in]   psRamConfig      Tx buffer configuration ram address.
+ * @param[in]   psElemSize       Tx buffer configuration element size.
+ * @param[in]   eTxBufSize       Maximum data field size that should be stored in a dedicated Tx Buffer
+ *                              (configure BYTE64 if you are unsure, as this is the largest data field allowed in CAN FD)largest data field allowed in CAN FD)
+ *
+ * @return      None.
+ *
+ * @details     Function configures the data structures used by a dedicated Rx Buffer.
+ */
+static void CANFD_InitTxDBuf(CANFD_T *psCanfd, CANFD_RAM_PART_T *psRamConfig, CANFD_ELEM_SIZE_T *psElemSize, E_CANFD_DATA_FIELD_SIZE eTxBufSize)
+{
+    CANFD_TX_BUF_T *psHeadAddr;
+    uint32_t u32Size;
+
+    /*Note: Be aware that the sum of TFQS and NDTB may be not greater than 32. There is no check
+            for erroneous configurations. The Tx Buffers section in the Message RAM starts with the
+            dedicated Tx Buffers.*/
+    if ((psElemSize->u32TxBuf + psElemSize->u32TxFifoQueue) > 32)
+    {
+        psElemSize->u32TxBuf = 16;
+        psElemSize->u32TxFifoQueue = 16;
+    }
+
+    /*Setting the Tx Buffer Start Address*/
+    psCanfd->TXBC = (((psElemSize->u32TxFifoQueue & 0x3F) << CANFD_TXBC_TFQS_Pos) |
+                     ((psElemSize->u32TxBuf & 0x3F) << CANFD_TXBC_NDTB_Pos) |
+                     (psRamConfig->u32TXBC_TBSA & CANFD_TXBC_TBSA_Msk));
+
+    /*Setting the Tx Buffer Data Field Size*/
+    psCanfd->TXESC = (psCanfd->TXESC & (~CANFD_TXESC_TBDS_Msk)) | (eTxBufSize <<  CANFD_TXESC_TBDS_Pos);
+
+    /*Get the TX Buffer Start Address in the RAM*/
+    psHeadAddr = CANFD_GET_TXBUF_ADDR(psCanfd, 0);
+
+    /*Get the Buffer Data Field Size*/
+    u32Size = eTxBufSize;
+
+    if (u32Size < 5U)
+    {
+        u32Size += 4U;
+    }
+    else
+    {
+        u32Size = u32Size * 4U - 10U;
+    }
+
+    /*Clear the TX Buffer Memory*/
+    memset((void *)psHeadAddr, 0x00, (u32Size * 4 * psElemSize->u32TxBuf));
+}
+
+
+/**
+ * @brief       Function configures the data structures used by a dedicated Rx Buffer.
+ *
+ * @param[in]   psCanfd          The pointer to CAN FD module base address.
+ * @param[in]   psRamConfig      Rx buffer configuration ram address.
+ * @param[in]   psElemSize       Rx buffer configuration element size.
+ * @param[in]   eRxBufSize       Maximum data field size that should be stored in a dedicated Rx Buffer
+ *                              (configure BYTE64 if you are unsure, as this is the largest data field allowed in CAN FD)largest data field allowed in CAN FD)
+ *
+ * @return      None.
+ *
+ * @details     Function configures the data structures used by a dedicated Rx Buffer.
+ */
+static void CANFD_InitRxDBuf(CANFD_T *psCanfd, CANFD_RAM_PART_T *psRamConfig, CANFD_ELEM_SIZE_T *psElemSize, E_CANFD_DATA_FIELD_SIZE eRxBufSize)
+{
+    /*Get the Buffer Data Field Size*/
+    uint32_t u32Size = eRxBufSize;
+
+    /*Get the RX Buffer Start Address in the RAM*/
+    CANFD_RX_BUF_T *psHeadAddr = CANFD_GET_RXBUF_ADDR(psCanfd, 0);
+
+    /*Setting the Rx Buffer Start Address*/
+    psCanfd->RXBC = (psRamConfig->u32RXBC_RBSA & CANFD_RXBC_RBSA_Msk);
+
+    /*Setting the Rx Buffer Data Field Size*/
+    psCanfd->RXESC = (psCanfd->RXESC & (~CANFD_RXESC_RBDS_Msk)) | (eRxBufSize <<  CANFD_RXESC_RBDS_Pos);
+
+    if (u32Size < 5U)
+    {
+        u32Size += 4U;
+    }
+    else
+    {
+        u32Size = u32Size * 4U - 10U;
+    }
+
+    /*Clear the RX Buffer Memory*/
+    memset((void *)psHeadAddr, 0x00, (u32Size * 4 * psElemSize->u32RxBuf));
+}
+
+/**
+ * @brief       Init Tx event fifo
+ *
+ * @param[in]   psCanfd          The pointer to CAN FD module base address.
+ * @param[in]   psRamConfig      Tx Event Fifo configuration ram address.
+ * @param[in]   psElemSize       Tx Event Fifo configuration element size
+ * @param[in]   u32FifoWaterLvl  FIFO water level
+ *
+ * @return      None.
+ *
+ * @details     Init Tx event fifo.
+ */
+static void CANFD_InitTxEvntFifo(CANFD_T *psCanfd, CANFD_RAM_PART_T *psRamConfig, CANFD_ELEM_SIZE_T *psElemSize, uint32_t u32FifoWaterLvl)
+{
+    /* Set TX Event FIFO element size,watermark,start address. */
+    psCanfd->TXEFC = (u32FifoWaterLvl << CANFD_TXEFC_EFWM_Pos) |
+                     (psElemSize->u32TxEventFifo << CANFD_TXEFC_EFS_Pos) |
+                     (psRamConfig->u32TXEFC_EFSA & CANFD_TXEFC_EFSA_Msk);
+}
+
+
+/**
+ * @brief       Configures the register SIDFC for the 11-bit Standard Message ID Filter elements.
+ *
+ * @param[in]   psCanfd           The pointer to CAN FD module base address.
+ * @param[in]   psRamConfig       Standard ID filter configuration ram address
+ * @param[in]   psElemSize        Standard ID filter configuration element size
+ *
+ * @return      None.
+ *
+ * @details     Function configures the data structures used by a dedicated Rx Buffer.
+ */
+static void CANFD_ConfigSIDFC(CANFD_T *psCanfd, CANFD_RAM_PART_T *psRamConfig, CANFD_ELEM_SIZE_T *psElemSize)
+{
+    /*Get the Filter List Standard Start Address in the RAM*/
+    CANFD_SID_FILTER_T *psHeadAddr = CANFD_GET_SID_ADDR(psCanfd, 0);
+
+    /*Setting the Filter List Standard Start Address and List Size  */
+    psCanfd->SIDFC = ((psElemSize->u32SIDFC & 0xFF) << CANFD_SIDFC_LSS_Pos) | (psRamConfig->u32SIDFC_FLSSA & CANFD_SIDFC_FLSSA_Msk);
+
+    /*Clear the Filter List Memory*/
+    memset((void *)psHeadAddr, 0x00, (psElemSize->u32SIDFC * sizeof(CANFD_SID_FILTER_T)));
+}
+
+
+/**
+ * @brief       Configures the register XIDFC for the 29-bit Extended Message ID Filter elements.
+ *
+ * @param[in]   psCanfd           The pointer to CAN FD module base address.
+ * @param[in]   psRamConfig       Extended ID filter configuration ram address
+ * @param[in]   psElemSize        Extended ID filter configuration element size
+ *
+ * @return      None.
+ *
+ * @details     Configures the register XIDFC for the 29-bit Extended Message ID Filter elements.
+ */
+static void CANFD_ConfigXIDFC(CANFD_T *psCanfd, CANFD_RAM_PART_T *psRamConfig, CANFD_ELEM_SIZE_T *psElemSize)
+{
+    /*Get the Filter List Standard Start Address in the RAM*/
+    CANFD_XID_FILTER_T *psHeadAddr = CANFD_GET_XID_ADDR(psCanfd, 0);
+
+    /*Setting the Filter List Extended Start Address and List Size  */
+    psCanfd->XIDFC = ((psElemSize->u32XIDFC & 0xFF) << CANFD_XIDFC_LSE_Pos) | (psRamConfig->u32XIDFC_FLESA & CANFD_XIDFC_FLESA_Msk);
+
+    /*Clear the Filter List Memory*/
+    memset((void *)psHeadAddr, 0x00, (psElemSize->u32XIDFC * sizeof(CANFD_XID_FILTER_T)));
 }
 
 /**
@@ -209,7 +310,7 @@ uint32_t CANFD_ReadReg(__I uint32_t *pu32RegAddr)
  *
  * @details     Calculates the CAN FD RAM buffer address.
  */
-static void CANFD_CalculateRamAddress(CANFD_RAM_PART_T *psConfigAddr, CANFD_ELEM_SIZE_T *psConfigSize)
+static uint32_t CANFD_CalculateRamAddress(CANFD_RAM_PART_T *psConfigAddr, CANFD_ELEM_SIZE_T *psConfigSize)
 {
     uint32_t u32RamAddrOffset = 0;
 
@@ -217,156 +318,59 @@ static void CANFD_CalculateRamAddress(CANFD_RAM_PART_T *psConfigAddr, CANFD_ELEM
     if (psConfigSize->u32SIDFC > 0)
     {
         psConfigAddr->u32SIDFC_FLSSA = 0;
-        u32RamAddrOffset += psConfigSize->u32SIDFC * sizeof(CANFD_STD_FILTER_T);
+        u32RamAddrOffset += psConfigSize->u32SIDFC * sizeof(CANFD_SID_FILTER_T);
     }
 
     /* Get the Extended Message ID Filter element address */
     if (psConfigSize->u32XIDFC > 0)
     {
         psConfigAddr->u32XIDFC_FLESA = u32RamAddrOffset;
-        u32RamAddrOffset += psConfigSize->u32XIDFC * sizeof(CANFD_EXT_FILTER_T);
+        u32RamAddrOffset += psConfigSize->u32XIDFC * sizeof(CANFD_XID_FILTER_T);
     }
 
     /* Get the Rx FIFO0 element address */
     if (psConfigSize->u32RxFifo0 > 0)
     {
         psConfigAddr->u32RXF0C_F0SA = u32RamAddrOffset;
-        u32RamAddrOffset += psConfigSize->u32RxFifo0 * sizeof(CANFD_BUF_T);
+        u32RamAddrOffset += psConfigSize->u32RxFifo0 * sizeof(CANFD_RX_BUF_T);
     }
 
     /* Get the Rx FIFO1 element address */
     if (psConfigSize->u32RxFifo1 > 0)
     {
         psConfigAddr->u32RXF1C_F1SA = u32RamAddrOffset;
-        u32RamAddrOffset += psConfigSize->u32RxFifo1 * sizeof(CANFD_BUF_T);
+        u32RamAddrOffset += psConfigSize->u32RxFifo1 * sizeof(CANFD_RX_BUF_T);
     }
 
     /* Get the Rx Buffer element address */
     if (psConfigSize->u32RxBuf > 0)
     {
         psConfigAddr->u32RXBC_RBSA = u32RamAddrOffset;
-        u32RamAddrOffset += psConfigSize->u32RxBuf * sizeof(CANFD_BUF_T);
+        u32RamAddrOffset += psConfigSize->u32RxBuf * sizeof(CANFD_RX_BUF_T);
     }
 
     /* Get the TX Event FIFO element address */
     if (psConfigSize->u32TxEventFifo > 0)
     {
         psConfigAddr->u32TXEFC_EFSA = u32RamAddrOffset;
-        u32RamAddrOffset += psConfigSize->u32TxEventFifo *  sizeof(CANFD_EXT_FILTER_T);
+        u32RamAddrOffset += psConfigSize->u32TxEventFifo * sizeof(CANFD_TX_EVENT_T);
     }
 
-    /* Get the Tx Buffer element address */
-    if (psConfigSize->u32TxBuf > 0)
+    /* Get the Tx Buffer and Tx FIFO/Queue element address */
+    if ((psConfigSize->u32TxBuf + psConfigSize->u32TxFifoQueue) > 0)
     {
+        if ((psConfigSize->u32TxBuf + psConfigSize->u32TxFifoQueue) > 32)
+        {
+            psConfigSize->u32TxBuf = 16;
+            psConfigSize->u32TxFifoQueue = 16;
+        }
+
         psConfigAddr->u32TXBC_TBSA = u32RamAddrOffset;
-        u32RamAddrOffset += psConfigSize->u32TxBuf * sizeof(CANFD_BUF_T);
-    }
-}
-
-/**
- * @brief       Get the default configuration structure.
- *
- * @param[in]   psConfig       Pointer to CAN FD configuration structure.
- * @param[in]   u8OpMode       Setting the CAN FD Operating mode.
- *
- * @return      None.
- *
- * @details     This function initializes the CAN FD configure structure to default value.
- *              The default value are:
- *              sNormBitRate.u32BitRate   = 500000bps;
- *              u32DataBaudRate     = 0(CAN mode) or 1000000(CAN FD mode) ;
- *              u32MRamSize         = 8k bytes (2k words);
- *              bEnableLoopBack     = FALSE;
- *              bBitRateSwitch      = FALSE(CAN Mode) or TRUE(CAN FD Mode);
- *              bFDEn               = FALSE(CAN Mode) or TRUE(CAN FD Mode);
-*/
-void CANFD_GetDefaultConfig(CANFD_FD_T *psConfig, uint8_t u8OpMode)
-{
-    memset(psConfig, 0, sizeof(CANFD_FD_T));
-
-    psConfig->sBtConfig.sNormBitRate.u32BitRate = 500000;
-
-    if (u8OpMode == CANFD_OP_CAN_MODE)
-    {
-        psConfig->sBtConfig.sDataBitRate.u32BitRate = 0;
-        psConfig->sBtConfig.bFDEn = FALSE;
-        psConfig->sBtConfig.bBitRateSwitch = FALSE;
-    }
-    else
-    {
-        psConfig->sBtConfig.sDataBitRate.u32BitRate = 10000000;
-        psConfig->sBtConfig.bFDEn = TRUE;
-        psConfig->sBtConfig.bBitRateSwitch = TRUE;
+        u32RamAddrOffset += (psConfigSize->u32TxBuf + psConfigSize->u32TxFifoQueue) * sizeof(CANFD_TX_BUF_T);
     }
 
-    /* Set normal mode by default */
-    psConfig->sBtConfig.evTestMode = eCANFD_NORMAL;
-
-    /*Get the CAN FD memory address*/
-    psConfig->u32MRamSize  = CANFD_SRAM_SIZE;
-
-    /* CAN FD Standard message ID elements as 64 elements    */
-    psConfig->sElemSize.u32SIDFC = 64;
-    /* CAN FD Extended message ID elements as 64 elements    */
-    psConfig->sElemSize.u32XIDFC = 64;
-    /* CAN FD TX Buffer elements as 8 elements    */
-    psConfig->sElemSize.u32TxBuf = 8;
-    /* CAN FD RX Buffer elements as 8 elements    */
-    psConfig->sElemSize.u32RxBuf = 8;
-    /* CAN FD RX FIFO0 elements as 48 elements    */
-    psConfig->sElemSize.u32RxFifo0 = 48;
-    /* CAN FD RX FIFO1 elements as 8 elements    */
-    psConfig->sElemSize.u32RxFifo1 = 8;
-    /* CAN FD TX Event FOFI elements as 8 elements    */
-    psConfig->sElemSize.u32TxEventFifo = 8;
-    /*Calculates the CAN FD RAM buffer address*/
-    CANFD_CalculateRamAddress(&psConfig->sMRamStartAddr, &psConfig->sElemSize);
+    return u32RamAddrOffset;
 }
-
-
-/**
- * @brief       Encode the Data Length Code.
- *
- * @param[in]   u8NumberOfBytes  Number of bytes in a message.
- *
- * @return      Data Length Code.
- *
- * @details     Converts number of bytes in a message into a Data Length Code.
- */
-static uint8_t CANFD_EncodeDLC(uint8_t u8NumberOfBytes)
-{
-    if (u8NumberOfBytes <= 8) return u8NumberOfBytes;
-    else if (u8NumberOfBytes <= 12) return 9;
-    else if (u8NumberOfBytes <= 16) return 10;
-    else if (u8NumberOfBytes <= 20) return 11;
-    else if (u8NumberOfBytes <= 24) return 12;
-    else if (u8NumberOfBytes <= 32) return 13;
-    else if (u8NumberOfBytes <= 48) return 14;
-    else return 15;
-}
-
-
-/**
- * @brief       Decode the Data Length Code.
- *
- * @param[in]   u8Dlc   Data Length Code.
- *
- * @return      Number of bytes in a message.
- *
- * @details     Converts a Data Length Code into a number of message bytes.
- */
-static uint8_t CANFD_DecodeDLC(uint8_t u8Dlc)
-{
-    if (u8Dlc <= 8) return u8Dlc;
-    else if (u8Dlc == 9) return 12;
-    else if (u8Dlc == 10) return 16;
-    else if (u8Dlc == 11) return 20;
-    else if (u8Dlc == 12) return 24;
-    else if (u8Dlc == 13) return 32;
-    else if (u8Dlc == 14) return 48;
-    else return 64;
-}
-
 
 /**
  * @brief       Sets the CAN FD protocol timing characteristic.
@@ -421,13 +425,14 @@ static void CANFD_SetTimingConfig(CANFD_T *psCanfd, const CANFD_TIMEING_CONFIG_T
     /* canfd->DBTP */
     if (psCanfd->CCCR & CANFD_CCCR_FDOE_Msk)
     {
+
         psCanfd->DBTP = (((psConfig->u8DataPrescaler & 0x1F) - 1) << 16) +
                         ((((psConfig->u8DataPhaseSeg1 + psConfig->u8DataPropSeg) & 0x1F) - 1) << 8) +
                         (((psConfig->u8DataPhaseSeg2 & 0xF) - 1) << 4) +
                         (((psConfig->u8DataRJumpwidth & 0xF) - 1) << 0);
+
     }
 }
-
 
 /**
  * @brief       Get the segment values.
@@ -454,14 +459,16 @@ static void CANFD_GetSegments(uint32_t u32NominalBaudRate, uint32_t u32DataBaudR
 
     /* distribute time quanta */
     int32P1 = (int)(u32Ntq * ideal_sp);
+
     /* can controller doesn't separate prop seg and phase seg 1 */
     psConfig->u8NominalPropSeg = 0;
+
     /* subtract one TQ for sync seg */
     psConfig->u8NominalPhaseSeg1 = int32P1 - 1;
     psConfig->u8NominalPhaseSeg2 = u32Ntq - int32P1;
+
     /* sjw is 20% of total TQ, rounded to nearest int */
     psConfig->u8NominalRJumpwidth = (u32Ntq + (5 - 1)) / 5;
-
 
     /* if using baud rate switching then distribute time quanta for data rate */
     if (u32Dtq > 0)
@@ -469,15 +476,18 @@ static void CANFD_GetSegments(uint32_t u32NominalBaudRate, uint32_t u32DataBaudR
         /* get ideal sample point */
         if (u32DataBaudRate >= 1000000)     ideal_sp = 0.750;
         else if (u32DataBaudRate >= 800000) ideal_sp = 0.800;
-        else                             ideal_sp = 0.875;
+        else                                ideal_sp = 0.875;
 
         /* distribute time quanta */
         int32P1 = (int)(u32Dtq * ideal_sp);
+
         /* can controller doesn't separate prop seg and phase seg 1 */
         psConfig->u8DataPropSeg = 0;
+
         /* subtract one TQ for sync seg */
         psConfig->u8DataPhaseSeg1 = int32P1 - 1;
         psConfig->u8DataPhaseSeg2 = u32Dtq - int32P1;
+
         /* sjw is 20% of total TQ, rounded to nearest int */
         psConfig->u8DataRJumpwidth = (u32Dtq + (5 - 1)) / 5;
     }
@@ -490,10 +500,10 @@ static void CANFD_GetSegments(uint32_t u32NominalBaudRate, uint32_t u32DataBaudR
     }
 }
 
-
 /**
  * @brief       Calculates the CAN controller timing values for specific baudrates.
  *
+ * @param[in]   psCanfd             Pointer to CAN FD configuration structure.
  * @param[in]   u32NominalBaudRate  The nominal speed in bps.
  * @param[in]   u32DataBaudRate     The data speed in bps. Zero to disable baudrate switching.
  * @param[in]   u32SourceClock_Hz   CAN FD Protocol Engine clock source frequency in Hz.
@@ -505,7 +515,6 @@ static void CANFD_GetSegments(uint32_t u32NominalBaudRate, uint32_t u32DataBaudR
  */
 static uint32_t CANFD_CalculateTimingValues(CANFD_T *psCanfd, uint32_t u32NominalBaudRate, uint32_t u32DataBaudRate, uint32_t u32SourceClock_Hz, CANFD_TIMEING_CONFIG_T *psConfig)
 {
-    int i32Nclk;
     int i32Nclk2;
     int i32Ntq;
     int i32Dclk;
@@ -517,17 +526,18 @@ static uint32_t CANFD_CalculateTimingValues(CANFD_T *psCanfd, uint32_t u32Nomina
 
     for (i32Ntq = MAX_TIME_QUANTA; i32Ntq >= MIN_TIME_QUANTA; i32Ntq--)
     {
-        i32Nclk = u32NominalBaudRate * i32Ntq;
+        int i32Nclk = u32NominalBaudRate * i32Ntq;
 
         for (psConfig->u16NominalPrescaler = 0x001; psConfig->u16NominalPrescaler <= 0x400; (psConfig->u16NominalPrescaler)++)
         {
             i32Nclk2 = i32Nclk * psConfig->u16NominalPrescaler;
 
-            if (((u32SourceClock_Hz / i32Nclk2) <= 5) && ((u32SourceClock_Hz % i32Nclk2) == 0))
+            if (((u32SourceClock_Hz / i32Nclk2) <= 256) && ((u32SourceClock_Hz % i32Nclk2) == 0))
             {
+
                 psConfig->u8PreDivider = u32SourceClock_Hz / i32Nclk2;
 
-                /* FD Operation? */
+                /* FD Enabled */
                 if (psCanfd->CCCR & CANFD_CCCR_FDOE_Msk)
                 {
                     /* Exception case: Let u32DataBaudRate is same with u32NominalBaudRate. */
@@ -552,6 +562,7 @@ static uint32_t CANFD_CalculateTimingValues(CANFD_T *psCanfd, uint32_t u32Nomina
                         for (psConfig->u8DataPrescaler = 0x01; psConfig->u8DataPrescaler <= 0x20; (psConfig->u8DataPrescaler)++)
                         {
                             i32Dclk2 = i32Dclk * psConfig->u8DataPrescaler;
+
                             if (u32SourceClock_Hz == ((uint32_t)i32Dclk2 * psConfig->u8PreDivider))
                             {
                                 CANFD_GetSegments(u32NominalBaudRate, u32DataBaudRate, i32Ntq, i32Dtq, psConfig);
@@ -559,14 +570,14 @@ static uint32_t CANFD_CalculateTimingValues(CANFD_T *psCanfd, uint32_t u32Nomina
                             }
                         }
                     }
-                }
+                } // if (psCanfd->CCCR & CANFD_CCCR_FDOE_Msk)
                 else
                 {
                     psConfig->u8DataPrescaler = 0;
-                    CANFD_GetSegments(u32NominalBaudRate, 0, 0, 0, psConfig);
+                    CANFD_GetSegments(u32NominalBaudRate, 0, i32Ntq, 0, psConfig);
                     return TRUE;
                 }
-            }
+            } // if (((u32SourceClock_Hz / i32Nclk2) <= 5) && ((u32SourceClock_Hz % i32Nclk2) == 0))
         }
     }
 
@@ -574,6 +585,114 @@ static uint32_t CANFD_CalculateTimingValues(CANFD_T *psCanfd, uint32_t u32Nomina
     return FALSE;
 }
 
+/**
+ * @brief       Get the default configuration structure.
+ *
+ * @param[in]   psConfig       Pointer to CAN FD configuration structure.
+ * @param[in]   u8OpMode       Setting the CAN FD Operating mode.
+ *
+ * @return      None.
+ *
+ * @details     This function initializes the CAN FD configure structure to default value.
+ *              The default value are:
+ *              sNormBitRate.u32BitRate   = 500000bps;
+ *              u32DataBaudRate     = 0(CAN mode) or 1000000(CAN FD mode) ;
+ *              u32MRamSize         = 6144 bytes (1536 words);
+ *              bEnableLoopBack     = FALSE;
+ *              bBitRateSwitch      = FALSE(CAN Mode) or TRUE(CAN FD Mode);
+ *              bFDEn               = FALSE(CAN Mode) or TRUE(CAN FD Mode);
+*/
+uint32_t CANFD_GetDefaultConfig(CANFD_FD_T *psConfig, uint8_t u8OpMode)
+{
+    if (psConfig->sElemSize.u32UserDef == 0)
+        memset(psConfig, 0, sizeof(CANFD_FD_T));
+
+    psConfig->sBtConfig.sNormBitRate.u32BitRate = 500000;
+
+    if (u8OpMode == CANFD_OP_CAN_MODE)
+    {
+        psConfig->sBtConfig.sDataBitRate.u32BitRate = 0;
+        psConfig->sBtConfig.bFDEn = FALSE;
+        psConfig->sBtConfig.bBitRateSwitch = FALSE;
+    }
+    else
+    {
+        psConfig->sBtConfig.sDataBitRate.u32BitRate = 1000000;
+        psConfig->sBtConfig.bFDEn = TRUE;
+        psConfig->sBtConfig.bBitRateSwitch = TRUE;
+    }
+
+    /* Set normal mode by default */
+    psConfig->sBtConfig.evTestMode = eCANFD_NORMAL;
+
+    /*Get the CAN FD memory size(number of byte)*/
+    psConfig->u32MRamSize  = CANFD_SRAM_SIZE;
+
+    if (psConfig->sElemSize.u32UserDef == 0)
+    {
+        /* CAN FD Standard message ID elements as 16 elements    */
+        psConfig->sElemSize.u32SIDFC = 16;
+        /* CAN FD Extended message ID elements as 16 elements    */
+        psConfig->sElemSize.u32XIDFC = 16;
+        /* CAN FD TX Buffer elements as 16 elements    */
+        psConfig->sElemSize.u32TxBuf = 16;
+        /* CAN FD Tx FIFO/Queue elements as 16 elements    */
+        psConfig->sElemSize.u32TxFifoQueue = 16;
+        /* CAN FD RX Buffer elements as 16 elements    */
+        psConfig->sElemSize.u32RxBuf = 16;
+        /* CAN FD RX FIFO0 elements as 16 elements    */
+        psConfig->sElemSize.u32RxFifo0 = 16;
+        /* CAN FD RX FIFO1 elements as 16 elements    */
+        psConfig->sElemSize.u32RxFifo1 = 16;
+        /* CAN FD TX Event FIFO elements as 16 elements    */
+        psConfig->sElemSize.u32TxEventFifo = 16;
+    }
+
+    /*Calculates the CAN FD RAM buffer address*/
+    return CANFD_CalculateRamAddress(&psConfig->sMRamStartAddr, &psConfig->sElemSize);
+}
+
+/**
+ * @brief       Encode the Data Length Code.
+ *
+ * @param[in]   u32NumOfBytes Number of bytes in a message.
+ *
+ * @return      Data Length Code.
+ *
+ * @details     Converts number of bytes in a message into a Data Length Code.
+ */
+uint32_t CANFD_EncodeDLC(uint32_t u32NumOfBytes)
+{
+    if (u32NumOfBytes <= 8) return u32NumOfBytes;
+    else if (u32NumOfBytes <= 12) return 9;
+    else if (u32NumOfBytes <= 16) return 10;
+    else if (u32NumOfBytes <= 20) return 11;
+    else if (u32NumOfBytes <= 24) return 12;
+    else if (u32NumOfBytes <= 32) return 13;
+    else if (u32NumOfBytes <= 48) return 14;
+    else return 15;
+}
+
+/**
+ * @brief       Decode the Data Length Code.
+ *
+ * @param[in]   u32Dlc   Data Length Code.
+ *
+ * @return      Number of bytes in a message.
+ *
+ * @details     Converts a Data Length Code into a number of message bytes.
+ */
+uint32_t CANFD_DecodeDLC(uint32_t u32Dlc)
+{
+    if (u32Dlc <= 8) return u32Dlc;
+    else if (u32Dlc == 9) return 12;
+    else if (u32Dlc == 10) return 16;
+    else if (u32Dlc == 11) return 20;
+    else if (u32Dlc == 12) return 24;
+    else if (u32Dlc == 13) return 32;
+    else if (u32Dlc == 14) return 48;
+    else return 64;
+}
 
 /**
  * @brief       Config message ram and Set bit-time.
@@ -670,6 +789,7 @@ void CANFD_Open(CANFD_T *psCanfd, CANFD_FD_T *psCanfdStr)
 
     /*Clear the Rx Fifo0 element setting */
     psCanfd->RXF0C = 0;
+
     /*Clear the Rx Fifo1 element setting */
     psCanfd->RXF1C = 0;
 
@@ -692,7 +812,7 @@ void CANFD_Open(CANFD_T *psCanfd, CANFD_FD_T *psCanfdStr)
         CANFD_ConfigXIDFC(psCanfd, &psCanfdStr->sMRamStartAddr, &psCanfdStr->sElemSize);
 
     /*Configures the Tx Buffer element */
-    if (psCanfdStr->sElemSize.u32RxBuf != 0)
+    if (psCanfdStr->sElemSize.u32TxBuf != 0 || psCanfdStr->sElemSize.u32TxFifoQueue != 0)
         CANFD_InitTxDBuf(psCanfd, &psCanfdStr->sMRamStartAddr, &psCanfdStr->sElemSize, eCANFD_BYTE64);
 
     /*Configures the Rx Buffer element */
@@ -741,8 +861,8 @@ void CANFD_Open(CANFD_T *psCanfd, CANFD_FD_T *psCanfdStr)
         psCanfd->TEST &= ~CANFD_TEST_LBCK_Msk;
         break;
     }
-}
 
+}
 
 /**
  * @brief       Close the CAN FD Bus.
@@ -771,34 +891,6 @@ void CANFD_Close(CANFD_T *psCanfd)
     {
         CLK_DisableModuleClock(CANFD3_MODULE);
     }
-}
-
-
-/**
- * @brief       Get the element's address when read transmit buffer.
- *
- * @param[in]   psCanfd      The pointer of the specified CAN FD module.
- * @param[in]   u32Idx       The number of the transmit buffer element
- *
- * @return      Address of the element in transmit buffer.
- *
- * @details     The function is used to get the element's address when read transmit buffer.
- */
-static uint32_t CANFD_GetTxBufferElementAddress(CANFD_T *psCanfd, uint32_t u32Idx)
-{
-    uint32_t u32Size = 0;
-    u32Size = (CANFD_ReadReg(&psCanfd->TXESC) & CANFD_TXESC_TBDS_Msk) >> CANFD_TXESC_TBDS_Pos;
-
-    if (u32Size < 5U)
-    {
-        u32Size += 4U;
-    }
-    else
-    {
-        u32Size = u32Size * 4U - 10U;
-    }
-
-    return (CANFD_ReadReg(&psCanfd->TXBC) & CANFD_TXBC_TBSA_Msk) + u32Idx * u32Size * 4U;
 }
 
 /**
@@ -847,31 +939,30 @@ static uint32_t CANFD_GetTxBufferElementAddress(CANFD_T *psCanfd, uint32_t u32Id
 void CANFD_EnableInt(CANFD_T *psCanfd, uint32_t u32IntLine0, uint32_t u32IntLine1, uint32_t u32TXBTIE, uint32_t u32TXBCIE)
 {
     /*Setting the CANFD Interrupt Enabling*/
-    psCanfd->IE = CANFD_ReadReg(&psCanfd->IE) | u32IntLine0 | u32IntLine1;
+    psCanfd->IE |= u32IntLine0 | u32IntLine1;
 
     if (u32IntLine0 != 0)
     {
         /* Select specified interrupt event of Line0. */
-        psCanfd->ILS = CANFD_ReadReg(&psCanfd->ILS) & ~u32IntLine0;
+        psCanfd->ILS &= ~u32IntLine0;
         /* Enable Line0 interrupt. */
-        psCanfd->ILE = CANFD_ReadReg(&psCanfd->ILE) | CANFD_ILE_ENT0_Msk;
+        psCanfd->ILE |= CANFD_ILE_ENT0_Msk;
     }
 
     if (u32IntLine1 != 0)
     {
         /* Select specified interrupt event of Line1. */
-        psCanfd->ILS = CANFD_ReadReg(&psCanfd->ILS) | u32IntLine1;
+        psCanfd->ILS |= u32IntLine1;
         /* Enable Line1 interrupt. */
-        psCanfd->ILE = CANFD_ReadReg(&psCanfd->ILE) | CANFD_ILE_ENT1_Msk;
+        psCanfd->ILE |= CANFD_ILE_ENT1_Msk;
     }
 
     /*Setting the Tx Buffer Transmission Interrupt Enable*/
-    psCanfd->TXBTIE = CANFD_ReadReg(&psCanfd->TXBTIE) | u32TXBTIE;
+    psCanfd->TXBTIE |= u32TXBTIE;
 
     /*Tx Buffer Cancellation Finished Interrupt Enable*/
-    psCanfd->TXBCIE = CANFD_ReadReg(&psCanfd->TXBCIE) | u32TXBCIE;
+    psCanfd->TXBCIE |= u32TXBCIE;
 }
-
 
 /**
  * @brief       Disables CAN FD interrupts according to provided mask .
@@ -918,137 +1009,36 @@ void CANFD_EnableInt(CANFD_T *psCanfd, uint32_t u32IntLine0, uint32_t u32IntLine
  */
 void CANFD_DisableInt(CANFD_T *psCanfd, uint32_t u32IntLine0, uint32_t u32IntLine1, uint32_t u32TXBTIE, uint32_t u32TXBCIE)
 {
-    psCanfd->IE = CANFD_ReadReg(&psCanfd->IE) & ~(u32IntLine0 | u32IntLine1);
+    psCanfd->IE &= ~(u32IntLine0 | u32IntLine1);
 
     if (u32IntLine0 != 0)
     {
         /* Cancel specified interrupt event of Line0. */
-        psCanfd->ILS = CANFD_ReadReg(&psCanfd->ILS) | u32IntLine0;
+        psCanfd->ILS |= u32IntLine0;
     }
-    if (CANFD_ReadReg(&psCanfd->ILS) == ~0)
+    if (psCanfd->ILS == ~0)
     {
         /* Disable Line0 interrupt */
-        psCanfd->ILE = CANFD_ReadReg(&psCanfd->ILE) & ~CANFD_ILE_ENT0_Msk;
+        psCanfd->ILE &= ~CANFD_ILE_ENT0_Msk;
     }
 
     if (u32IntLine1 != 0)
     {
         /* Select specified interrupt event of Line1. */
-        psCanfd->ILS = CANFD_ReadReg(&psCanfd->ILS) & ~u32IntLine1;
+        psCanfd->ILS &= ~u32IntLine1;
     }
-    if (CANFD_ReadReg(&psCanfd->ILS) == 0)
+    if (psCanfd->ILS == 0)
     {
         /* Disable Line1 interrupt */
-        psCanfd->ILE = CANFD_ReadReg(&psCanfd->ILE) & ~CANFD_ILE_ENT1_Msk;
+        psCanfd->ILE &= ~CANFD_ILE_ENT1_Msk;
     }
 
     /*Setting the Tx Buffer Transmission Interrupt Disable*/
-    psCanfd->TXBTIE = CANFD_ReadReg(&psCanfd->TXBTIE) & ~u32TXBTIE;
+    psCanfd->TXBTIE &= ~u32TXBTIE;
 
     /*Tx Buffer Cancellation Finished Interrupt Disable*/
-    psCanfd->TXBCIE = CANFD_ReadReg(&psCanfd->TXBCIE) & ~u32TXBCIE;
+    psCanfd->TXBCIE &= ~u32TXBCIE;
 }
-
-
-/**
- * @brief       Copy Tx Message to  TX buffer and Request transmission.
- *
- * @param[in]   psCanfd         The pointer to CAN FD module base address.
- * @param[in]   u32TxBufIdx     The Message Buffer index.
- * @param[in]   psTxMsg         Message to be copied.
- *
- * @return      number of tx requests set: 0= Tx Message Buffer is currently in use.
- *                                         1= Write Tx Message Buffer Successfully.
- *
- * @details     Copy Tx Message to FIFO/Queue TX buffer and Request transmission.
- */
-uint32_t CANFD_TransmitTxMsg(CANFD_T *psCanfd, uint32_t u32TxBufIdx, CANFD_FD_MSG_T *psTxMsg)
-{
-    uint32_t u32Success = 0;
-    uint32_t u32TimeOutCnt = CANFD_TIMEOUT;
-
-    /* write the message to the message buffer */
-    u32Success = CANFD_TransmitDMsg(psCanfd, u32TxBufIdx, psTxMsg);
-
-    if (u32Success == 1)
-    {
-        /* wait for completion */
-        while (!(psCanfd->TXBRP & (1UL << u32TxBufIdx)))
-        {
-            if (--u32TimeOutCnt == 0)
-            {
-                u32Success = 0;
-                break;
-            }
-
-        }
-    }
-
-    return u32Success;
-}
-
-
-/**
- * @brief       Writes a Tx Message to Transmit Message Buffer.
- *
- * @param[in]   psCanfd        The pointer of the specified CAN FD module.
- * @param[in]   u32TxBufIdx    The Message Buffer index.
- * @param[in]   psTxMsg        Pointer to CAN FD message frame to be sent.
- *
- * @return      1  Write Tx Message Buffer Successfully.
- *              0  Tx Message Buffer is currently in use.
- *
- * @details     This function writes a CANFD Message to the specified Transmit Message Buffer
- *              and changes the Message Buffer state to start CANFD Message transmit. After
- *              that the function returns immediately.
- */
-uint32_t CANFD_TransmitDMsg(CANFD_T *psCanfd, uint32_t u32TxBufIdx, CANFD_FD_MSG_T *psTxMsg)
-{
-    CANFD_BUF_T *psTxBuffer;
-    uint32_t u32Idx = 0, u32Success = 1;
-    uint32_t u32TimeOutCnt = CANFD_TIMEOUT;
-
-    if (u32TxBufIdx >= CANFD_MAX_TX_BUF_ELEMS) return 0;
-
-    /* transmission is pending in this message buffer */
-    if (CANFD_ReadReg(&(psCanfd->TXBRP)) & (1UL << u32TxBufIdx)) return 0;
-
-    /*Get the TX Buffer Start Address in the RAM*/
-    psTxBuffer = (CANFD_BUF_T *)(CANFD_SRAM_BASE_ADDR(psCanfd) + (CANFD_ReadReg(&psCanfd->TXBC) & 0xFFFF) + (u32TxBufIdx * sizeof(CANFD_BUF_T)));
-
-    if (psTxMsg->eIdType == eCANFD_XID)
-    {
-        psTxBuffer->u32Id = TX_BUFFER_T0_ELEM_XTD_Msk | (psTxMsg->u32Id & 0x1FFFFFFF);
-    }
-    else
-    {
-        psTxBuffer->u32Id = (psTxMsg->u32Id & 0x7FF) << 18;
-    }
-
-    if (psTxMsg->eFrmType == eCANFD_REMOTE_FRM) psTxBuffer->u32Id |= TX_BUFFER_T0_ELEM_RTR_Msk;
-
-    psTxBuffer->u32Config = (CANFD_EncodeDLC(psTxMsg->u32DLC) << 16);
-
-    if (psTxMsg->bFDFormat) psTxBuffer->u32Config |= TX_BUFFER_T1_ELEM_FDF_Msk;
-
-    if (psTxMsg->bBitRateSwitch) psTxBuffer->u32Config |= TX_BUFFER_T1_ELEM_BSR_Msk;
-
-
-    for (u32Idx = 0; u32Idx < (psTxMsg->u32DLC + (4 - 1)) / 4; u32Idx++)
-    {
-        psTxBuffer->au32Data[u32Idx] = psTxMsg->au32Data[u32Idx];
-    }
-
-    while (CANFD_GET_COMMUNICATION_STATE(psCanfd) != eCANFD_IDLE)
-    {
-        if (--u32TimeOutCnt == 0) return 0;
-    }
-
-    psCanfd->TXBAR = (1 << u32TxBufIdx);
-
-    return u32Success;
-}
-
 
 /**
  * @brief       Global Filter Configuration (GFC).
@@ -1072,474 +1062,6 @@ void CANFD_SetGFC(CANFD_T *psCanfd, E_CANFD_ACC_NON_MATCH_FRM eNMStdFrm, E_CANFD
                    (u32RejRmtExtFrm << CANFD_GFC_RRFE_Pos);
 }
 
-
-/**
- * @brief       Rx FIFO Configuration for RX_FIFO_0 and RX_FIFO_1.
- *
- * @param[in]   psCanfd          The pointer to CAN FD module base address.
- * @param[in]   u32RxFifoNum     0: RX FIFO_0, 1: RX_FIFO_1.
- * @param[in]   psRamConfig      Rx FIFO Size in number of configuration ram address.
- * @param[in]   psElemSize       Rx FIFO Size in number of Rx FIFO elements (element number (max. = 64)).
- * @param[in]   u32FifoWM        Watermark in number of Rx FIFO elements
- * @param[in]   eFifoSize        Maximum data field size that should be stored in this Rx FIFO
- *                               (configure BYTE64 if you are unsure, as this is the largest data field allowed in CAN FD)
- *
- * @return      None.
- *
- * @details     Rx FIFO Configuration for RX_FIFO_0 and RX_FIFO_1.
- */
-static void CANFD_InitRxFifo(CANFD_T *psCanfd, uint32_t u32RxFifoNum, CANFD_RAM_PART_T *psRamConfig, CANFD_ELEM_SIZE_T *psElemSize, uint32_t u32FifoWM, E_CANFD_DATA_FIELD_SIZE eFifoSize)
-{
-    uint32_t u32Address;
-    uint32_t u32Size;
-
-    /* ignore if index is too high */
-    if (u32RxFifoNum > CANFD_NUM_RX_FIFOS)return;
-
-    /* ignore if index is too high */
-    if (psElemSize-> u32RxFifo0 > CANFD_MAX_RX_FIFO0_ELEMS) return;
-
-    /* ignore if index is too high */
-    if (psElemSize-> u32RxFifo1 > CANFD_MAX_RX_FIFO1_ELEMS) return;
-
-    switch (u32RxFifoNum)
-    {
-    case 0:
-        if (psElemSize-> u32RxFifo0)
-        {
-            /* set size of Rx FIFO 0, set offset, blocking mode */
-            psCanfd->RXF0C = (psRamConfig->u32RXF0C_F0SA) | (psElemSize->u32RxFifo0 << CANFD_RXF0C_F0S_Pos)
-                             | (u32FifoWM << CANFD_RXF0C_F0WM_Pos);
-            psCanfd->RXESC = (psCanfd->RXESC & (~CANFD_RXESC_F0DS_Msk)) | (eFifoSize << CANFD_RXESC_F0DS_Pos);
-
-            /*Get the RX FIFO 0 Start Address in the RAM*/
-            u32Address = CANFD_SRAM_BASE_ADDR(psCanfd) + (psRamConfig->u32RXF0C_F0SA & CANFD_RXF0C_F0SA_Msk);
-            u32Size = eFifoSize;
-
-            if (u32Size < 5U)
-            {
-                u32Size += 4U;
-            }
-            else
-            {
-                u32Size = u32Size * 4U - 10U;
-            }
-
-            /*Clear the RX FIFO 0 Memory*/
-            memset((uint32_t *)(u32Address), 0x00, (u32Size * 4 * psElemSize->u32RxFifo0));
-        }
-        else
-        {
-            psCanfd->RXF0C = 0;
-        }
-
-        break;
-
-    case 1:
-        if (psElemSize-> u32RxFifo1)
-        {
-            /* set size of Rx FIFO 1, set offset, blocking mode */
-            psCanfd->RXF1C = (psRamConfig->u32RXF1C_F1SA) | (psElemSize->u32RxFifo1 << CANFD_RXF1C_F1S_Pos)
-                             | (u32FifoWM << CANFD_RXF1C_F1WM_Pos);
-            psCanfd->RXESC = (psCanfd->RXESC & (~CANFD_RXESC_F1DS_Msk)) | (eFifoSize << CANFD_RXESC_F1DS_Pos);
-
-            /*Get the RX FIFO 1 Start Address in the RAM*/
-            u32Address = CANFD_SRAM_BASE_ADDR(psCanfd) + (psRamConfig->u32RXF1C_F1SA & CANFD_RXF1C_F1SA_Msk);
-
-            u32Size = eFifoSize;
-
-            if (u32Size < 5U)
-            {
-                u32Size += 4U;
-            }
-            else
-            {
-                u32Size = u32Size * 4U - 10U;
-            }
-
-            /*Clear the RX FIFO 0 Memory*/
-            memset((uint32_t *)(u32Address), 0x00, (u32Size * 4 * psElemSize->u32RxFifo1));
-        }
-        else
-        {
-            psCanfd->RXF1C = 0;
-        }
-
-        break;
-    }
-}
-
-
-/**
- * @brief       Function configures the data structures used by a dedicated Rx Buffer.
- *
- * @param[in]   psCanfd          The pointer to CAN FD module base address.
- * @param[in]   psRamConfig      Tx buffer configuration ram address.
- * @param[in]   psElemSize       Tx buffer configuration element size.
- * @param[in]   eTxBufSize       Maximum data field size that should be stored in a dedicated Tx Buffer
- *                              (configure BYTE64 if you are unsure, as this is the largest data field allowed in CAN FD)largest data field allowed in CAN FD)
- *
- * @return      None.
- *
- * @details     Function configures the data structures used by a dedicated Rx Buffer.
- */
-static void CANFD_InitTxDBuf(CANFD_T *psCanfd, CANFD_RAM_PART_T *psRamConfig, CANFD_ELEM_SIZE_T *psElemSize, E_CANFD_DATA_FIELD_SIZE eTxBufSize)
-{
-    uint32_t u32Address;
-    uint32_t u32Size;
-
-    /*Setting the Tx Buffer Start Address*/
-    psCanfd->TXBC = ((psElemSize->u32TxBuf & 0x3F) << CANFD_TXBC_NDTB_Pos) | (psRamConfig->u32TXBC_TBSA & CANFD_TXBC_TBSA_Msk);
-
-    /*Get the TX Buffer Start Address in the RAM*/
-    u32Address = CANFD_SRAM_BASE_ADDR(psCanfd) + (psRamConfig->u32TXBC_TBSA & CANFD_TXBC_TBSA_Msk);
-
-    /*Setting the Tx Buffer Data Field Size*/
-    psCanfd->TXESC = (psCanfd->TXESC & (~CANFD_TXESC_TBDS_Msk)) | (eTxBufSize <<  CANFD_TXESC_TBDS_Pos);
-
-    /*Get the Buffer Data Field Size*/
-    u32Size = eTxBufSize;
-
-    if (u32Size < 5U)
-    {
-        u32Size += 4U;
-    }
-    else
-    {
-        u32Size = u32Size * 4U - 10U;
-    }
-
-    /*Clear the TX Buffer Memory*/
-    memset((uint32_t *)(u32Address), 0x00, (u32Size * 4 * psElemSize->u32TxBuf));
-}
-
-
-/**
- * @brief       Function configures the data structures used by a dedicated Rx Buffer.
- *
- * @param[in]   psCanfd          The pointer to CAN FD module base address.
- * @param[in]   psRamConfig      Rx buffer configuration ram address.
- * @param[in]   psElemSize       Rx buffer configuration element size.
- * @param[in]   eRxBufSize       Maximum data field size that should be stored in a dedicated Rx Buffer
- *                              (configure BYTE64 if you are unsure, as this is the largest data field allowed in CAN FD)largest data field allowed in CAN FD)
- *
- * @return      None.
- *
- * @details     Function configures the data structures used by a dedicated Rx Buffer.
- */
-static void CANFD_InitRxDBuf(CANFD_T *psCanfd, CANFD_RAM_PART_T *psRamConfig, CANFD_ELEM_SIZE_T *psElemSize, E_CANFD_DATA_FIELD_SIZE eRxBufSize)
-{
-    uint32_t u32Address;
-    uint32_t u32Size;
-
-    /*Setting the Rx Buffer Start Address*/
-    psCanfd->RXBC = (psRamConfig->u32RXBC_RBSA & CANFD_RXBC_RBSA_Msk);
-
-    /*Get the RX Buffer Start Address in the RAM*/
-    u32Address = CANFD_SRAM_BASE_ADDR(psCanfd) + (psRamConfig->u32RXBC_RBSA & CANFD_RXBC_RBSA_Msk);
-
-    /*Setting the Rx Buffer Data Field Size*/
-    psCanfd->RXESC = (psCanfd->RXESC & (~CANFD_RXESC_RBDS_Msk)) | (eRxBufSize <<  CANFD_RXESC_RBDS_Pos);
-    /*Get the Buffer Data Field Size*/
-    u32Size = eRxBufSize;
-
-    if (u32Size < 5U)
-    {
-        u32Size += 4U;
-    }
-    else
-    {
-        u32Size = u32Size * 4U - 10U;
-    }
-
-    /*Clear the RX Buffer Memory*/
-    memset((uint32_t *)(u32Address), 0x00, (u32Size * 4 * psElemSize->u32RxBuf));
-}
-
-
-/**
- * @brief       Configures the register SIDFC for the 11-bit Standard Message ID Filter elements.
- *
- * @param[in]   psCanfd           The pointer to CAN FD module base address.
- * @param[in]   psRamConfig       Standard ID filter configuration ram address
- * @param[in]   psElemSize        Standard ID filter configuration element size
- *
- * @return      None.
- *
- * @details     Function configures the data structures used by a dedicated Rx Buffer.
- */
-static void CANFD_ConfigSIDFC(CANFD_T *psCanfd, CANFD_RAM_PART_T *psRamConfig, CANFD_ELEM_SIZE_T *psElemSize)
-{
-    uint32_t u32Address;
-
-    /*Setting the Filter List Standard Start Address and List Size  */
-    psCanfd->SIDFC = ((psElemSize->u32SIDFC & 0xFF) << CANFD_SIDFC_LSS_Pos) | (psRamConfig->u32SIDFC_FLSSA & CANFD_SIDFC_FLSSA_Msk);
-
-    /*Get the Filter List Standard Start Address in the RAM*/
-    u32Address = CANFD_SRAM_BASE_ADDR(psCanfd) + (psRamConfig->u32SIDFC_FLSSA & CANFD_SIDFC_FLSSA_Msk);
-
-    /*Clear the Filter List Memory*/
-    memset((uint32_t *)(u32Address), 0x00, (psElemSize->u32SIDFC * sizeof(CANFD_STD_FILTER_T)));
-}
-
-
-/**
- * @brief       Configures the register XIDFC for the 29-bit Extended Message ID Filter elements.
- *
- * @param[in]   psCanfd           The pointer to CAN FD module base address.
- * @param[in]   psRamConfig       Extended ID filter configuration ram address
- * @param[in]   psElemSize        Extended ID filter configuration element size
- *
- * @return      None.
- *
- * @details     Configures the register XIDFC for the 29-bit Extended Message ID Filter elements.
- */
-static void CANFD_ConfigXIDFC(CANFD_T *psCanfd, CANFD_RAM_PART_T *psRamConfig, CANFD_ELEM_SIZE_T *psElemSize)
-{
-    uint32_t u32Address;
-
-    /*Setting the Filter List Extended Start Address and List Size  */
-    psCanfd->XIDFC = ((psElemSize->u32XIDFC & 0xFF) << CANFD_XIDFC_LSE_Pos) | (psRamConfig->u32XIDFC_FLESA & CANFD_XIDFC_FLESA_Msk);
-
-    /*Get the Filter List Standard Start Address in the RAM*/
-    u32Address = CANFD_SRAM_BASE_ADDR(psCanfd) + (psRamConfig->u32XIDFC_FLESA & CANFD_XIDFC_FLESA_Msk);
-
-    /*Clear the Filter List Memory*/
-    memset((uint32_t *)(u32Address), 0x00, (psElemSize->u32XIDFC * sizeof(CANFD_EXT_FILTER_T)));
-}
-
-
-/**
- * @brief       Writes a 11-bit Standard ID filter element in the Message RAM.
- *
- * @param[in]   psCanfd          The pointer to CAN FD module base address.
- * @param[in]   u32FltrIdx       Index at which the filter element should be written in the '11-bit Filter' section of Message RAM
- * @param[in]   u32Filter        Rx Individual filter value.
- *
- * @return      None.
- *
- * @details     Writes a 11-bit Standard ID filter element in the Message RAM.
- */
-void CANFD_SetSIDFltr(CANFD_T *psCanfd, uint32_t u32FltrIdx, uint32_t u32Filter)
-{
-    CANFD_STD_FILTER_T *psFilter;
-
-    /* ignore if index is too high */
-    if (u32FltrIdx >= CANFD_MAX_11_BIT_FTR_ELEMS) return;
-
-    /*Get the Filter List Configuration Address in the RAM*/
-    psFilter = (CANFD_STD_FILTER_T *)(CANFD_SRAM_BASE_ADDR(psCanfd) + (psCanfd->SIDFC & CANFD_SIDFC_FLSSA_Msk) + (u32FltrIdx * sizeof(CANFD_STD_FILTER_T)));
-
-    /*Wirted the Standard ID filter element to RAM */
-    psFilter->VALUE = u32Filter;
-}
-
-
-/**
- * @brief       Writes a 29-bit extended id filter element in the Message RAM.
- *              Size of an Extended Id filter element is 2 words. So 2 words are written into the Message RAM for each filter element
- *
- * @param[in]   psCanfd         The pointer to CAN FD module base address.
- * @param[in]   u32FltrIdx      Index at which the filter element should be written in the '29-bit Filter' section of Message RAM.
- * @param[in]   u32FilterLow    Rx Individual filter low value.
- * @param[in]   u32FilterHigh   Rx Individual filter high value.
- *
- * @return      None.
- *
- * @details     Writes a 29-bit extended id filter element in the Message RAM.
- */
-void CANFD_SetXIDFltr(CANFD_T *psCanfd, uint32_t u32FltrIdx, uint32_t u32FilterLow, uint32_t u32FilterHigh)
-{
-    CANFD_EXT_FILTER_T *psFilter;
-
-    /* ignore if index is too high */
-    if (u32FltrIdx >= CANFD_MAX_29_BIT_FTR_ELEMS) return;
-
-    /*Get the Filter List Configuration Address on RAM*/
-    psFilter = (CANFD_EXT_FILTER_T *)(CANFD_SRAM_BASE_ADDR(psCanfd) + (psCanfd->XIDFC & CANFD_XIDFC_FLESA_Msk) + (u32FltrIdx * sizeof(CANFD_EXT_FILTER_T)));
-
-    /*Wirted the Extended ID filter element to RAM */
-    psFilter->LOWVALUE = u32FilterLow;
-    psFilter->HIGHVALUE = u32FilterHigh;
-}
-
-
-/**
- * @brief       Reads a CAN FD Message from Receive Message Buffer.
- *
- * @param[in]   psCanfd     The pointer of the specified CAN FD module.
- * @param[in]   u8MbIdx     The CANFD Message Buffer index.
- * @param[in]   psMsgBuf    Pointer to CAN FD message frame structure for reception.
- *
- * @return       1:Rx Message Buffer is full and has been read successfully.
- *               0:Rx Message Buffer is empty.
- *
- * @details     This function reads a CAN message from a specified Receive Message Buffer.
- *              The function fills a receive CAN message frame structure with just received data
- *              and activates the Message Buffer again.The function returns immediately.
-*/
-uint32_t CANFD_ReadRxBufMsg(CANFD_T *psCanfd, uint8_t u8MbIdx, CANFD_FD_MSG_T *psMsgBuf)
-{
-    CANFD_BUF_T *psRxBuffer;
-    uint32_t u32Success = 0;
-    uint32_t newData = 0;
-
-    if (u8MbIdx < CANFD_MAX_RX_BUF_ELEMS)
-    {
-        if (u8MbIdx < 32)
-            newData = (CANFD_ReadReg(&psCanfd->NDAT1) >> u8MbIdx) & 1;
-        else
-            newData = (CANFD_ReadReg(&psCanfd->NDAT2) >> (u8MbIdx - 32)) & 1;
-
-        /* new message is waiting to be read */
-        if (newData)
-        {
-            /* get memory location of rx buffer */
-            psRxBuffer = (CANFD_BUF_T *)(CANFD_SRAM_BASE_ADDR(psCanfd) + (CANFD_ReadReg(&psCanfd->RXBC) & 0xFFFF) + (u8MbIdx * sizeof(CANFD_BUF_T)));
-
-            /* read the message */
-            CANFD_CopyDBufToMsgBuf(psRxBuffer, psMsgBuf);
-
-            /* clear 'new data' flag */
-            if (u8MbIdx < 32)
-                psCanfd->NDAT1 = CANFD_ReadReg(&psCanfd->NDAT1) | (1UL << u8MbIdx);
-            else
-                psCanfd->NDAT2 = CANFD_ReadReg(&psCanfd->NDAT2) | (1UL << (u8MbIdx - 32));
-
-            u32Success = 1;
-        }
-    }
-
-    return u32Success;
-}
-
-
-/**
- * @brief       Reads a CAN FD Message from Rx FIFO.
- *
- * @param[in]   psCanfd     The pointer of the specified CANFD module.
- * @param[in]   u8FifoIdx   Number of the FIFO, 0 or 1.
- * @param[in]   psMsgBuf    Pointer to CANFD message frame structure for reception.
- *
- * @return      1           Read Message from Rx FIFO successfully.
- *              2           Rx FIFO is already overflowed and has been read successfully
- *              0           Rx FIFO is not enabled.
- *
- * @details     This function reads a CAN message from the CANFD build-in Rx FIFO.
- */
-uint32_t CANFD_ReadRxFifoMsg(CANFD_T *psCanfd, uint8_t u8FifoIdx, CANFD_FD_MSG_T *psMsgBuf)
-{
-    CANFD_BUF_T *pRxBuffer;
-    uint8_t GetIndex;
-    uint32_t u32Success = 0;
-    __I  uint32_t *pRXFS;
-    __IO uint32_t *pRXFC, *pRXFA;
-    uint8_t msgLostBit;
-
-    /* check for valid FIFO number */
-    if (u8FifoIdx < CANFD_NUM_RX_FIFOS)
-    {
-        if (u8FifoIdx == 0)
-        {
-            pRXFS = &(psCanfd->RXF0S);
-            pRXFC = &(psCanfd->RXF0C);
-            pRXFA = &(psCanfd->RXF0A);
-            msgLostBit = 3;
-        }
-        else
-        {
-            pRXFS = &(psCanfd->RXF1S);
-            pRXFC = &(psCanfd->RXF1C);
-            pRXFA = &(psCanfd->RXF1A);
-            msgLostBit = 7;
-        }
-
-        /* if FIFO is not empty */
-        if ((CANFD_ReadReg(pRXFS) & 0x7F) > 0)
-        {
-            GetIndex = (uint8_t)((CANFD_ReadReg(pRXFS) >> 8) & 0x3F);
-            pRxBuffer = (CANFD_BUF_T *)(CANFD_SRAM_BASE_ADDR(psCanfd) + (CANFD_ReadReg(pRXFC) & 0xFFFF) + (GetIndex * sizeof(CANFD_BUF_T)));
-
-            CANFD_CopyRxFifoToMsgBuf(pRxBuffer, psMsgBuf);
-
-            /* we got the message */
-            *pRXFA = GetIndex;
-
-            /* check for overflow */
-            if (CANFD_ReadReg(pRXFS) & CANFD_RXFS_RFL)
-            {
-                /* clear overflow flag */
-                psCanfd->IR = (1UL << msgLostBit);
-                u32Success = 2;
-            }
-            else
-            {
-                u32Success = 1;
-            }
-        }
-    }
-
-    return u32Success;
-}
-
-
-/**
- * @brief       Copies a message from a dedicated Rx buffer into a message buffer.
- *
- * @param[in]   psRxBuf         Buffer to read from.
- * @param[in]   psMsgBuf        Location to store read message.
- *
- * @return      None.
- *
- * @details     Copies a message from a dedicated Rx buffer into a message buffer.
- */
-void CANFD_CopyDBufToMsgBuf(CANFD_BUF_T *psRxBuf, CANFD_FD_MSG_T *psMsgBuf)
-{
-    uint32_t u32Idx;
-
-    if (psRxBuf->u32Id & RX_BUFFER_AND_FIFO_R0_ELEM_ESI_Msk)
-        psMsgBuf->bErrStaInd = TRUE;
-    else
-        psMsgBuf->bErrStaInd = FALSE;
-
-    /* if 29-bit ID */
-    if (psRxBuf->u32Id & RX_BUFFER_AND_FIFO_R0_ELEM_XTD_Msk)
-    {
-        psMsgBuf->u32Id = (psRxBuf->u32Id & RX_BUFFER_AND_FIFO_R0_ELEM_ID_Msk);
-        psMsgBuf->eIdType = eCANFD_XID;
-    }
-    /* if 11-bit ID */
-    else
-    {
-        psMsgBuf->u32Id = (psRxBuf->u32Id  >> 18) & 0x7FF;
-        psMsgBuf->eIdType = eCANFD_SID;
-    }
-
-    if (psRxBuf->u32Id  & RX_BUFFER_AND_FIFO_R0_ELEM_RTR_Msk)
-        psMsgBuf->eFrmType = eCANFD_REMOTE_FRM;
-    else
-        psMsgBuf->eFrmType = eCANFD_DATA_FRM;
-
-
-    if (psRxBuf->u32Config &  RX_BUFFER_AND_FIFO_R1_ELEM_FDF_Msk)
-        psMsgBuf->bFDFormat = TRUE;
-    else
-        psMsgBuf->bFDFormat = FALSE;
-
-    if (psRxBuf->u32Config &  RX_BUFFER_AND_FIFO_R1_ELEM_BSR_Msk)
-        psMsgBuf->bBitRateSwitch = TRUE;
-    else
-        psMsgBuf->bBitRateSwitch = FALSE;
-
-    psMsgBuf->u32DLC = CANFD_DecodeDLC((psRxBuf->u32Config & RX_BUFFER_AND_FIFO_R1_ELEM_DLC_Msk) >> RX_BUFFER_AND_FIFO_R1_ELEM_DLC_Pos);
-
-    for (u32Idx = 0 ; u32Idx < psMsgBuf->u32DLC ; u32Idx++)
-    {
-        psMsgBuf->au8Data[u32Idx] = psRxBuf->au8Data[u32Idx];
-    }
-}
-
-
 /**
  * @brief       Get Rx FIFO water level.
  *
@@ -1555,30 +1077,12 @@ uint32_t CANFD_GetRxFifoWaterLvl(CANFD_T *psCanfd, uint32_t u32RxFifoNum)
     uint32_t u32WaterLevel = 0;
 
     if (u32RxFifoNum == 0)
-        u32WaterLevel = ((CANFD_ReadReg(&psCanfd->RXF0C) & CANFD_RXF0C_F0WM_Msk) >> CANFD_RXF0C_F0WM_Pos);
+        u32WaterLevel = ((psCanfd->RXF0C & CANFD_RXF0C_F0WM_Msk) >> CANFD_RXF0C_F0WM_Pos);
     else
-        u32WaterLevel = ((CANFD_ReadReg(&psCanfd->RXF1C) & CANFD_RXF1C_F1WM_Msk) >> CANFD_RXF1C_F1WM_Pos);
+        u32WaterLevel = ((psCanfd->RXF1C & CANFD_RXF1C_F1WM_Msk) >> CANFD_RXF1C_F1WM_Pos);
 
     return u32WaterLevel;
 }
-
-
-/**
- * @brief       Copies messages from FIFO into a message buffert.
- *
- * @param[in]   psRxBuf         Buffer to read from.
- * @param[in]   psMsgBuf        Location to store read message.
- *
- * @return      None.
- *
- * @details      Copies messages from FIFO into a message buffert.
- */
-void CANFD_CopyRxFifoToMsgBuf(CANFD_BUF_T *psRxBuf, CANFD_FD_MSG_T *psMsgBuf)
-{
-    /*Copies a message from a dedicated Rx FIFO into a message buffer*/
-    CANFD_CopyDBufToMsgBuf(psRxBuf, psMsgBuf);
-}
-
 
 /**
  * @brief       Cancel a Tx buffer transmission request.
@@ -1592,9 +1096,8 @@ void CANFD_CopyRxFifoToMsgBuf(CANFD_BUF_T *psRxBuf, CANFD_FD_MSG_T *psMsgBuf)
  */
 void CANFD_TxBufCancelReq(CANFD_T *psCanfd, uint32_t u32TxBufIdx)
 {
-    psCanfd->TXBCR = CANFD_ReadReg(&psCanfd->TXBCR) | (0x1ul << u32TxBufIdx);
+    psCanfd->TXBCR = psCanfd->TXBCR | (0x1ul << u32TxBufIdx);
 }
-
 
 /**
  * @brief       Checks if a Tx buffer cancellation request has been finished or not.
@@ -1603,16 +1106,15 @@ void CANFD_TxBufCancelReq(CANFD_T *psCanfd, uint32_t u32TxBufIdx)
  * @param[in]   u32TxBufIdx     Tx buffer index number
  *
  * @return      0: cancellation finished.
- *              1: cancellation fail
+ *              1: cancellation pending
  *
  * @details     Checks if a Tx buffer cancellation request has been finished or not.
  */
 uint32_t CANFD_IsTxBufCancelFin(CANFD_T *psCanfd, uint32_t u32TxBufIdx)
 {
     /* wait for completion */
-    return ((CANFD_ReadReg(&psCanfd->TXBCR) & (0x1ul << u32TxBufIdx)) >> u32TxBufIdx);
+    return ((psCanfd->TXBCR & (0x1ul << u32TxBufIdx)) >> u32TxBufIdx);
 }
-
 
 /**
  * @brief       Checks if a Tx buffer transmission has occurred or not.
@@ -1627,29 +1129,8 @@ uint32_t CANFD_IsTxBufCancelFin(CANFD_T *psCanfd, uint32_t u32TxBufIdx)
  */
 uint32_t CANFD_IsTxBufTransmitOccur(CANFD_T *psCanfd, uint32_t u32TxBufIdx)
 {
-    return ((CANFD_ReadReg(&psCanfd->TXBTO) & (0x1ul << u32TxBufIdx)) >> u32TxBufIdx);
+    return ((psCanfd->TXBTO & (0x1ul << u32TxBufIdx)) >> u32TxBufIdx);
 }
-
-
-/**
- * @brief       Init Tx event fifo
- *
- * @param[in]   psCanfd          The pointer to CAN FD module base address.
- * @param[in]   psRamConfig      Tx Event Fifo configuration ram address.
- * @param[in]   psElemSize       Tx Event Fifo configuration element size
- * @param[in]   u32FifoWaterLvl  FIFO water level
- *
- * @return      None.
- *
- * @details     Init Tx event fifo.
- */
-static void CANFD_InitTxEvntFifo(CANFD_T *psCanfd, CANFD_RAM_PART_T *psRamConfig, CANFD_ELEM_SIZE_T *psElemSize, uint32_t u32FifoWaterLvl)
-{
-    /* Set TX Event FIFO element size,watermark,start address. */
-    psCanfd->TXEFC = (u32FifoWaterLvl << CANFD_TXEFC_EFWN_Pos) | (psElemSize->u32TxEventFifo << CANFD_TXEFC_EFS_Pos)
-                     | (psRamConfig->u32TXEFC_EFSA & CANFD_TXEFC_EFSA_Msk);
-}
-
 
 /**
  * @brief       Get Tx event fifo water level
@@ -1662,73 +1143,9 @@ static void CANFD_InitTxEvntFifo(CANFD_T *psCanfd, CANFD_RAM_PART_T *psRamConfig
  */
 uint32_t CANFD_GetTxEvntFifoWaterLvl(CANFD_T *psCanfd)
 {
-    return ((CANFD_ReadReg(&psCanfd->TXEFC) & CANFD_TXEFC_EFWN_Msk) >> CANFD_TXEFC_EFWN_Pos);
+
+    return ((psCanfd->TXEFC & CANFD_TXEFC_EFWM_Msk) >> CANFD_TXEFC_EFWM_Pos);
 }
-
-
-/**
- * @brief        Copy Event Elements from TX Event FIFO to user buffer
- *
- * @param[in]   psCanfd          The pointer to CAN FD module base address.
- * @param[in]   u32TxEvntNum     Tx Event FIFO number
- * @param[in]   psTxEvntElem     Tx Event Message struct
- *
- * @return      None.
- *
- * @details     Copy all Event Elements from TX Event FIFO to the Software Event List .
- */
-void CANFD_CopyTxEvntFifoToUsrBuf(CANFD_T *psCanfd, uint32_t u32TxEvntNum, CANFD_TX_EVNT_ELEM_T *psTxEvntElem)
-{
-    uint32_t *pu32TxEvnt;
-    /*Get the Tx Event FIFO Address*/
-    pu32TxEvnt = (uint32_t *)CANFD_GetTxBufferElementAddress(psCanfd, u32TxEvntNum);
-
-    /*Get the Error State Indicator*/
-    if ((pu32TxEvnt[0] & TX_FIFO_E0_EVENT_ESI_Msk) > 0)
-        psTxEvntElem->bErrStaInd = TRUE; //Transmitting node is error passive
-    else
-        psTxEvntElem->bErrStaInd = FALSE;//Transmitting node is error active
-
-    /*Get the Tx FIFO Identifier type and Identifier*/
-
-    if ((pu32TxEvnt[0] & TX_FIFO_E0_EVENT_XTD_Msk) > 0)
-    {
-        psTxEvntElem-> eIdType = eCANFD_XID;
-        psTxEvntElem->u32Id = (pu32TxEvnt[0] & TX_FIFO_E0_EVENT_ID_Msk);// Extended ID
-    }
-    else
-    {
-        psTxEvntElem-> eIdType = eCANFD_SID;
-        psTxEvntElem->u32Id = (pu32TxEvnt[0] & TX_FIFO_E0_EVENT_ID_Msk) >> 18;// Standard ID
-    }
-
-    /*Get the Frame type*/
-    if ((pu32TxEvnt[0] & TX_FIFO_E0_EVENT_RTR_Msk) > 0)
-        psTxEvntElem->bRemote = TRUE; //Remote frame
-    else
-        psTxEvntElem->bRemote = FALSE; //Data frame
-
-    /*Get the FD Format type*/
-    if ((pu32TxEvnt[0] & TX_FIFO_E1_EVENT_FDF_Msk) > 0)
-        psTxEvntElem->bFDFormat = TRUE; //CAN FD frame format
-    else
-        psTxEvntElem->bFDFormat = FALSE; //Classical CAN frame format
-
-    /*Get the Bit Rate Switch type*/
-    if ((pu32TxEvnt[0] & TX_FIFO_E1_EVENT_BRS_Msk) > 0)
-        psTxEvntElem->bBitRateSwitch = TRUE; //Frame transmitted with bit rate switching
-    else
-        psTxEvntElem->bBitRateSwitch = FALSE; //Frame transmitted without bit rate switching
-
-    /*Get the Tx FIFO Data Length  */
-    psTxEvntElem->u32DLC = CANFD_DecodeDLC((uint8_t)((pu32TxEvnt[1] & TX_FIFO_E1_EVENT_DLC_Msk) >> TX_FIFO_E1_EVENT_DLC_Pos));
-
-    /*Get the Tx FIFO Timestamp  */
-    psTxEvntElem->u32TxTs = (((pu32TxEvnt[1] & TX_FIFO_E1A_EVENT_TXTS_Msk) >> TX_FIFO_E1A_EVENT_TXTS_Pos));
-    /*Get the Tx FIFO Message marker  */
-    psTxEvntElem->u32MsgMarker = (((pu32TxEvnt[1] & TX_FIFO_E1_EVENT_MM_Msk) >> TX_FIFO_E1_EVENT_MM_Pos));
-}
-
 
 /**
  * @brief       Get CAN FD interrupts status.
@@ -1770,9 +1187,8 @@ void CANFD_CopyTxEvntFifoToUsrBuf(CANFD_T *psCanfd, uint32_t u32TxEvntNum, CANFD
  */
 uint32_t CANFD_GetStatusFlag(CANFD_T *psCanfd, uint32_t u32IntTypeFlag)
 {
-    return (CANFD_ReadReg(&psCanfd->IR) & u32IntTypeFlag);
+    return (psCanfd->IR & u32IntTypeFlag);
 }
-
 
 /**
  * @brief       Clears the CAN FD module interrupt flags
@@ -1815,9 +1231,8 @@ uint32_t CANFD_GetStatusFlag(CANFD_T *psCanfd, uint32_t u32IntTypeFlag)
 void CANFD_ClearStatusFlag(CANFD_T *psCanfd, uint32_t u32InterruptFlag)
 {
     /* Write 1 to clear status flag. */
-    psCanfd->IR = CANFD_ReadReg(&psCanfd->IR) | u32InterruptFlag;
+    psCanfd->IR |= u32InterruptFlag;
 }
-
 
 /**
  * @brief       Gets the CAN FD Bus Error Counter value.
@@ -1835,15 +1250,14 @@ void CANFD_GetBusErrCount(CANFD_T *psCanfd, uint8_t *pu8TxErrBuf, uint8_t *pu8Rx
 {
     if (pu8TxErrBuf)
     {
-        *pu8TxErrBuf = (uint8_t)((CANFD_ReadReg(&psCanfd->ECR) >> CANFD_ECR_TEC_Pos) & CANFD_ECR_TEC_Msk);
+        *pu8TxErrBuf = (uint8_t)((psCanfd->ECR >> CANFD_ECR_TEC_Pos) & CANFD_ECR_TEC_Msk);
     }
 
     if (pu8RxErrBuf)
     {
-        *pu8RxErrBuf = (uint8_t)((CANFD_ReadReg(&psCanfd->ECR) >> CANFD_ECR_REC_Pos) & CANFD_ECR_REC_Msk);
+        *pu8RxErrBuf = (uint8_t)((psCanfd->ECR >> CANFD_ECR_REC_Pos) & CANFD_ECR_REC_Msk);
     }
 }
-
 
 /**
  * @brief       CAN FD Run to the Normal Operation.
@@ -1859,36 +1273,226 @@ void CANFD_GetBusErrCount(CANFD_T *psCanfd, uint8_t *pu8TxErrBuf, uint8_t *pu8Rx
  */
 int32_t CANFD_RunToNormal(CANFD_T *psCanfd, uint8_t u8Enable)
 {
-    uint32_t u32TimeOutCnt = CANFD_TIMEOUT;
+    uint32_t u32TimeOutCount = SystemCoreClock; // 1 second timeout
 
     if (u8Enable)
     {
         /* start operation */
-        psCanfd->CCCR = CANFD_ReadReg(&psCanfd->CCCR) & ~(CANFD_CCCR_CCE_Msk | CANFD_CCCR_INIT_Msk);
+        psCanfd->CCCR &= ~(CANFD_CCCR_CCE_Msk | CANFD_CCCR_INIT_Msk);
 
+        /* Check INIT bit is released */
         while (psCanfd->CCCR & CANFD_CCCR_INIT_Msk)
         {
-            if (--u32TimeOutCnt == 0) return CANFD_ERR_TIMEOUT;
+            if (--u32TimeOutCount == 0) return CANFD_ERR_TIMEOUT;
         }
     }
     else
     {
         /* init mode */
-        psCanfd->CCCR = CANFD_ReadReg(&psCanfd->CCCR) | CANFD_CCCR_INIT_Msk | CANFD_CCCR_CCE_Msk;
+        psCanfd->CCCR |= CANFD_CCCR_INIT_Msk | CANFD_CCCR_CCE_Msk;
 
+        /* Wait run to INIT mode */
         while (!(psCanfd->CCCR & CANFD_CCCR_INIT_Msk))
         {
-            if (--u32TimeOutCnt == 0) return CANFD_ERR_TIMEOUT;
+            if (--u32TimeOutCount == 0) return CANFD_ERR_TIMEOUT;
         }
     }
 
     return CANFD_OK;
 }
 
+void *CANFD_Transfer(CANFD_T *psCanfd, E_CANFD_MSG eCanfdMsg, void *psUserData, uint32_t u32Idx)
+{
+    void *pvRetMsgBufAddr = NULL;
+
+    switch (eCanfdMsg)
+    {
+    case eCANFD_MSG_RF0: /*!< RX FIFO0  */
+    case eCANFD_MSG_RF1: /*!< RX FIFO1  */
+    {
+        uint32_t msgLostBit;
+        __I  uint32_t *pRXFS;
+        __IO uint32_t *pRXFC, *pRXFA;
+
+        if (eCanfdMsg == eCANFD_MSG_RF0)
+        {
+            pRXFS = &(psCanfd->RXF0S);
+            pRXFC = &(psCanfd->RXF0C);
+            pRXFA = &(psCanfd->RXF0A);
+            msgLostBit = CANFD_IR_RF0L_Msk;
+        }
+        else
+        {
+            pRXFS = &(psCanfd->RXF1S);
+            pRXFC = &(psCanfd->RXF1C);
+            pRXFA = &(psCanfd->RXF1A);
+            msgLostBit = CANFD_IR_RF1L_Msk;
+        }
+
+        /* if FIFO is not empty */
+        if ((*pRXFS & CANFD_RXF0S_F0FL_Msk) > 0)
+        {
+            uint8_t GetIndex = (uint8_t)((*pRXFS & CANFD_RXF0S_F0GI_Msk) >> CANFD_RXF0S_F0GI_Pos);
+
+            CANFD_RX_BUF_T *psRxBuffer = (CANFD_RX_BUF_T *)(CANFD_SRAM_BASE_ADDR(psCanfd) + (*pRXFC & CANFD_RXF0C_F0SA_Msk) + (GetIndex * sizeof(CANFD_RX_BUF_T)));
+
+            /* read the message */
+            if (psUserData)
+                memcpy((void *)psUserData, psRxBuffer, sizeof(CANFD_RX_BUF_T));
+
+            /* we got the message */
+            *pRXFA = GetIndex;
+
+            /* check for overflow */
+            if ((*pRXFS & CANFD_RXF0S_RF0L_Msk))
+            {
+                /* clear overflow flag */
+                psCanfd->IR = msgLostBit;
+            }
+
+            pvRetMsgBufAddr = (void *)psRxBuffer;
+        }
+    }
+    break;
+
+    case eCANFD_MSG_DRB: /*!< Dedicated RX Buffe  */
+    {
+        if (u32Idx < CANFD_MAX_RX_BUF_ELEMS)
+        {
+            uint32_t newData = 0;
+
+            if (u32Idx < 32)
+                newData = (psCanfd->NDAT1 >> u32Idx) & 1;
+            else
+                newData = (psCanfd->NDAT2 >> (u32Idx - 32)) & 1;
+
+            /* new message is waiting to be read */
+            if (newData)
+            {
+                /* get memory location of rx buffer */
+                CANFD_RX_BUF_T *psRxBuffer = CANFD_GET_RXBUF_ADDR(psCanfd, u32Idx);
+
+                /* read the message */
+                if (psUserData)
+                {
+                    memcpy((void *)psUserData, psRxBuffer, sizeof(CANFD_RX_BUF_T));
+
+                    /* clear 'new data' flag */
+                    if (u32Idx < 32)
+                        psCanfd->NDAT1 = psCanfd->NDAT1 | (1UL << u32Idx);
+                    else
+                        psCanfd->NDAT2 = psCanfd->NDAT2 | (1UL << (u32Idx - 32));
+
+                    pvRetMsgBufAddr = (void *) psRxBuffer;
+                }
+            }
+        }
+    }
+    break;
+
+    case eCANFD_MSG_DTB: /*!< Dedicated TX Buffe  */
+    {
+        /* Check it is over max TX buffer numbers or not.*/
+        if (u32Idx >= CANFD_MAX_TX_BUF_ELEMS)
+            goto EXIT_CANFD_Transfer;
+
+        /* Transmission is pending in this message buffer */
+        if ((psCanfd->TXBRP & (1UL << u32Idx)))
+            goto EXIT_CANFD_Transfer;
+
+        if (psUserData)
+        {
+            CANFD_TX_BUF_T *psDstTxBuf = CANFD_GET_TXBUF_ADDR(psCanfd, u32Idx);
+
+            memcpy((void *)psDstTxBuf, psUserData, sizeof(CANFD_TX_BUF_T));
+
+            /* Request append new Tx buffer. */
+            psCanfd->TXBAR = (1 << u32Idx);
+
+            pvRetMsgBufAddr = (void *)psDstTxBuf;
+        }
+    }
+    break;
+
+    case eCANFD_MSG_TEF: /*!< TX EVENT FIFO */
+    {
+        if ((psCanfd->TXEFS & CANFD_TXEFS_EFFL_Msk) > 0)
+        {
+            uint8_t GetIndex = (uint8_t)((psCanfd->TXEFS & CANFD_TXEFS_EFGI_Msk) >> CANFD_TXEFS_EFGI_Pos);
+
+            CANFD_TX_EVENT_T *psTxEvtBuf = CANFD_GET_TXEVENT_ADDR(psCanfd, GetIndex);
+
+            /* Read the message */
+            if (psUserData)
+            {
+                memcpy(psUserData, (void *)psTxEvtBuf, sizeof(CANFD_TX_EVENT_T));
+
+                /* Got the message */
+                psCanfd->TXEFA = GetIndex;
+            }
+
+            /* check for overflow */
+            if ((psCanfd->TXEFS & CANFD_TXEFS_TEFL_Msk))
+            {
+                /* clear overflow flag */
+                psCanfd->IR |= CANFD_IR_TEFF_Msk;
+            }
+
+            pvRetMsgBufAddr = (void *)psTxEvtBuf;
+        }
+    }
+    break;
+
+    case eCANFD_MSG_SID: /*!< Standard ID Filter */
+    {
+        /* ignore if index is too high */
+        if (u32Idx >= CANFD_MAX_11_BIT_FTR_ELEMS)
+            goto EXIT_CANFD_Transfer;
+
+        if (psUserData)
+        {
+            /*Get the Filter List Configuration Address in the RAM*/
+            CANFD_SID_FILTER_T *psFilter = CANFD_GET_SID_ADDR(psCanfd, u32Idx);
+
+            /* Write the Extended ID filter element to RAM */
+            memcpy((void *)psFilter, (void *)psUserData, sizeof(CANFD_SID_FILTER_T));
+
+            pvRetMsgBufAddr = (void *)psFilter;
+        }
+    }
+    break;
+
+    case eCANFD_MSG_XID: /*!< Extended ID Filter */
+    {
+        /* Ignore if index is too high */
+        if (u32Idx >= CANFD_MAX_29_BIT_FTR_ELEMS)
+            goto EXIT_CANFD_Transfer;
+
+        if (psUserData)
+        {
+            /* Get the Filter List Configuration Address in the RAM */
+            CANFD_XID_FILTER_T *psFilter = CANFD_GET_XID_ADDR(psCanfd, u32Idx);
+
+            /* Write the Extended ID filter element to RAM */
+            memcpy((void *)psFilter, psUserData, sizeof(CANFD_XID_FILTER_T));
+
+            pvRetMsgBufAddr = (void *)psFilter;
+        }
+    }
+    break;
+
+    default:
+        break;
+    }
+
+EXIT_CANFD_Transfer:
+
+    return pvRetMsgBufAddr;
+}
 
 
-/*@}*/ /* end of group CANFD_EXPORTED_FUNCTIONS */
+/** @} end of group CANFD_EXPORTED_FUNCTIONS */
 
-/*@}*/ /* end of group CANFD_Driver */
+/** @} end of group CANFD_Driver */
 
-/*@}*/ /* end of group Standard_Driver */
+/** @} end of group Standard_Driver */

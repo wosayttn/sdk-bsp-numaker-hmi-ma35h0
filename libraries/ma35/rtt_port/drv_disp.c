@@ -14,16 +14,23 @@
 
 #if defined(BSP_USING_DISP)
 
-#include <rthw.h>
-#include <rtdevice.h>
-#include <rtdbg.h>
-#include "NuMicro.h"
-#include <drv_sys.h>
-#include <string.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <rtdevice.h>
+#include "NuMicro.h"
+#include "drv_sys.h"
 
 #include "drv_disp.h"
+
+#if defined(NU_PKG_USING_DISPLIB)
+    #include "displib.h"
+#endif
+
+#define LOG_TAG    "drv.disp"
+//#undef  DBG_ENABLE
+#define DBG_SECTION_NAME   LOG_TAG
+#define DBG_LEVEL          LOG_LVL_INFO
+#define DBG_COLOR
+#include <rtdbg.h>
 
 #if !defined(DISP_USING_LCD_IDX)
     #define DISP_USING_LCD_IDX eDispLcd_1024x600
@@ -33,19 +40,15 @@
     #define BSP_LCD_BPP 32
 #endif
 
-#if !defined(DISP_USING_OVERLAY)
-    #define DISP_USING_OVERLAY
-#endif
-
 #define DEF_VPOST_BUFFER_NUMBER 3
 
 typedef enum
 {
     eDispLcd_1024x600   = 0,
     eDispLcd_800x480    = 1,
-    eDispLcd_1920x1080  = 2,
-    eDispLcd_1024x768   = 3, //XGA Signal 1024 x 768 @ 60 Hz timing
-    eDispLcd_1920x1200  = 4, //TI RGB888TOLDVS
+#if defined(LCD_USING_CUSTOMER)
+    eDispLcd_Customized = 2,
+#endif
     eDispLcd_Cnt
 } E_DISP_LCD;
 
@@ -53,16 +56,16 @@ const static DISP_LCD_INFO g_sLcdInfo_arr [eDispLcd_Cnt] =
 {
     {
         /* eDispLcd_1024x600 */
-        .u32ResolutionWidth  = 1024,
-        .u32ResolutionHeight = 600,
+        .u32ResolutionWidth  = BSP_LCD_WIDTH,
+        .u32ResolutionHeight = BSP_LCD_HEIGHT,
         .sLcdTiming =
         {
             .u32PCF          = 51000000,
-            .u32HA           = 1024,
+            .u32HA           = BSP_LCD_WIDTH,
             .u32HSL          = 1,
             .u32HFP          = 160,
             .u32HBP          = 160,
-            .u32VA           = 600,
+            .u32VA           = BSP_LCD_HEIGHT,
             .u32VSL          = 1,
             .u32VFP          = 23,
             .u32VBP          = 12,
@@ -79,16 +82,16 @@ const static DISP_LCD_INFO g_sLcdInfo_arr [eDispLcd_Cnt] =
     },
     {
         /* eDispLcd_800x480 */
-        .u32ResolutionWidth  = 800,
-        .u32ResolutionHeight = 480,
+        .u32ResolutionWidth  = BSP_LCD_WIDTH,
+        .u32ResolutionHeight = BSP_LCD_HEIGHT,
         .sLcdTiming =
         {
             .u32PCF          = 45000000,
-            .u32HA           = 800,
+            .u32HA           = BSP_LCD_WIDTH,
             .u32HSL          = 1,
             .u32HFP          = 210,
             .u32HBP          = 46,
-            .u32VA           = 480,
+            .u32VA           = BSP_LCD_HEIGHT,
             .u32VSL          = 1,
             .u32VFP          = 22,
             .u32VBP          = 23,
@@ -103,89 +106,34 @@ const static DISP_LCD_INFO g_sLcdInfo_arr [eDispLcd_Cnt] =
             .eCP             = ePolarity_Positive
         },
     },
+#if defined(LCD_USING_CUSTOMER)
     {
-        /* eDispLcd_1920x1080 */
-        .u32ResolutionWidth  = 1920,
-        .u32ResolutionHeight = 1080,
+        /* eDispLcd_Customized */
+        .u32ResolutionWidth  = BSP_LCD_WIDTH,
+        .u32ResolutionHeight = BSP_LCD_HEIGHT,
         .sLcdTiming =
         {
-            .u32PCF          = 125000000,
-            .u32HA           = 1920,
-            .u32HSL          = 32,
-            .u32HFP          = 120,
-            .u32HBP          = 128,
-            .u32VA           = 1080,
-            .u32VSL          = 14,
-            .u32VFP          = 21,
-            .u32VBP          = 10,
-            .eHSPP           = ePolarity_Positive,
-            .eVSPP           = ePolarity_Positive
+            .u32PCF     = BSP_LCD_PIXEL_CLOCK,
+            .u32HA      = BSP_LCD_WIDTH,
+            .u32HSL     = BSP_LCD_HSL,
+            .u32HFP     = BSP_LCD_HFP,
+            .u32HBP     = BSP_LCD_HBP,
+            .u32VA      = BSP_LCD_HEIGHT,
+            .u32VSL     = BSP_LCD_VSL,
+            .u32VFP     = BSP_LCD_VFP,
+            .u32VBP     = BSP_LCD_VBP,
+            .eHSPP      = ePolarity_Positive,
+            .eVSPP      = ePolarity_Positive
         },
         .sPanelConf =
         {
-            .eDpiFmt         = eDPIFmt_D24,
-            .eDEP            = ePolarity_Positive,
-            .eDP             = ePolarity_Positive,
-            .eCP             = ePolarity_Positive
+            .eDpiFmt    = eDPIFmt_D24,
+            .eDEP       = ePolarity_Positive,
+            .eDP        = ePolarity_Positive,
+            .eCP        = ePolarity_Positive
         },
     },
-    {
-        /* eDispLcd_1024x768 */
-        /* XGA Signal 1024 x 768 @ 60 Hz timing */
-        /* ADV7125KSTZ140 - RGB888 TO VGA. */
-        .u32ResolutionWidth  = 1024,
-        .u32ResolutionHeight = 768,
-        .sLcdTiming =
-        {
-            .u32PCF          = 65000000,
-            .u32HA           = 1024,
-            .u32HSL          = 136,
-            .u32HFP          = 24,
-            .u32HBP          = 160,
-            .u32VA           = 768,
-            .u32VSL          = 6,
-            .u32VFP          = 3,
-            .u32VBP          = 29,
-            .eHSPP           = ePolarity_Positive,
-            .eVSPP           = ePolarity_Positive
-        },
-        .sPanelConf =
-        {
-            .eDpiFmt         = eDPIFmt_D24,
-            .eDEP            = ePolarity_Positive,
-            .eDP             = ePolarity_Positive,
-            .eCP             = ePolarity_Positive
-        },
-    },
-    {
-        /* eDispLcd_1920x1200 */
-        /* Use RGB TO LVDS 1080P V2.0 board */
-        /* The board is with TI DS90C189 RGB888/LVDS bridge and ILI2511 CTP controller. */
-        .u32ResolutionWidth  = 1920,
-        .u32ResolutionHeight = 1200,
-        .sLcdTiming =
-        {
-            //.u32PCF          = (1920 + 16 + 32 + 16) * (1200 + 2 + 15 + 18) * 60, // 148000000Hz, 60FPS
-            .u32PCF          = (1920 + 16 + 32 + 16) * (1200 + 2 + 15 + 18) * 40, // 88208640Hz, 40FPS
-            .u32HA           = 1920,
-            .u32HSL          = 16,
-            .u32HFP          = 32,
-            .u32HBP          = 16,
-            .u32VA           = 1200,
-            .u32VSL          = 2,
-            .u32VFP          = 15,
-            .u32VBP          = 18,
-            .eHSPP           = ePolarity_Positive,
-            .eVSPP           = ePolarity_Positive
-        },
-        .sPanelConf =
-        {
-            .eDpiFmt         = eDPIFmt_D24,
-            .eDEP            = ePolarity_Positive,
-            .eDP             = ePolarity_Positive,
-            .eCP             = ePolarity_Positive
-        },
-    },
+#endif
 };
 
 
@@ -298,6 +246,11 @@ static rt_err_t disp_layer_open(rt_device_t dev, rt_uint16_t oflag)
         DISP_SetTransparencyMode(eLayer_Video, eMASK);
         DISP_Trigger(eLayer_Video, 1);
         DISP_ENABLE_INT();
+
+#if defined(NU_PKG_USING_DISPLIB)
+        disp_converter_init();
+#endif
+
     }
 
 #if defined(DISP_USING_OVERLAY) || defined(DISP_USING_CURSOR)
@@ -350,6 +303,11 @@ static rt_err_t disp_layer_close(rt_device_t dev)
     {
         DISP_DISABLE_INT();
         DISP_Trigger(eLayer_Video, 0);
+
+#if defined(NU_PKG_USING_DISPLIB)
+        disp_converter_fini();
+#endif
+
     }
 
 #if defined(DISP_USING_OVERLAY) || defined(DISP_USING_CURSOR)
@@ -418,7 +376,7 @@ static rt_err_t disp_layer_control(rt_device_t dev, int cmd, void *args)
         case RTGRAPHIC_PIXEL_FORMAT_NV12:
             eFBFmt = eFBFmt_NV12;
             bpp = 16;
-            pitch = psDisp->info.width;
+            pitch = RT_ALIGN(psDisp->info.width, 16);
             break;
 
         case RTGRAPHIC_PIXEL_FORMAT_MONO:
@@ -496,6 +454,19 @@ static rt_err_t disp_layer_init(rt_device_t dev)
     return RT_EOK;
 }
 
+static void disp_panel_timing(const DISP_LCD_TIMING *psDispLcdTiming)
+{
+    LOG_I("%dx%d(Pixel Clock: %d Hz)", psDispLcdTiming->u32HA, psDispLcdTiming->u32VA, psDispLcdTiming->u32PCF);
+    LOG_I("Horizontal Active: %d", psDispLcdTiming->u32HA);
+    LOG_I("Horizontal Sync Length: %d", psDispLcdTiming->u32HSL);
+    LOG_I("Horizontal Front Porch: %d", psDispLcdTiming->u32HFP);
+    LOG_I("Horizontal Back Porch: %d", psDispLcdTiming->u32HBP);
+    LOG_I("Vertical Active: %d", psDispLcdTiming->u32VA);
+    LOG_I("Vertical Sync Len: %d", psDispLcdTiming->u32VSL);
+    LOG_I("Vertical Front Porch: %d", psDispLcdTiming->u32VFP);
+    LOG_I("Vertical Back Porch: %d", psDispLcdTiming->u32VBP);
+}
+
 int rt_hw_disp_init(void)
 {
     int i;
@@ -504,6 +475,8 @@ int rt_hw_disp_init(void)
     /* Get LCD panel instance by ID. */
     const DISP_LCD_INFO *psDispLcdInstance = DISP_GetLCDInst(DISP_USING_LCD_IDX);
     RT_ASSERT(psDispLcdInstance != RT_NULL);
+
+    disp_panel_timing(&psDispLcdInstance->sLcdTiming);
 
     /* Initial LCD */
     DISP_LCDInit(psDispLcdInstance);
@@ -541,7 +514,7 @@ int rt_hw_disp_init(void)
         rt_uint8_t *pu8FBDMABuf = rt_malloc_align(psDisp->info.pitch * psDisp->info.height * DEF_VPOST_BUFFER_NUMBER, 128);
         if (pu8FBDMABuf == NULL)
         {
-            rt_kprintf("Fail to get VRAM buffer for %s layer.\n", psDisp->name);
+            LOG_E("Fail to get VRAM buffer for %s layer.\n", psDisp->name);
             RT_ASSERT(0);
         }
         else
@@ -585,7 +558,7 @@ int rt_hw_disp_init(void)
         ret = rt_device_register(&psDisp->dev, psDisp->name, RT_DEVICE_FLAG_RDWR);
         RT_ASSERT(ret == RT_EOK);
 
-        rt_kprintf("%s's fbdev video memory at 0x%08x.\n", psDisp->name, psDisp->info.framebuffer);
+        LOG_I("%s's fbdev video memory at 0x%08x.", psDisp->name, psDisp->info.framebuffer);
     }
 
 #if defined(DISP_USING_OVERLAY)
@@ -606,7 +579,7 @@ int rt_hw_disp_init(void)
     /* Unmask interrupt. */
     rt_hw_interrupt_umask(DISP_IRQn);
 
-    rt_kprintf("LCD panel timing is %d FPS.\n", DISP_LCDTIMING_GetFPS(&psDispLcdInstance->sLcdTiming));
+    LOG_I("LCD panel timing is %d FPS.", DISP_LCDTIMING_GetFPS(&psDispLcdInstance->sLcdTiming));
 
     return 0;
 }
@@ -626,8 +599,8 @@ MSH_CMD_EXPORT(nu_disp_hide_video, hide video layer);
 
 static void nu_disp_dump_info(void)
 {
-    rt_kprintf("Blank:%d\n", g_u32VSyncBlank);
-    rt_kprintf("FIFO underflow - Video:%d Overlay:%d\n", s_u32VideoUnderFlow, s_u32OverlayUnderFlow);
+    LOG_I("Blank:%d", g_u32VSyncBlank);
+    LOG_I("FIFO underflow - Video:%d Overlay:%d", s_u32VideoUnderFlow, s_u32OverlayUnderFlow);
 }
 MSH_CMD_EXPORT(nu_disp_dump_info, dump some information);
 
@@ -640,7 +613,7 @@ static rt_err_t nu_disp_set_fps(int argc, char **argv)
         return -1;
 
     DISP_LCDTIMING_SetFPS(arg);
-    rt_kprintf("Set FPS to %d\n", arg);
+    LOG_I("Set FPS to %d", arg);
 
     return 0;
 }
@@ -665,7 +638,7 @@ static rt_err_t nu_disp_set_colkey(int argc, char **argv)
     if (sscanf(argv[1], "%lx", &arg) != 1)
         return -1;
 
-    rt_kprintf("colkey:0x%08x\n", arg);
+    LOG_I("colkey:0x%08x", arg);
     nu_disp_overlay_set_colkey(arg);
 
     return 0;
@@ -696,7 +669,7 @@ static void nu_disp_overlay_fill_color(void)
         uint32_t fill_num = psDispLayer->info.height * psDispLayer->info.width;
         uint32_t *fbmem_start = (uint32_t *)psDispLayer->info.framebuffer;
         uint32_t color = (0x3F << 24) | (rand() % 0x1000000) ;
-        rt_kprintf("fill color=0x%08x on %s layer\n", color, psDispLayer->name);
+        LOG_I("fill color=0x%08x on %s layer", color, psDispLayer->name);
         for (i = 0; i < fill_num; i++)
         {
             rt_memcpy((void *)&fbmem_start[i], &color, (psDispLayer->info.bits_per_pixel / 8));
@@ -718,7 +691,7 @@ static rt_err_t nu_disp_set_alphablend_opmode(int argc, char **argv)
             return -1;
     }
 
-    rt_kprintf("opmode:0x%08x\n", arg[0]);
+    LOG_I("opmode:0x%08x", arg[0]);
 
     if (arg[0] <= DC_BLEND_MODE_SRC_OUT)
         DISP_SetBlendOpMode(arg[0], eGloAM_NORMAL, eGloAM_NORMAL);

@@ -93,7 +93,7 @@ static const struct rt_i2c_bit_ops nu_soft_i2c_bit_ops =
     .get_scl  = nu_soft_i2c_get_scl,
     .udelay   = nu_soft_i2c_udelay,
     .delay_us = 1,
-    .timeout  = 100
+    .timeout  = 2
 };
 
 /* Functions define ------------------------------------------------------------*/

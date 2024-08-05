@@ -28,70 +28,70 @@ extern "C"
 
 typedef enum
 {
-    ePolarity_Disable  = -1,
-    ePolarity_Positive = 0,
-    ePolarity_Negative = 1
+    ePolarity_Disable  = -1,   /*!< Pins disable */
+    ePolarity_Positive = 0,    /*!< Pins are active high */
+    ePolarity_Negative = 1     /*!< Pins are active low */
 } E_POLARITY;
 
 typedef enum
 {
-    eDPIFmt_D16CFG1,
-    eDPIFmt_D16CFG2,
-    eDPIFmt_D16CFG3,
-    eDPIFmt_D18CFG1,
-    eDPIFmt_D18CFG2,
-    eDPIFmt_D24
+    eDPIFmt_D16CFG1,      /*!< DPI interface data format D16CFG1 */
+    eDPIFmt_D16CFG2,      /*!< DPI interface data format D16CFG2 */
+    eDPIFmt_D16CFG3,      /*!< DPI interface data format D16CFG3 */
+    eDPIFmt_D18CFG1,      /*!< DPI interface data format D18CFG1 */
+    eDPIFmt_D18CFG2,      /*!< DPI interface data format D18CFG2 */
+    eDPIFmt_D24           /*!< DPI interface data format D24 */
 } E_DPI_DATA_FMT;
 
 typedef enum
 {
-    eLayer_Video   = 0,
-    eLayer_Overlay = 1,
-    eLayer_Cursor  = 2,
+    eLayer_Video   = 0,   /*!< Framebuffer layer */
+    eLayer_Overlay = 1,   /*!< Overlay layer */
+    eLayer_Cursor  = 2,   /*!< H/W Cursor layer */
     eLayer_Cnt
 } E_DISP_LAYER;
 
 typedef enum
 {
-    eYUV_709_BT709   = 1,
-    eYUV_2020_BT2020 = 3,
+    eYUV_709_BT709   = 1,   /*!< YUV standard 709_BT709 */
+    eYUV_2020_BT2020 = 3,   /*!< YUV standard 2020_BT2020 */
 } E_YUV_STANDARD;
 
 typedef enum
 {
-    eFBFmt_X4R4G4B4      = 0,
-    eFBFmt_A4R4G4B4      = 1,
-    eFBFmt_X1R5G5B5      = 2,
-    eFBFmt_A1R5G5B5      = 3,
-    eFBFmt_R5G6B5        = 4,
-    eFBFmt_X8R8G8B8      = 5,
-    eFBFmt_A8R8G8B8      = 6,
-    eFBFmt_YUY2          = 7,
-    eFBFmt_UYVY          = 8,
-    eFBFmt_INDEX8        = 9,
-    eFBFmt_MONOCHROME    = 10,
-    eFBFmt_YV12          = 15,
-    eFBFmt_A8            = 16,
-    eFBFmt_NV12          = 17,
-    eFBFmt_NV16          = 18,
-    eFBFmt_RG16          = 19,
-    eFBFmt_R8            = 20,
-    eFBFmt_NV12_10BIT    = 21,
-    eFBFmt_A2R10G10B10   = 22,
-    eFBFmt_NV16_10BIT    = 23,
-    eFBFmt_INDEX1        = 24,
-    eFBFmt_INDEX2        = 25,
-    eFBFmt_INDEX4        = 26,
-    eFBFmt_P010          = 27,
-    eFBFmt_NV12_10BIT_L1 = 28,
-    eFBFmt_NV16_10BIT_L1 = 29
+    eFBFmt_X4R4G4B4      = 0,   /*!< X4R4G4B4 format */
+    eFBFmt_A4R4G4B4      = 1,   /*!< A4R4G4B4 format */
+    eFBFmt_X1R5G5B5      = 2,   /*!< X1R5G5B5 format */
+    eFBFmt_A1R5G5B5      = 3,   /*!< A1R5G5B5 format */
+    eFBFmt_R5G6B5        = 4,   /*!< R5G6B5 format */
+    eFBFmt_X8R8G8B8      = 5,   /*!< X8R8G8B8 format */
+    eFBFmt_A8R8G8B8      = 6,   /*!< A8R8G8B8 format */
+    eFBFmt_YUY2          = 7,   /*!< YUY2 format */
+    eFBFmt_UYVY          = 8,   /*!< UYVY format */
+    eFBFmt_INDEX8        = 9,   /*!< INDEX8 format */
+    eFBFmt_MONOCHROME    = 10,  /*!< MONOCHROME format */
+    eFBFmt_YV12          = 15,  /*!< YV12 format */
+    eFBFmt_A8            = 16,  /*!< A8 format */
+    eFBFmt_NV12          = 17,  /*!< NV12 format */
+    eFBFmt_NV16          = 18,  /*!< NV16 format */
+    eFBFmt_RG16          = 19,  /*!< RG16 format */
+    eFBFmt_R8            = 20,  /*!< R8 format */
+    eFBFmt_NV12_10BIT    = 21,  /*!< NV12_10BIT format */
+    eFBFmt_A2R10G10B10   = 22,  /*!< A2R10G10B10 format */
+    eFBFmt_NV16_10BIT    = 23,  /*!< NV16_10BIT format */
+    eFBFmt_INDEX1        = 24,  /*!< INDEX1 format */
+    eFBFmt_INDEX2        = 25,  /*!< INDEX2 format */
+    eFBFmt_INDEX4        = 26,  /*!< INDEX4 format */
+    eFBFmt_P010          = 27,  /*!< P010 format */
+    eFBFmt_NV12_10BIT_L1 = 28,  /*!< NV12_10BIT_L1 format */
+    eFBFmt_NV16_10BIT_L1 = 29   /*!< NV16_10BIT_L1 format */
 } E_FB_FMT;
 
 typedef enum
 {
-    eOPAQUE,
-    eMASK,
-    eKEY
+    eOPAQUE,     /*!< OPAQUE effects */
+    eMASK,       /*!< MASK effect */
+    eKEY         /*!< OPAQUE effect */
 } E_TRANSPARENCY_MODE;
 
 typedef enum
@@ -113,7 +113,6 @@ typedef enum
     eGloAM_SCALED
 } E_GLOBAL_ALPHA_MODE;
 
-
 typedef enum
 {
     eBM_ZERO,
@@ -125,7 +124,6 @@ typedef enum
     eBM_SATURATED_ALPHA,
     eBM_SATURATED_DEST_ALPHA
 } E_BLENDING_MODE;
-
 
 typedef enum
 {
@@ -143,40 +141,41 @@ typedef struct
 typedef struct
 {
     /*
-    htotal: u32HA + u32HBP + u32HFP + u32HSL
-    vtotal: u32VA + u32VBP + u32VFP + u32VSL
-    clock-frequency: htotal * vtotal * fps
+        Set display panel timing.
+        htotal: u32HA + u32HBP + u32HFP + u32HSL
+        vtotal: u32VA + u32VBP + u32VFP + u32VSL
+        Panel Pixel Clock frequency: htotal * vtotal * fps
     */
-    uint32_t u32PCF;     // Pixel Clock Frequency
+    uint32_t u32PCF;    /*!< Panel Pixel Clock Frequency in Hz   */
 
-    uint32_t u32HA;      // Horizontal Active
-    uint32_t u32HSL;     // Horizontal Sync Length
-    uint32_t u32HFP;     // Horizontal Front Porch
-    uint32_t u32HBP;     // Horizontal Back Porch
-    uint32_t u32VA;      // Vertical Active
-    uint32_t u32VSL;     // Vertical Sync Len
-    uint32_t u32VFP;     // Vertical Front Porch
-    uint32_t u32VBP;     // Vertical Back Porch
+    uint32_t u32HA;     /*!< Horizontal Active, Horizontal panel resolution   */
+    uint32_t u32HSL;    /*!< Horizontal Sync Length, panel timing   */
+    uint32_t u32HFP;    /*!< Horizontal Front Porch, panel timing   */
+    uint32_t u32HBP;    /*!< Horizontal Back Porch, panel timing   */
+    uint32_t u32VA;     /*!< Vertical Active, Vertical panel resolution in pixels   */
+    uint32_t u32VSL;    /*!< Vertical Sync Length, panel timing   */
+    uint32_t u32VFP;    /*!< Vertical Front Porch, panel timing   */
+    uint32_t u32VBP;    /*!< Vertical Back Porch, panel timing   */
 
-    E_POLARITY eHSPP;    // HSync Pulse Polarity
-    E_POLARITY eVSPP;    // VSync Pulse Polarity
+    E_POLARITY eHSPP;   /*!< Polarity of the horizontal sync pulse   */
+    E_POLARITY eVSPP;   /*!< VSync Pulse Polarity   */
 
 } DISP_LCD_TIMING;
 
 typedef struct
 {
-    E_DPI_DATA_FMT eDpiFmt; // DPI Data Format
-    E_POLARITY     eDEP;    // DE Polarity
-    E_POLARITY     eDP;     // DATA Polarity
-    E_POLARITY     eCP;     // CLOCK Polarity
+    E_DPI_DATA_FMT   eDpiFmt; // DPI Data Format
+    E_POLARITY       eDEP;    // DE Polarity
+    E_POLARITY       eDP;     // DATA Polarity
+    E_POLARITY       eCP;     // CLOCK Polarity
 } DISP_PANEL_CONF;
 
 typedef struct
 {
-    uint32_t u32ResolutionWidth;
-    uint32_t u32ResolutionHeight;
-    DISP_LCD_TIMING sLcdTiming;
-    DISP_PANEL_CONF sPanelConf;
+    uint32_t u32ResolutionWidth;  /*!< Panel Width    */
+    uint32_t u32ResolutionHeight; /*!< Panel Height   */
+    DISP_LCD_TIMING sLcdTiming;   /*!< Panel timings for some registers   */
+    DISP_PANEL_CONF sPanelConf;   /*!< Panel Configure information   */
 } DISP_LCD_INFO;
 
 typedef struct
@@ -249,7 +248,7 @@ uint32_t DISP_LCDTIMING_GetFPS(const DISP_LCD_TIMING *psDispLCDTiming);
 uint32_t DISP_LCDTIMING_SetFPS(uint32_t u32FPS);
 void DISP_SetCursorPosition(uint32_t u32X, uint32_t u32Y);
 void DISP_InitCursor(DISP_CURSOR_CONF *psCursorConf);
-
+const DISP_LCD_TIMING *DISP_GetLCDTimingCtx(void);
 
 /*@}*/ /* end of group DISP_EXPORTED_FUNCTIONS */
 

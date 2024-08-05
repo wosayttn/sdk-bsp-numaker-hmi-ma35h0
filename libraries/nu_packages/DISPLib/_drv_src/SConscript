@@ -1,0 +1,17 @@
+import os
+Import('RTT_ROOT')
+from building import *
+
+cwd = GetCurrentDir()
+cpppath = [cwd]
+group = []
+
+if os.path.isfile(os.path.join(cwd, 'libDispLibDrv_gcc.a')):
+    src = []
+    libpath = [cwd]
+    libs = ['libDispLibDrv_gcc']
+    group = DefineGroup('DispLibDrv', src, depend = ['NU_PKG_USING_DISPLIB'], CPPPATH = cpppath, LIBS = libs, LIBPATH = libpath)
+else:
+    src = Glob('*.c')
+    group = DefineGroup('DispLibDrv', src, depend = ['NU_PKG_USING_DISPLIB'], CPPPATH = cpppath)
+Return('group')

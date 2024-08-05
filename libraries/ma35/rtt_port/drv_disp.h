@@ -14,6 +14,7 @@
 #define __DRV_DISP_H__
 
 #include <rtthread.h>
+#include "NuMicro.h"
 
 #if !defined(RTGRAPHIC_PIXEL_FORMAT_NV12)
     #define RTGRAPHIC_PIXEL_FORMAT_NV12    (RTGRAPHIC_PIXEL_FORMAT_RESERVED+1)

@@ -23,6 +23,7 @@ typedef enum
     evCCAPSNR_HM1055,
     evCCAPSNR_ADV728X,
     evCCAPSNR_OV5640,
+    evCCAPSNR_XC7082_OV2718,
     evCCAPSNR_CNT
 } ccap_sensor_id;
 

@@ -24,8 +24,6 @@
 #define DEF_OV5640_ADDR    (0x78>>1)
 #define CONFIG_FLICKER_60HZ
 
-//#define CONFIG_CCIR656
-
 static const sensor_reg_val s_sRegValue_Init[] =
 {
     {0x3103, 0x11},
@@ -77,26 +75,37 @@ static const sensor_reg_val s_sRegValue_Init[] =
     {0x3821, 0x07},
     {0x3814, 0x31},
     {0x3815, 0x31},
-    {0x3800, 0x00},
+
+    {0x3800, 0x00}, //OV5640_REG_TIMING_HS, 0
     {0x3801, 0x00},
-    {0x3802, 0x00},
+
+    {0x3802, 0x00}, //OV5640_REG_TIMING_VS, 4
     {0x3803, 0x04},
-    {0x3804, 0x0a},
+
+    {0x3804, 0x0a}, //OV5640_REG_TIMING_HW, 2623
     {0x3805, 0x3f},
-    {0x3806, 0x07},
+
+    {0x3806, 0x07}, //OV5640_REG_TIMING_VH, 1947
     {0x3807, 0x9b},
-    {0x3808, 0x02}, // width
+
+    {0x3808, 0x02}, //OV5640_REG_TIMING_DVPHO, 640
     {0x3809, 0x80},
-    {0x380a, 0x01}, // height
+
+    {0x380a, 0x01}, //OV5640_REG_TIMING_DVPVO, 480
     {0x380b, 0xe0},
-    {0x380c, 0x07},
+
+    {0x380c, 0x07}, //OV5640_REG_TIMING_HTS, 1896
     {0x380d, 0x68},
-    {0x380e, 0x03},
+
+    {0x380e, 0x03}, //OV5640_REG_TIMING_HTS, 987
     {0x380f, 0xd8},
-    {0x3810, 0x00},
+
+    {0x3810, 0x00}, //OV5640_REG_TIMING_HOFFS, 16
     {0x3811, 0x10},
-    {0x3812, 0x00},
+
+    {0x3812, 0x00}, //OV5640_REG_TIMING_HOFFS, 6
     {0x3813, 0x06},
+
     {0x3618, 0x00},
     {0x3612, 0x29},
     {0x3708, 0x62},
@@ -277,182 +286,18 @@ static const sensor_reg_val s_sRegValue_Init[] =
     {0x3008, 0x02},
 };
 
-static const sensor_reg_val s_sRegValue_VGA_YUV[] =
-{
-    {0x3035, 0x11},
-    {0x3036, 0x69},
-    {0x3C07, 0x07},
-    {0x3820, 0x41},
-    {0x3821, 0x07},
-#if 1
-    {0x3814, 0x31},
-    {0x3815, 0x31},
-    {0x3800, 0x00},
-    {0x3801, 0x00},
-    {0x3802, 0x00},
-    {0x3803, 0x00},
-    {0x3804, 0x0a},
-    {0x3805, 0x3f},
-    {0x3806, 0x07},
-    {0x3807, 0x9f},
-    {0x3808, 0x02}, // width
-    {0x3809, 0x80},
-    {0x380A, 0x01}, // height
-    {0x380B, 0xE1},
-    {0x380C, 0x0B},
-    {0x380D, 0x1C},
-    {0x380E, 0x07},
-    {0x380F, 0x9F},
-    {0x3810, 0x00},
-    {0x3811, 0x10},
-    {0x3812, 0x00},
-    {0x3813, 0x06},
-#else
-    {0x3814, 0x31},
-    {0x3815, 0x31},
-    {0x3800, 0x00},
-    {0x3801, 0x00},
-    {0x3802, 0x00},
-    {0x3803, 0x04},
-    {0x3804, 0x0a},
-    {0x3805, 0x3f},
-    {0x3806, 0x07},
-    {0x3807, 0x9b},
-    {0x3808, 0x02}, // width
-    {0x3809, 0x80},
-    {0x380A, 0x01}, // height
-    {0x380B, 0xE0},
-    {0x380C, 0x07},
-    {0x380D, 0x68},
-    {0x380E, 0x03},
-    {0x380F, 0xd8},
-    {0x3810, 0x00},
-    {0x3811, 0x10},
-    {0x3812, 0x00},
-    {0x3813, 0x06},
-#endif
-    //{0x3817, 0x01},   //added
-    //{0x4712, 0xFF}, //HSYNC Mode Right Padding Pixel Counter, Add Padding data at end of a line.
-    //{0x4721, 0x0F}, //Vertical start delay between video output and video input
-    //{0x4722, 0x04}, //Vertical end delay between video output and video input
-    //{0x4711, 0x02}, //added
-    //{0x4721, 0x01}, //added
-    //{0x471d, 0x10}, //added
-    //{0x4709, 0x01}, //added
-    //{0x470a, 0x01}, //added
-    //{0x3B09, 0x00}, //FREX HREF delay
-    //{0x503d, 0x80}, //added
-
-    {0x3618, 0x00},
-    {0x3612, 0x29},
-    {0x3708, 0x64}, //{0x3708, 0x62},
-    {0x3709, 0x52},
-    {0x370C, 0x03},
-    {0x3A02, 0x03}, //{0x3A02, 0x02},
-    {0x3A03, 0xd8}, //{0x3A03, 0xe4},
-    {0x3A0E, 0x01},
-    {0x3A0D, 0x04}, //{0x3A0D, 0x02},
-    {0x3A14, 0x03}, //{0x3A14, 0x02},
-    {0x3A15, 0xd8}, //{0x3A15, 0xe4},
-    {0x4004, 0x02},
-    {0x4713, 0x03}, //{0x4713, 0x02},
-    {0x4407, 0x04},
-    {0x460B, 0x35}, //{0x460B, 0x37},
-    {0x460C, 0x22}, //{0x460C, 0x20},
-    {0x3824, 0x02}, //{0x3824, 0x04},
-    {0x5001, 0xa3},
-
-    {0x5180, 0xff},
-    {0x5181, 0xf2},
-    {0x5182, 0x00},
-    {0x5183, 0x14},
-    {0x5184, 0x25},
-    {0x5185, 0x24},
-    {0x5186, 0x09},
-    {0x5187, 0x09},
-    {0x5188, 0x09},
-    {0x5189, 0x75},
-    {0x518a, 0x54},
-    {0x518b, 0xe0},
-    {0x518c, 0xb2},
-    {0x518d, 0x42},
-    {0x518e, 0x3d},
-    {0x518f, 0x56},
-
-    {0x3008, 0x02},
-    {0x3035, 0x31},
-    {0x3821, 0x07},
-    {0x3002, 0x1c},
-    {0x3006, 0xc3},
-    {0x4713, 0x02},
-    {0x4407, 0x04},
-    {0x460b, 0x37},
-    {0x460c, 0x20},
-    {0x3824, 0x04},
-    {0x4003, 0x08},
-    // Gamma
-    {0x5481, 0x0F},
-    {0x5482, 0x1E},
-    {0x5483, 0x3A},
-    {0x5484, 0x62},
-    {0x5485, 0x74},
-    {0x5486, 0x82},
-    {0x5487, 0x8E},
-    {0x5488, 0x98},
-    {0x5489, 0xA0},
-    {0x548a, 0xA7},
-    {0x548b, 0xB5},
-    {0x548c, 0xC0},
-    {0x548d, 0xD2},
-    {0x548e, 0xE1},
-    {0x548f, 0xED},
-    {0x5490, 0x19},
-    // Color Matrix
-    {0x5381, 0x1c},
-    {0x5382, 0x5a},
-    {0x5383, 0x06},
-    {0x5384, 0x20},
-    {0x5385, 0x80},
-    {0x5386, 0xa0},
-    {0x5387, 0xa2},
-    {0x5388, 0xa0},
-    {0x5389, 0x02},
-    {0x538b, 0x98},
-    {0x538a, 0x01},
-    // Saturation
-    {0x5001, 0xa3},
-    {0x5583, 0x30},
-    {0x5584, 0x30},
-    {0x5580, 0x02},
-    {0x5588, 0x41},
-    // AEC
-    {0x3a0f, 0x40},
-    {0x3a10, 0x38},
-    {0x3a11, 0x71},
-    {0x3a1b, 0x40},
-    {0x3a1e, 0x38},
-    {0x3a1f, 0x10},
-    // AEC Weight
-//  {0x5688, 0x11}, // Zone 1/Zone 0 weight
-//  {0x5689, 0x11}, // Zone 3/Zone 2 weight
-//  {0x569a, 0x31}, // Zone 5/Zone 4 weight
-//  {0x569b, 0x13}, // Zone 7/Zone 6 weight
-//  {0x569c, 0x31}, // Zone 9/Zone 8 weight
-//  {0x569d, 0x13}, // Zone b/Zone a weight
-//  {0x569e, 0x11}, // Zone d/Zone c weight
-//  {0x569f, 0x11}, // Zone f/Zone e weight
-};
-
 static const sensor_reg_val s_sRegValue_1080P_YUV[] =
 {
     {0x3035, 0x21},
+
 #if 0
     {0x3036, 0x54},
     {0x3037, 0x11},  //PLL div=1,2,3,4,6,8
 #else //PCLK = 9x Mhz
-    {0x3036, 0x31},
-    {0x3037, 0x01},  //PLL div=1,2,3,4,6,8
+    {0x3036, 0x40},
+    {0x3037, 0x04},  //PLL div=1,2,3,4,6,8
 #endif
+
     {0x3C07, 0x07},
     {0x3820, 0x40},
     {0x3821, 0x06},
@@ -470,19 +315,14 @@ static const sensor_reg_val s_sRegValue_1080P_YUV[] =
     {0x3806, 0x04}, //1080
     {0x3807, 0x48},
 
-
     {0x3808, 0x07}, // width
     {0x3809, 0x80},
     {0x380A, 0x04}, // height
     {0x380B, 0x38},
 
-#if 1
     {0x380C, 0x07},
     {0x380D, 0xD0},
-#else
-    {0x380C, 0x0f},
-    {0x380D, 0x00},
-#endif
+
     {0x380E, 0x04},
     {0x380F, 0xb0},
 
@@ -521,123 +361,6 @@ static const sensor_reg_val s_sRegValue_1080P_YUV[] =
     {0x4003, 0x08},
 
     {0x3821, 0x01}, //mirror
-};
-
-static const sensor_reg_val s_sRegValue_3M_YUV[] =
-{
-    {0x3035, 0x21},
-    {0x3036, 0x54},
-    {0x3C07, 0x07},
-    {0x3820, 0x40},
-    {0x3821, 0x06},
-    {0x3814, 0x11},
-    {0x3815, 0x11},
-    {0x3803, 0x00},
-    {0x3806, 0x07},
-    {0x3807, 0x9f},
-    {0x3808, 0x08}, // width
-    {0x3809, 0x00},
-    {0x380A, 0x06}, // height
-    {0x380B, 0x00},
-    {0x380C, 0x0b},
-    {0x380D, 0x1C},
-    {0x380E, 0x07},
-    {0x380F, 0xb0},
-    {0x3813, 0x04},
-    {0x3618, 0x04},
-    {0x3612, 0x2B},
-    {0x3708, 0x21},
-    {0x3709, 0x12},
-    {0x370C, 0x00},
-    {0x3A02, 0x07},
-    {0x3A03, 0xB0},
-    {0x3A0E, 0x06},
-    {0x3A0D, 0x08},
-    {0x3A14, 0x07},
-    {0x3A15, 0xD0},
-    {0x4004, 0x06},
-    {0x4713, 0x02},
-    {0x4407, 0x0C},
-    {0x460B, 0x37},
-    {0x460C, 0x20},
-    {0x3824, 0x01},
-    {0x5001, 0x83},
-    {0x3008, 0x02},
-    {0x3035, 0x51},
-    {0x3821, 0x06},
-    {0x3002, 0x1c},
-    {0x3006, 0xc3},
-    {0x4713, 0x02},
-    {0x4407, 0x0c},
-    {0x460b, 0x35},
-    {0x460c, 0x20},
-    {0x3824, 0x01},
-    {0x4003, 0x08},
-};
-
-static const sensor_reg_val s_sRegValue_5M_YUV[] =
-{
-    {0x3035, 0x21},
-    {0x3036, 0x54},
-    {0x3C07, 0x07},
-    {0x3820, 0x40},
-    {0x3821, 0x06},
-
-    {0x3814, 0x11},
-    {0x3815, 0x11},
-    {0x3800, 0x00},
-    {0x3801, 0x00},
-    {0x3802, 0x00},
-    {0x3803, 0x00},
-    {0x3804, 0x0a},
-    {0x3805, 0x3f},
-    {0x3806, 0x07},
-    {0x3807, 0x9f},
-    {0x3808, 0x0a}, // width
-    {0x3809, 0x20},
-    {0x380A, 0x07}, // height
-    {0x380B, 0x99},
-    {0x380C, 0x0b},
-    {0x380D, 0x1C},
-    {0x380E, 0x07},
-    {0x380F, 0xb0},
-    {0x3810, 0x00},
-    {0x3811, 0x10},
-    {0x3812, 0x00},
-    {0x3813, 0x04},
-
-    {0x3618, 0x04},
-    {0x3612, 0x2B},
-    {0x3708, 0x21},
-    {0x3709, 0x12},
-    {0x370C, 0x00},
-    {0x3A02, 0x07},
-    {0x3A03, 0xB0},
-    {0x3A0E, 0x06},
-    {0x3A0D, 0x08},
-    {0x3A14, 0x07},
-    {0x3A15, 0xD0},
-    {0x4004, 0x06},
-    //{0x4712, 0xFF}, //HSYNC Mode Right Padding Pixel Counter, Add Padding data at end of a line.
-    //{0x4721, 0x01}, //Vertical start delay between video output and video input
-    //{0x4722, 0x0F}, //Vertical end delay between video output and video input
-    {0x4713, 0x02},
-    {0x4407, 0x0C},
-    {0x460B, 0x37},
-    {0x460C, 0x20},
-    {0x3824, 0x01},
-    {0x5001, 0x83},
-    {0x3008, 0x02},
-    {0x3035, 0x51},
-    {0x3821, 0x06},
-    {0x3002, 0x1c},
-    {0x3006, 0xc3},
-    {0x4713, 0x02},
-    {0x4407, 0x0c},
-    {0x460b, 0x35},
-    {0x460c, 0x20},
-    {0x3824, 0x01},
-    {0x4003, 0x08},
 };
 
 static rt_err_t ov5640_read_version(struct rt_i2c_bus_device *i2cdev, void *pvPriv)
@@ -688,7 +411,7 @@ static rt_err_t ccap_sensor_set_mode_ov5640(struct rt_i2c_bus_device *i2cdev, vo
             return -RT_ERROR;
         }
 
-        LOG_I("0x%02X[W]: 0x%02X@0x%04X", pdev->u16DevAddr, au8TxData[pdev->u16AddrBL], *((uint16_t *)&au8TxData[0]));
+        LOG_I("0x%02X[W]: 0x%02X@0x%04X", pdev->u16DevAddr, psRegVal->u16Val, psRegVal->u16Addr);
 
         if ((psRegVal->u16Addr == 0x3008) && (psRegVal->u16Val == 0x82))
         {
@@ -699,12 +422,12 @@ static rt_err_t ccap_sensor_set_mode_ov5640(struct rt_i2c_bus_device *i2cdev, vo
         {
             ccap_sensor_i2c_read(i2cdev, pdev->u16DevAddr, (rt_uint8_t *)&au8TxData[0], pdev->u16AddrBL, (rt_uint8_t *)&au8TxData[pdev->u16AddrBL], pdev->u16ValBL);
 
-            LOG_I("0x%02X[R]: 0x%02X@0x%04X", pdev->u16DevAddr, au8TxData[pdev->u16AddrBL],  *((uint16_t *)&au8TxData[0]));
+            LOG_I("0x%02X[R]: 0x%02X@0x%04X", pdev->u16DevAddr, psRegVal->u16Val,  psRegVal->u16Addr);
         }
 
     }
 
-#if 0
+    LOG_I("Inject mode sensor table - Begin");
     /* Inject mode sensor table */
     for (i = 0; i < psInfo->u32RegArrSize; i++)
     {
@@ -719,7 +442,7 @@ static rt_err_t ccap_sensor_set_mode_ov5640(struct rt_i2c_bus_device *i2cdev, vo
             return -RT_ERROR;
         }
 
-        LOG_I("0x%02X[W]: 0x%02X@0x%04X", pdev->u16DevAddr, au8TxData[pdev->u16AddrBL], *((uint16_t *)&au8TxData[0]));
+        LOG_I("0x%02X[W]: 0x%02X@0x%04X", pdev->u16DevAddr, psRegVal->u16Val, psRegVal->u16Addr);
 
         if ((psRegVal->u16Addr == 0x3008) && (psRegVal->u16Val == 0x82))
         {
@@ -730,82 +453,27 @@ static rt_err_t ccap_sensor_set_mode_ov5640(struct rt_i2c_bus_device *i2cdev, vo
         {
             ccap_sensor_i2c_read(i2cdev, pdev->u16DevAddr, (rt_uint8_t *)&au8TxData[0], pdev->u16AddrBL, (rt_uint8_t *)&au8TxData[pdev->u16AddrBL], pdev->u16ValBL);
 
-            LOG_I("0x%02X[R]: 0x%02X@0x%04X", pdev->u16DevAddr, au8TxData[pdev->u16AddrBL],  *((uint16_t *)&au8TxData[0]));
+            LOG_I("0x%02X[R]: 0x%02X@0x%04X", pdev->u16DevAddr, psRegVal->u16Val,  psRegVal->u16Addr);
         }
     }
-#endif
+    LOG_I("Inject mode sensor table - End");
 
     return ov5640_read_version(i2cdev, pvPriv);
 }
 
 static sensor_mode_info ov5640_modeinfo [] =
 {
-    /* First setting table, 640x480xYUV */
-    {
-        .sViewInfo.u32Width = 640,
-        .sViewInfo.u32Height = 480,
-        .sViewInfo.pu8FarmAddr = RT_NULL, /*Unused*/
-        .psRegArr = &s_sRegValue_VGA_YUV[0],
-        .u32RegArrSize = sizeof(s_sRegValue_VGA_YUV) / sizeof(sensor_reg_val),
-        .u32SenClk = 32000000,
-#if defined(CONFIG_CCIR656)
-        .sViewInfo.u32PixFmt = (CCAP_PAR_INDATORD_YUYV | CCAP_PAR_INFMT_YUV422),
-        .u32Polarity = (CCAP_PAR_SENTYPE_CCIR656 | CCAP_PAR_FBB_Msk | CCAP_PAR_PCLKP_LOW),
-#else
-        .sViewInfo.u32PixFmt = (CCAP_PAR_INDATORD_YUYV | CCAP_PAR_INFMT_YUV422),
-        .u32Polarity = (CCAP_PAR_SENTYPE_CCIR601 | CCAP_PAR_VSP_HIGH | CCAP_PAR_HSP_LOW | CCAP_PAR_PCLKP_HIGH),
-#endif
-    },
-#if 0
     /* Second setting table, 1920x1080xYUV */
     {
         .sViewInfo.u32Width = 1920,
         .sViewInfo.u32Height = 1080,
         .sViewInfo.pu8FarmAddr = RT_NULL, /*Unused*/
         .psRegArr = &s_sRegValue_1080P_YUV[0],
-        .u32RegArrSize = sizeof(s_sRegValue_1080P_YUV) / sizeof(sensor_reg_val),
-        .u32SenClk = 32000000,
-#if defined(CONFIG_CCIR656)
-        .sViewInfo.u32PixFmt = (CCAP_PAR_INDATORD_YUYV | CCAP_PAR_INFMT_YUV422),
-        .u32Polarity = (CCAP_PAR_SENTYPE_CCIR656 | CCAP_PAR_FBB_Msk | CCAP_PAR_PCLKP_LOW),
-#else
+        .u32RegArrSize = 0, //sizeof(s_sRegValue_1080P_YUV) / sizeof(sensor_reg_val),
+        .u32SenClk = 60000000,
         .sViewInfo.u32PixFmt = (CCAP_PAR_INDATORD_YUYV | CCAP_PAR_INFMT_YUV422),
         .u32Polarity = (CCAP_PAR_SENTYPE_CCIR601 | CCAP_PAR_VSP_HIGH | CCAP_PAR_HSP_LOW | CCAP_PAR_PCLKP_HIGH),
-#endif
     },
-    /* Third setting table, 2048x1536xYUV */
-    {
-        .sViewInfo.u32Width = 2048,
-        .sViewInfo.u32Height = 1536,
-        .sViewInfo.pu8FarmAddr = RT_NULL, /*Unused*/
-        .psRegArr = &s_sRegValue_3M_YUV[0],
-        .u32RegArrSize = sizeof(s_sRegValue_3M_YUV) / sizeof(sensor_reg_val),
-        .u32SenClk = 32000000,
-#if defined(CONFIG_CCIR656)
-        .sViewInfo.u32PixFmt = (CCAP_PAR_INDATORD_YUYV | CCAP_PAR_INFMT_YUV422),
-        .u32Polarity = (CCAP_PAR_SENTYPE_CCIR656 | CCAP_PAR_FBB_Msk | CCAP_PAR_PCLKP_LOW),
-#else
-        .sViewInfo.u32PixFmt = (CCAP_PAR_INDATORD_YUYV | CCAP_PAR_INFMT_YUV422),
-        .u32Polarity = (CCAP_PAR_SENTYPE_CCIR601 | CCAP_PAR_VSP_HIGH | CCAP_PAR_HSP_LOW | CCAP_PAR_PCLKP_HIGH),
-#endif
-    },
-    /* Fourth setting table, 2592x1944xYUV */
-    {
-        .sViewInfo.u32Width = 2592,
-        .sViewInfo.u32Height = 1944,
-        .sViewInfo.pu8FarmAddr = RT_NULL, /*Unused*/
-        .psRegArr = &s_sRegValue_5M_YUV[0],
-        .u32RegArrSize = sizeof(s_sRegValue_5M_YUV) / sizeof(sensor_reg_val),
-        .u32SenClk = 32000000,
-#if defined(CONFIG_CCIR656)
-        .sViewInfo.u32PixFmt = (CCAP_PAR_INDATORD_YUYV | CCAP_PAR_INFMT_YUV422),
-        .u32Polarity = (CCAP_PAR_SENTYPE_CCIR656 | CCAP_PAR_FBB_Msk | CCAP_PAR_PCLKP_LOW),
-#else
-        .sViewInfo.u32PixFmt = (CCAP_PAR_INDATORD_YUYV | CCAP_PAR_INFMT_YUV422),
-        .u32Polarity = (CCAP_PAR_SENTYPE_CCIR601 | CCAP_PAR_VSP_HIGH | CCAP_PAR_HSP_LOW | CCAP_PAR_PCLKP_HIGH),
-#endif
-    }
-#endif
 };
 
 static const sensor_priv ov5640_priv =

@@ -81,6 +81,8 @@ static rt_uint32_t Get_Y(S_TOUCH_SW *psTouchSW)
 
 static void nu_adc_touch_smpl(void *p)
 {
+#define DEF_ADC_THS  3950
+
     static rt_bool_t bDrop = RT_FALSE;
     static uint32_t u32LastZ0 = 0xffffu;
 
@@ -97,7 +99,7 @@ static void nu_adc_touch_smpl(void *p)
     /* Get X, Y ADC converting data */
     point.u32X  = Get_X(psTouchSW);
     point.u32Y  = Get_Y(psTouchSW);
-    if ((point.u32X < 4000) && (point.u32Y  < 4000))
+    if ((point.u32X < DEF_ADC_THS) && (point.u32Y  < DEF_ADC_THS))
     {
         point.u32Z0 = point.u32Z1 = 1;
         bDrop = RT_FALSE;
@@ -107,7 +109,7 @@ static void nu_adc_touch_smpl(void *p)
         bDrop = RT_TRUE;
     }
 
-    // rt_kprintf("%04x %04x %d %d\n", point.u32X, point.u32Y, point.u32Z0, bDrop);
+    //rt_kprintf("%04x %04x %d %d\n", point.u32X, point.u32Y, point.u32Z0, bDrop);
     if ((!bDrop || (u32LastZ0 != 0)) && (rt_mq_send(g_pmqTouchXYZ, (const void *)&point, sizeof(struct nu_adc_touch_data)) == RT_EOK))
     {
         if (psTouchSW->psRtTouch != RT_NULL)

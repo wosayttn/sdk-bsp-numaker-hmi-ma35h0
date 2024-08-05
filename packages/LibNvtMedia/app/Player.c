@@ -340,7 +340,7 @@ void nvtmedia_worker(void *data)
         printf("[%s]Can't find media file in %s\n", __func__, pcDirPath);
         return;
     }
-    else if ( filelist_getInstance()->m_i32UsedNum != 0)
+    else if (filelist_getInstance()->m_i32UsedNum != 0)
     {
         filelist_dump();
 
@@ -352,9 +352,10 @@ void nvtmedia_worker(void *data)
             {
                 nvtmedia_stop();
 
-                printf("[%lld] Will start %s ...\n", NMUtil_GetTimeMilliSec(), filelist_getFileName(i));
-                if (nvtmedia_start(filelist_getFileName(i)) == eNM_ERRNO_NONE)
+                if ((filelist_getFileName(i) != NULL) &&
+                        (nvtmedia_start(filelist_getFileName(i)) == eNM_ERRNO_NONE))
                 {
+                    printf("Will start %s ...\n", filelist_getFileName(i));
                     if (nvtmedia_play() != eNM_ERRNO_NONE)
                         continue;
 

@@ -28,19 +28,20 @@
 #define THREAD_STACK_SIZE 4096
 #define THREAD_TIMESLICE  5
 
-#define DEF_CROP_PACKET_RECT
+//#define DEF_CROP_PACKET_RECT
+//#define DEF_SWITCH_BASE_ADDR_ISR
+//#define DEF_FRAMERATE_DIV2
 
 #define DEF_DURATION         10
-#define DEF_FRAMERATE_DIV2
+#define DEF_PREVIEW
 
 #if defined(BSP_USING_CCAP0) && defined(BSP_USING_CCAP1)
     #define DEF_GRID_VIEW          1
-    #define DEF_BINARIZATION_VIEW  DEF_GRID_VIEW
 #elif defined(BSP_USING_CCAP0) || defined(BSP_USING_CCAP1)
     #define DEF_GRID_VIEW          0
-    #define DEF_BINARIZATION_VIEW  DEF_GRID_VIEW
 #endif
 
+#define DEF_BINARIZATION_VIEW   DEF_GRID_VIEW
 #define DEF_ENABLE_PLANAR_PIPE  DEF_BINARIZATION_VIEW
 
 typedef struct
@@ -65,9 +66,13 @@ typedef struct
     struct rt_device_graphic_info sLcdInfo;
     uint32_t       u32CurFBPointer;
     uint32_t       u32FrameEnd;
+    uint32_t       u32ISRFrameEnd;
     rt_sem_t       semFrameEnd;
     ccap_view_info viewinfo_binarization;
-
+    rt_device_t    psDevCcap;
+    rt_device_t    psDevLcd;
+    int            i32FBSize;
+    int            i32VRAMPiece;
 } ccap_grabber_context;
 typedef ccap_grabber_context *ccap_grabber_context_t;
 
@@ -96,12 +101,34 @@ static ccap_grabber_param ccap_grabber_param_array[evCCAP_Cnt] =
 };
 static uint32_t s_u32LCDToggle = 0;
 
+static void switch_framebuffers(ccap_grabber_context_t psGrabberContext)
+{
+    ccap_config sCcapConfig = {0};
+
+    sCcapConfig.sPipeInfo_Packet.pu8FarmAddr = psGrabberContext->sCcapConfig.sPipeInfo_Packet.pu8FarmAddr
+            + ((psGrabberContext->u32ISRFrameEnd + 1) % psGrabberContext->i32VRAMPiece) * psGrabberContext->i32FBSize ;
+
+#if DEF_ENABLE_PLANAR_PIPE
+    sCcapConfig.sPipeInfo_Planar.pu8FarmAddr = psGrabberContext->sCcapConfig.sPipeInfo_Planar.pu8FarmAddr;
+    sCcapConfig.sPipeInfo_Planar.u32Width    = psGrabberContext->sCcapConfig.sPipeInfo_Planar.u32Width;
+    sCcapConfig.sPipeInfo_Planar.u32Height   = psGrabberContext->sCcapConfig.sPipeInfo_Planar.u32Height;
+    sCcapConfig.sPipeInfo_Planar.u32PixFmt   = psGrabberContext->sCcapConfig.sPipeInfo_Planar.u32PixFmt;
+#endif
+
+    /* Switch next frambuffer/ */
+    rt_device_control(psGrabberContext->psDevCcap, CCAP_CMD_SET_BASEADDR, &sCcapConfig);
+}
+
 static void nu_ccap_event_hook(void *pvData, uint32_t u32EvtMask)
 {
     ccap_grabber_context_t psGrabberContext = (ccap_grabber_context_t)pvData;
 
     if (u32EvtMask & NU_CCAP_FRAME_END)
     {
+#if defined(DEF_SWITCH_BASE_ADDR_ISR)
+        switch_framebuffers(psGrabberContext);
+#endif
+        psGrabberContext->u32ISRFrameEnd++;
         rt_sem_release(psGrabberContext->semFrameEnd);
     }
 
@@ -768,19 +795,23 @@ static void ccap_grabber(void *parameter)
         LOG_W("Can't set frame rate ", psGrabberParam->devname_ccap);
     }
 #endif
-
-    /* Start to capture */
-    if (rt_device_control(psDevCcap, CCAP_CMD_START_CAPTURE, RT_NULL) != RT_EOK)
-    {
-        LOG_E("Can't start %s", psGrabberParam->devname_ccap);
-        goto exit_ccap_grabber;
-    }
+    sGrabberContext.psDevCcap = psDevCcap;
+    sGrabberContext.psDevLcd = psDevLcd;
+    sGrabberContext.i32FBSize = sGrabberContext.sLcdInfo.width * sGrabberContext.sLcdInfo.height * (sGrabberContext.sLcdInfo.bits_per_pixel >> 3);
+    sGrabberContext.i32VRAMPiece = sGrabberContext.sLcdInfo.smem_len / sGrabberContext.i32FBSize;
 
     /* open lcd */
     ret = rt_device_open(psDevLcd, 0);
     if (ret != RT_EOK)
     {
         LOG_E("Can't open %s", psGrabberParam->devname_lcd);
+        goto exit_ccap_grabber;
+    }
+
+    /* Start to capture */
+    if (rt_device_control(psDevCcap, CCAP_CMD_START_CAPTURE, RT_NULL) != RT_EOK)
+    {
+        LOG_E("Can't start %s", psGrabberParam->devname_ccap);
         goto exit_ccap_grabber;
     }
 
@@ -791,14 +822,16 @@ static void ccap_grabber(void *parameter)
     psGrabberParam->ccap_viewinfo_planar = &sGrabberContext.sCcapConfig.sPipeInfo_Planar;
 
     if (psGrabberParam->ccap_viewinfo_binarization->pu8FarmAddr == RT_NULL)
+    {
         psGrabberParam->ccap_viewinfo_binarization->pu8FarmAddr = rt_malloc_align(psGrabberParam->ccap_viewinfo_planar->u32Width * psGrabberParam->ccap_viewinfo_planar->u32Height, 32);
-
+    }
     if (psGrabberParam->ccap_viewinfo_binarization->pu8FarmAddr == RT_NULL)
     {
         LOG_E("Can't allocate buffer");
         goto exit_ccap_grabber;
     }
 #endif
+
 
     last = now = rt_tick_get();
     while (1)
@@ -837,6 +870,7 @@ static void ccap_grabber(void *parameter)
 
         }
 #endif
+#if defined(DEF_PREVIEW)
         if (!bDrawDirect)
         {
             //MPU type
@@ -852,28 +886,14 @@ static void ccap_grabber(void *parameter)
         }
         else if (!DEF_GRID_VIEW)
         {
-            int i32FBSize = sGrabberContext.sLcdInfo.width * sGrabberContext.sLcdInfo.height * (sGrabberContext.sLcdInfo.bits_per_pixel >> 3);
-            int i32VRAMPiece = sGrabberContext.sLcdInfo.smem_len / i32FBSize;
-            ccap_config sCcapConfig = {0};
-
             uint32_t u32BufPtr = (uint32_t)sGrabberContext.sCcapConfig.sPipeInfo_Packet.pu8FarmAddr
-                                 + (sGrabberContext.u32FrameEnd % i32VRAMPiece) * i32FBSize;
+                                 + ((sGrabberContext.u32ISRFrameEnd) % sGrabberContext.i32VRAMPiece) * sGrabberContext.i32FBSize;
 
             /* Pan to valid frame address. */
             rt_device_control(psDevLcd, RTGRAPHIC_CTRL_PAN_DISPLAY, (void *)u32BufPtr);
 
-            sCcapConfig.sPipeInfo_Packet.pu8FarmAddr = sGrabberContext.sCcapConfig.sPipeInfo_Packet.pu8FarmAddr
-                    + ((sGrabberContext.u32FrameEnd + 1) % i32VRAMPiece) * i32FBSize ;
-
-#if DEF_ENABLE_PLANAR_PIPE
-            sCcapConfig.sPipeInfo_Planar.pu8FarmAddr = sGrabberContext.sCcapConfig.sPipeInfo_Planar.pu8FarmAddr;
-            sCcapConfig.sPipeInfo_Planar.u32Width = sGrabberContext.sCcapConfig.sPipeInfo_Planar.u32Width;
-            sCcapConfig.sPipeInfo_Planar.u32Height = sGrabberContext.sCcapConfig.sPipeInfo_Planar.u32Height;
-            sCcapConfig.sPipeInfo_Planar.u32PixFmt = sGrabberContext.sCcapConfig.sPipeInfo_Planar.u32PixFmt;
-#endif
-
-            rt_device_control(psDevCcap, CCAP_CMD_SET_BASEADDR, &sCcapConfig);
-
+#if !defined(DEF_SWITCH_BASE_ADDR_ISR)
+            switch_framebuffers(&sGrabberContext);
 #if DEF_ENABLE_PLANAR_PIPE
             {
                 int OpModeShutter = 1;
@@ -881,7 +901,10 @@ static void ccap_grabber(void *parameter)
                 rt_device_control(psDevCcap, CCAP_CMD_SET_OPMODE, &OpModeShutter);
             }
 #endif
+#endif
+
         }
+#endif
 
         sGrabberContext.u32FrameEnd++;
 

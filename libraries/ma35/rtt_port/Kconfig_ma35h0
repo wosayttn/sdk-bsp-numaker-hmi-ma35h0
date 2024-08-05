@@ -1,3 +1,6 @@
+config SOC_FAMILY_NUMICRO
+    bool
+
     config SOC_SERIES_MA35H0
         bool
         select SOC_FAMILY_NUMICRO
@@ -791,42 +794,78 @@
         if BSP_USING_DISP
             choice
                 prompt "Select Supported LCM panel"
-                default LCM_USING_FW070TFT_WSVGA
-                config LCM_USING_FW070TFT_WSVGA
+                default LCD_USING_FW070TFT_WSVGA
+                config LCD_USING_FW070TFT_WSVGA
                     bool "eDispLcd_1024x600(1024x600-RGB888)"
 
-                config LCM_USING_FW070TFT_WVGA
+                config LCD_USING_FW070TFT_WVGA
                     bool "eDispLcd_800x480(800x480-RGB888)"
 
-
-                config LCM_USING_XVGA
-                    bool "eDispLcd_1024x768(1024x768-RGB888)"
-
+                config LCD_USING_CUSTOMER
+                    bool "Customized"
             endchoice
 
             config DISP_USING_LCD_IDX
                 int
-                default 0    if LCM_USING_FW070TFT_WSVGA
-                default 1    if LCM_USING_FW070TFT_WVGA
-                default 3    if LCM_USING_XVGA
+                default 0    if LCD_USING_FW070TFT_WSVGA
+                default 1    if LCD_USING_FW070TFT_WVGA
+                default 2    if LCD_USING_CUSTOMER
 
-           config BSP_LCD_BPP
+            config BSP_LCD_BPP
                 int
-                default 32   if LCM_USING_FW070TFT_WSVGA
-                default 32   if LCM_USING_FW070TFT_WVGA
-                default 32   if LCM_USING_XVGA
+                default 32   if LCD_USING_FW070TFT_WSVGA
+                default 32   if LCD_USING_FW070TFT_WVGA
+                default 32   if LCD_USING_CUSTOMER
 
-           config BSP_LCD_WIDTH
+            config BSP_LCD_WIDTH
                 int
-                default 1024   if LCM_USING_FW070TFT_WSVGA
-                default 800    if LCM_USING_FW070TFT_WVGA
-                default 1024   if LCM_USING_XVGA
+                default 1024   if LCD_USING_FW070TFT_WSVGA
+                default 800    if LCD_USING_FW070TFT_WVGA
+                depends on !LCD_USING_CUSTOMER
 
-           config BSP_LCD_HEIGHT
+            config BSP_LCD_HEIGHT
                 int
-                default 600   if LCM_USING_FW070TFT_WSVGA
-                default 480   if LCM_USING_FW070TFT_WVGA
-                default 768   if LCM_USING_XVGA
+                default 600   if LCD_USING_FW070TFT_WSVGA
+                default 480   if LCD_USING_FW070TFT_WVGA
+                depends on !LCD_USING_CUSTOMER
+
+            if LCD_USING_CUSTOMER
+                config BSP_LCD_WIDTH
+                    int "Specify Width of Resolution"
+                    default 1920
+
+                config BSP_LCD_HEIGHT
+                    int "Specify Height of Resolution"
+                    default 1200
+
+                config BSP_LCD_HSL
+                    int "Specify Horizontal Sync Length"
+                    default 16
+
+                config BSP_LCD_HFP
+                    int "Specify Horizontal Front Porch"
+                    default 32
+
+                config BSP_LCD_HBP
+                    int "Specify Horizontal Back Porch"
+                    default 16
+
+                config BSP_LCD_VSL
+                    int "Specify Vertical Sync Len"
+                    default 2
+
+                config BSP_LCD_VFP
+                    int "Specify Vertical Front Porch"
+                    default 15
+
+                config BSP_LCD_VBP
+                    int "Specify Vertical Back Porch"
+                    default 18
+
+                config BSP_LCD_PIXEL_CLOCK
+                    int "Specify Pixel Clock frequency"
+                    default 148000000
+            endif
 
             config DISP_USING_OVERLAY
                 bool "Enable Overlay layer"

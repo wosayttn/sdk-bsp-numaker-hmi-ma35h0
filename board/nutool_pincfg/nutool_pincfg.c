@@ -14,6 +14,7 @@ MCU:MA35H04F764C(LQFP216)
 ********************/
 
 #include "NuMicro.h"
+#include "rtconfig.h"
 
 void nutool_pincfg_init_adc0(void)
 {
@@ -186,6 +187,40 @@ void nutool_pincfg_init_lcm(void)
     SYS->GPI_MFPH |= (SYS_GPI_MFPH_PI15MFP_LCM_DATA7 | SYS_GPI_MFPH_PI14MFP_LCM_DATA6 | SYS_GPI_MFPH_PI13MFP_LCM_DATA5 | SYS_GPI_MFPH_PI12MFP_LCM_DATA4 | SYS_GPI_MFPH_PI11MFP_LCM_DATA3 | SYS_GPI_MFPH_PI10MFP_LCM_DATA2 | SYS_GPI_MFPH_PI9MFP_LCM_DATA1 | SYS_GPI_MFPH_PI8MFP_LCM_DATA0);
     SYS->GPK_MFPL &= ~(SYS_GPK_MFPL_PK4MFP_Msk);
     SYS->GPK_MFPL |= (SYS_GPK_MFPL_PK4MFP_LCM_DEN);
+
+#if defined(BOARD_USING_VDDIO4_1_8V)
+    /* Set 1.8v */
+    GPIO_SetPowerMode(PG, BIT10, 0);
+#endif
+
+    GPIO_SetPullCtl(PG, (BIT8 | BIT9 | BIT10), GPIO_PUSEL_DISABLE);
+    GPIO_SetPullCtl(PK, (BIT4), GPIO_PUSEL_DISABLE);
+    GPIO_SetPullCtl(PI, (BIT8 | BIT9 | BIT10 | BIT11 | BIT12 | BIT13 | BIT14 | BIT15), GPIO_PUSEL_DISABLE);
+    GPIO_SetPullCtl(PH, (BIT0 | BIT1 | BIT2 | BIT3 | BIT4 | BIT5 | BIT6 | BIT7), GPIO_PUSEL_DISABLE);
+    GPIO_SetPullCtl(PC, (BIT12 | BIT13 | BIT14 | BIT15), GPIO_PUSEL_DISABLE);
+    GPIO_SetPullCtl(PH, (BIT12 | BIT13 | BIT14 | BIT15), GPIO_PUSEL_DISABLE);
+
+    GPIO_SetSchmittTriggere(PG, (BIT8 | BIT9), 1); // Except clk, PG10
+    GPIO_SetSchmittTriggere(PK, (BIT4), 1);
+    GPIO_SetSchmittTriggere(PI, (BIT8 | BIT9 | BIT10 | BIT11 | BIT12 | BIT13 | BIT14 | BIT15), 1);
+    GPIO_SetSchmittTriggere(PH, (BIT0 | BIT1 | BIT2 | BIT3 | BIT4 | BIT5 | BIT6 | BIT7), 1);
+    GPIO_SetSchmittTriggere(PC, (BIT12 | BIT13 | BIT14 | BIT15), 1);
+    GPIO_SetSchmittTriggere(PH, (BIT12 | BIT13 | BIT14 | BIT15), 1);
+
+    GPIO_SetSlewCtl(PG, (BIT8 | BIT9 | BIT10), GPIO_SLEWCTL_NORMAL);
+    GPIO_SetSlewCtl(PK, (BIT4), GPIO_SLEWCTL_NORMAL);
+    GPIO_SetSlewCtl(PI, (BIT8 | BIT9 | BIT10 | BIT11 | BIT12 | BIT13 | BIT14 | BIT15), GPIO_SLEWCTL_NORMAL);
+    GPIO_SetSlewCtl(PH, (BIT0 | BIT1 | BIT2 | BIT3 | BIT4 | BIT5 | BIT6 | BIT7), GPIO_SLEWCTL_NORMAL);
+    GPIO_SetSlewCtl(PC, (BIT12 | BIT13 | BIT14 | BIT15), GPIO_SLEWCTL_NORMAL);
+    GPIO_SetSlewCtl(PH, (BIT12 | BIT13 | BIT14 | BIT15), GPIO_SLEWCTL_NORMAL);
+
+#define DEF_LCM_DRIVING     7
+    GPIO_SetDrivingCtl(PG, (BIT8 | BIT9 | BIT10), DEF_LCM_DRIVING);
+    GPIO_SetDrivingCtl(PK, (BIT4), DEF_LCM_DRIVING);
+    GPIO_SetDrivingCtl(PI, (BIT8 | BIT9 | BIT10 | BIT11 | BIT12 | BIT13 | BIT14 | BIT15), DEF_LCM_DRIVING);
+    GPIO_SetDrivingCtl(PH, (BIT0 | BIT1 | BIT2 | BIT3 | BIT4 | BIT5 | BIT6 | BIT7), DEF_LCM_DRIVING);
+    GPIO_SetDrivingCtl(PC, (BIT12 | BIT13 | BIT14 | BIT15), DEF_LCM_DRIVING);
+    GPIO_SetDrivingCtl(PH, (BIT12 | BIT13 | BIT14 | BIT15), DEF_LCM_DRIVING);
 
     return;
 }
@@ -372,9 +407,15 @@ void nutool_pincfg_init(void)
     nutool_pincfg_init_epwm1();
     nutool_pincfg_init_hsusb0();
     nutool_pincfg_init_hsusbh();
+#if defined(BSP_USING_I2C0)
     nutool_pincfg_init_i2c0();
+#endif
+#if defined(BSP_USING_I2C4)
     nutool_pincfg_init_i2c4();
+#endif
+#if defined(BSP_USING_I2C5)
     nutool_pincfg_init_i2c5();
+#endif
     nutool_pincfg_init_i2s0();
     nutool_pincfg_init_lcm();
     nutool_pincfg_init_nand();
@@ -396,9 +437,15 @@ void nutool_pincfg_deinit(void)
     nutool_pincfg_deinit_epwm1();
     nutool_pincfg_deinit_hsusb0();
     nutool_pincfg_deinit_hsusbh();
+#if defined(BSP_USING_I2C0)
     nutool_pincfg_deinit_i2c0();
+#endif
+#if defined(BSP_USING_I2C4)
     nutool_pincfg_deinit_i2c4();
+#endif
+#if defined(BSP_USING_I2C5)
     nutool_pincfg_deinit_i2c5();
+#endif
     nutool_pincfg_deinit_i2s0();
     nutool_pincfg_deinit_lcm();
     nutool_pincfg_deinit_nand();

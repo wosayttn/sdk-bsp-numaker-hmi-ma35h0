@@ -24,7 +24,7 @@
 #define LOG_TAG    "drv.canfd"
 #undef  DBG_ENABLE
 #define DBG_SECTION_NAME   LOG_TAG
-#define DBG_LEVEL       LOG_LVL_ERROR
+#define DBG_LEVEL          LOG_LVL_ERROR
 #define DBG_COLOR
 #include <rtdbg.h>
 
@@ -290,25 +290,83 @@ static rt_err_t nu_canfd_configure(struct rt_can_device *can, struct can_configu
 {
     nu_canfd_t psNuCANFD  = (nu_canfd_t)can;
     CANFD_FD_T *psCANFDConf;
+    CANFD_ELEM_SIZE_T *psCANFDElemSize;
+    uint32_t u32UsedRamSize;
 
     RT_ASSERT(can);
     RT_ASSERT(cfg);
 
-    psCANFDConf = &psNuCANFD->sCANFD_Config;
-
     /* Get base address of CAN register */
     CANFD_T *base = psNuCANFD->base;
 
-    CANFD_GetDefaultConfig(psCANFDConf, CANFD_OP_CAN_MODE);
+    psCANFDConf = &psNuCANFD->sCANFD_Config;
 
-    LOG_I("Message Ram Size: %d @%08x ~ %08x",    psCANFDConf->u32MRamSize, CANFD_SRAM_BASE_ADDR(base), psCANFDConf->u32MRamSize + CANFD_SRAM_BASE_ADDR(base));
-    LOG_I("SIDFC: %d @%08x Size:%d",       psCANFDConf->sElemSize.u32SIDFC, CANFD_SRAM_BASE_ADDR(base) + psCANFDConf->sMRamStartAddr.u32SIDFC_FLSSA, psCANFDConf->sElemSize.u32SIDFC * sizeof(CANFD_STD_FILTER_T));
-    LOG_I("XIDFC: %d @%08x Size:%d",       psCANFDConf->sElemSize.u32XIDFC, CANFD_SRAM_BASE_ADDR(base) + psCANFDConf->sMRamStartAddr.u32XIDFC_FLESA, psCANFDConf->sElemSize.u32XIDFC * sizeof(CANFD_EXT_FILTER_T));
-    LOG_I("RxFifo0: %d @%08x Size:%d",     psCANFDConf->sElemSize.u32RxFifo0, CANFD_SRAM_BASE_ADDR(base) + psCANFDConf->sMRamStartAddr.u32RXF0C_F0SA, psCANFDConf->sElemSize.u32RxFifo0 * sizeof(CANFD_BUF_T));
-    LOG_I("RxFifo1: %d @%08x Size:%d",     psCANFDConf->sElemSize.u32RxFifo1, CANFD_SRAM_BASE_ADDR(base) + psCANFDConf->sMRamStartAddr.u32RXF1C_F1SA, psCANFDConf->sElemSize.u32RxFifo1 * sizeof(CANFD_BUF_T));
-    LOG_I("RxBuf: %d @%08x Size:%d",       psCANFDConf->sElemSize.u32RxBuf, CANFD_SRAM_BASE_ADDR(base) + psCANFDConf->sMRamStartAddr.u32RXBC_RBSA, psCANFDConf->sElemSize.u32RxBuf * sizeof(CANFD_BUF_T));
-    LOG_I("TxEventFifo: %d @%08x Size:%d", psCANFDConf->sElemSize.u32TxEventFifo, CANFD_SRAM_BASE_ADDR(base) + psCANFDConf->sMRamStartAddr.u32TXEFC_EFSA, psCANFDConf->sElemSize.u32TxEventFifo * sizeof(CANFD_EXT_FILTER_T));
-    LOG_I("TxBuf: %d @%08x Size:%d",       psCANFDConf->sElemSize.u32TxBuf, CANFD_SRAM_BASE_ADDR(base) + psCANFDConf->sMRamStartAddr.u32TXBC_TBSA, psCANFDConf->sElemSize.u32TxBuf * sizeof(CANFD_BUF_T));
+    psCANFDElemSize = &psCANFDConf->sElemSize;
+
+    /* CAN FD Standard message ID elements as 16 elements */
+    psCANFDElemSize->u32SIDFC = 16;
+    /* CAN FD Extended message ID elements as 16 elements */
+    psCANFDElemSize->u32XIDFC = 16;
+    /* CAN FD TX Buffer elements as 16 elements */
+    psCANFDElemSize->u32TxBuf = 16;
+    /* CAN FD Tx FIFO/Queue elements as 16 elements */
+    psCANFDElemSize->u32TxFifoQueue = 16;
+    /* CAN FD RX Buffer elements as 16 elements */
+    psCANFDElemSize->u32RxBuf = 16;
+    /* CAN FD RX FIFO0 elements as 16 elements */
+    psCANFDElemSize->u32RxFifo0 = 16;
+    /* CAN FD RX FIFO1 elements as 16 elements */
+    psCANFDElemSize->u32RxFifo1 = 16;
+    /* CAN FD TX Event FIFO elements as 16 elements */
+    psCANFDElemSize->u32TxEventFifo = 16;
+    /* User-defined element size. */
+    psCANFDElemSize->u32UserDef = 1;
+
+    /*Calculates the CAN FD RAM buffer address*/
+    u32UsedRamSize = CANFD_GetDefaultConfig(psCANFDConf, CANFD_OP_CAN_MODE);
+
+    LOG_I("Message Ram Size: %d @%08x ~ %08x, Used: %d Bytes",
+          psCANFDConf->u32MRamSize,
+          CANFD_SRAM_BASE_ADDR(base),
+          psCANFDConf->u32MRamSize + CANFD_SRAM_BASE_ADDR(base),
+          u32UsedRamSize);
+
+    LOG_I("SIDFC: %d @%08x Size: %dB",
+          psCANFDConf->sElemSize.u32SIDFC,
+          CANFD_SRAM_BASE_ADDR(base) + psCANFDConf->sMRamStartAddr.u32SIDFC_FLSSA,
+          psCANFDConf->sElemSize.u32SIDFC * sizeof(CANFD_SID_FILTER_T));
+
+    LOG_I("XIDFC: %d @%08x Size: %dB",
+          psCANFDConf->sElemSize.u32XIDFC,
+          CANFD_SRAM_BASE_ADDR(base) + psCANFDConf->sMRamStartAddr.u32XIDFC_FLESA,
+          psCANFDConf->sElemSize.u32XIDFC * sizeof(CANFD_XID_FILTER_T));
+
+    LOG_I("RxFifo0: %d @%08x Size: %dB",
+          psCANFDConf->sElemSize.u32RxFifo0,
+          CANFD_SRAM_BASE_ADDR(base) + psCANFDConf->sMRamStartAddr.u32RXF0C_F0SA,
+          psCANFDConf->sElemSize.u32RxFifo0 * sizeof(CANFD_RX_BUF_T));
+
+    LOG_I("RxFifo1: %d @%08x Size: %dB",
+          psCANFDConf->sElemSize.u32RxFifo1,
+          CANFD_SRAM_BASE_ADDR(base) + psCANFDConf->sMRamStartAddr.u32RXF1C_F1SA,
+          psCANFDConf->sElemSize.u32RxFifo1 * sizeof(CANFD_RX_BUF_T));
+
+    LOG_I("RxBuf: %d @%08x Size: %dB",
+          psCANFDConf->sElemSize.u32RxBuf,
+          CANFD_SRAM_BASE_ADDR(base) + psCANFDConf->sMRamStartAddr.u32RXBC_RBSA,
+          psCANFDConf->sElemSize.u32RxBuf * sizeof(CANFD_RX_BUF_T));
+
+    LOG_I("TxEventFifo: %d @%08x Size: %dB",
+          psCANFDConf->sElemSize.u32TxEventFifo,
+          CANFD_SRAM_BASE_ADDR(base) + psCANFDConf->sMRamStartAddr.u32TXEFC_EFSA,
+          psCANFDConf->sElemSize.u32TxEventFifo * sizeof(CANFD_TX_EVENT_T));
+
+    LOG_I("TxBuf: %d @%08x Size: %dB",
+          psCANFDConf->sElemSize.u32TxBuf,
+          CANFD_SRAM_BASE_ADDR(base) + psCANFDConf->sMRamStartAddr.u32TXBC_TBSA,
+          psCANFDConf->sElemSize.u32TxBuf * sizeof(CANFD_TX_BUF_T));
+
+    RT_ASSERT(u32UsedRamSize <= psCANFDConf->u32MRamSize);
 
     psCANFDConf->sBtConfig.sNormBitRate.u32BitRate = cfg->baud_rate;
     psCANFDConf->sBtConfig.sDataBitRate.u32BitRate = 0;
@@ -374,13 +432,15 @@ static rt_err_t nu_canfd_control(struct rt_can_device *can, int cmd, void *arg)
     switch (cmd)
     {
     case RT_DEVICE_CTRL_SET_INT:
+    {
         psNuCANFD->int_flag |= argval;
         return nu_canfd_configure(can, &can->config);
-
+    }
     case RT_DEVICE_CTRL_CLR_INT:
+    {
         psNuCANFD->int_flag &= ~argval;
         return nu_canfd_configure(can, &can->config);
-
+    }
 #if defined(RT_CAN_USING_HDR)
     case RT_CAN_CMD_SET_FILTER:
     {
@@ -396,7 +456,7 @@ static rt_err_t nu_canfd_control(struct rt_can_device *can, int cmd, void *arg)
             if (filter_cfg->items[i].ide == RT_CAN_STDID)
             {
                 /* for 11-bit */
-                CANFD_STD_FILTER_T sStdFilter;
+                CANFD_SID_FILTER_T sStdFilter;
 
                 if (i >= CANFD_MAX_11_BIT_FTR_ELEMS)  // Check filter entry limitation
                     return -(RT_ERROR);
@@ -406,12 +466,12 @@ static rt_err_t nu_canfd_control(struct rt_can_device *can, int cmd, void *arg)
                 sStdFilter.SFEC  = u32FEC;                       /*!<Standard Filter Element Configuration */ //001b: Store in Rx FIFO 0 if filter matches
                 sStdFilter.SFT   = eCANFD_SID_FLTR_TYPE_CLASSIC; /*!<Standard Filter Type */ //10b: Classic filter: SFID1 = filter, SFID2 = mask
 
-                CANFD_SetSIDFltr(psNuCANFD->base, i, sStdFilter.VALUE);
+                CANFD_Transfer(psNuCANFD->base, eCANFD_MSG_SID, &sStdFilter, i);
             }
             else
             {
                 /* for 29-bit */
-                CANFD_EXT_FILTER_T sXidFilter;
+                CANFD_XID_FILTER_T sXidFilter;
 
                 if (i >= CANFD_MAX_29_BIT_FTR_ELEMS) // Check filter entry limitation
                     return -(RT_ERROR);
@@ -421,7 +481,7 @@ static rt_err_t nu_canfd_control(struct rt_can_device *can, int cmd, void *arg)
                 sXidFilter.EFEC  = u32FEC;                        /*!<Extended Filter Element Configuration */ //001b: Store in Rx FIFO 0 if filter matches
                 sXidFilter.EFT   = eCANFD_XID_FLTR_TYPE_CLASSIC;  /*!<Extended Filter Type */ //10b: Classic filter: SFID1 = filter, SFID2 = mask
 
-                CANFD_SetXIDFltr(psNuCANFD->base, i, sXidFilter.LOWVALUE, sXidFilter.HIGHVALUE);
+                CANFD_Transfer(psNuCANFD->base, eCANFD_MSG_XID, &sXidFilter, i);
             }
 
         } //for (int i = 0; i < filter_cfg->count; i++)
@@ -430,6 +490,7 @@ static rt_err_t nu_canfd_control(struct rt_can_device *can, int cmd, void *arg)
 #endif
 
     case RT_CAN_CMD_SET_MODE:
+    {
         if ((argval == RT_CAN_MODE_NORMAL) ||
                 (argval == RT_CAN_MODE_LISTEN) ||
                 (argval == RT_CAN_MODE_LOOPBACK) ||
@@ -445,7 +506,8 @@ static rt_err_t nu_canfd_control(struct rt_can_device *can, int cmd, void *arg)
         {
             return -(RT_ERROR);
         }
-        break;
+    }
+    break;
 
     case RT_CAN_CMD_SET_BAUD:
     {
@@ -473,6 +535,7 @@ static rt_err_t nu_canfd_control(struct rt_can_device *can, int cmd, void *arg)
     break;
 
     case RT_CAN_CMD_SET_PRIV:
+    {
         if (argval != RT_CAN_MODE_PRIV &&
                 argval != RT_CAN_MODE_NOPRIV)
         {
@@ -483,7 +546,8 @@ static rt_err_t nu_canfd_control(struct rt_can_device *can, int cmd, void *arg)
             can->config.privmode = argval;
             return nu_canfd_configure(can, &can->config);
         }
-        break;
+    }
+    break;
 
     case RT_CAN_CMD_GET_STATUS:
     {
@@ -521,68 +585,52 @@ static rt_err_t nu_canfd_control(struct rt_can_device *can, int cmd, void *arg)
 
 static int nu_canfd_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t boxno)
 {
-    CANFD_FD_MSG_T sTxMsg;
-    struct rt_can_msg *pmsg;
+    CANFD_TX_BUF_T sTxMsg = {0};
+
+    struct rt_can_msg *pmsg = (struct rt_can_msg *)buf;
     nu_canfd_t psNuCANFD = (nu_canfd_t)can;
 
     RT_ASSERT(can);
     RT_ASSERT(buf);
 
-    pmsg = (struct rt_can_msg *) buf;
+    /* Extended ID */
+    sTxMsg.XTD = pmsg->ide;
 
-    if (pmsg->ide == RT_CAN_STDID && IS_CAN_STDID(pmsg->id))
+    /* Message ID */
+    if (sTxMsg.XTD)
     {
-        /* Standard ID (11 bits)*/
-        sTxMsg.u32Id = pmsg->id;
-        sTxMsg.eIdType = eCANFD_SID;
-    }
-    else if (pmsg->ide == RT_CAN_EXTID && IS_CAN_EXTID(pmsg->id))
-    {
-        /* Extended ID (29 bits)*/
-        sTxMsg.u32Id = pmsg->id;
-        sTxMsg.eIdType = eCANFD_XID;
+        /* 29-bit ID */
+        sTxMsg.ID = pmsg->id;
     }
     else
     {
-        goto exit_nu_canfd_sendmsg;
+        /* 11-bit ID */
+        sTxMsg.ID = CANFD_SET_SID(pmsg->id);
     }
 
-    sTxMsg.bBitRateSwitch = 0;
+    /* Bit Rate Switch in data phase. */
+    sTxMsg.BRS = 0;
 
-    if (pmsg->rtr == RT_CAN_DTR)
-    {
-        /* Data frame */
-        sTxMsg.eFrmType = eCANFD_DATA_FRM;
-    }
-    else if (pmsg->rtr == RT_CAN_RTR)
-    {
-        /* Remote frame */
-        sTxMsg.eFrmType = eCANFD_REMOTE_FRM;
-    }
-    else
-    {
-        goto exit_nu_canfd_sendmsg;
-    }
+    /* Remote Transmission Request */
+    sTxMsg.RTR = pmsg->rtr;
 
     /* Check the parameters */
-    if (IS_CAN_DLC(pmsg->len))
-    {
-        sTxMsg.u32DLC = pmsg->len;
-    }
-    else
-    {
-        goto exit_nu_canfd_sendmsg;
-    }
-
     if (pmsg->len > 0)
     {
-        rt_memcpy(&sTxMsg.au8Data[0], pmsg->data, pmsg->len);
+        sTxMsg.DLC = CANFD_EncodeDLC(pmsg->len);
+
+        if (pmsg->len > 0)
+        {
+            rt_memcpy(&sTxMsg.DB[0], &pmsg->data[0], pmsg->len);
+        }
     }
 
-    if (!CANFD_TransmitTxMsg(psNuCANFD->base, 0, &sTxMsg))
+    if (CANFD_Transfer(psNuCANFD->base, eCANFD_MSG_DTB, &sTxMsg, boxno) == NULL)
     {
         goto exit_nu_canfd_sendmsg;
     }
+
+    //LOG_HEX("WriteCAN", 16, (void *)&sTxMsg, sizeof(CANFD_TX_BUF_T));
 
     return RT_EOK;
 
@@ -593,21 +641,23 @@ exit_nu_canfd_sendmsg:
 
 static int nu_canfd_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t boxno)
 {
-    CANFD_FD_MSG_T sRxMsg;
+    CANFD_RX_BUF_T sRxMsg;
     struct rt_can_msg *pmsg;
     nu_canfd_t psNuCANFD = (nu_canfd_t)can;
 
     RT_ASSERT(can);
     RT_ASSERT(buf);
 
-    pmsg = (struct rt_can_msg *) buf;
-
     /* get data */
-    if (CANFD_ReadRxFifoMsg(psNuCANFD->base, 0, &sRxMsg) == FALSE)
+    if (CANFD_Transfer(psNuCANFD->base, eCANFD_MSG_RF0, &sRxMsg, 0) == NULL)
     {
         rt_kprintf("No available RX Msg.\n");
         return -(RT_ERROR);
     }
+
+    //LOG_HEX("ReadCAN", 16, (void *)&sRxMsg, sizeof(CANFD_RX_BUF_T));
+
+    pmsg = (struct rt_can_msg *) buf;
 
 #ifdef RT_CAN_USING_HDR
     /* Hardware filter messages are valid */
@@ -615,13 +665,21 @@ static int nu_canfd_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t bo
     can->hdr[pmsg->hdr_index].connected = 1;
 #endif
 
-    pmsg->ide = (sRxMsg.eIdType == eCANFD_SID) ? RT_CAN_STDID : RT_CAN_EXTID;
-    pmsg->rtr = (sRxMsg.eFrmType == eCANFD_DATA_FRM) ? RT_CAN_DTR : RT_CAN_RTR;
-    pmsg->id  = sRxMsg.u32Id;
-    pmsg->len = sRxMsg.u32DLC;
+    pmsg->ide = (sRxMsg.XTD) ? RT_CAN_EXTID : RT_CAN_STDID;
+    if (pmsg->ide == RT_CAN_EXTID)
+    {
+        pmsg->id  = sRxMsg.ID;
+    }
+    else
+    {
+        pmsg->id = CANFD_GET_SID(sRxMsg.ID);
+    }
+
+    pmsg->rtr = (sRxMsg.RTR) ? RT_CAN_RTR : RT_CAN_DTR;
+    pmsg->len = CANFD_DecodeDLC(sRxMsg.DLC);
 
     if (pmsg->len > 0)
-        rt_memcpy(&pmsg->data[0], &sRxMsg.au8Data[0], pmsg->len);
+        rt_memcpy(&pmsg->data[0], &sRxMsg.DB[0], pmsg->len);
 
     return RT_EOK;
 }

@@ -68,9 +68,9 @@ enum GMACPhyBase
     #define RECEIVE_DESC_SIZE       1024 //Rx Descriptors needed in the Descriptor pool/queue
     #define MAX_ETHERNET_PAYLOAD    JUMBO_FRAME_PAYLOAD
 #else
-    #if defined(SOC_SERIES_MA35D1)
+    #if defined(CONFIG_SOC_SERIES_MA35D1)
         #define TRANSMIT_DESC_SIZE      4096   //Tx Descriptors needed in the Descriptor pool/queue
-        #define RECEIVE_DESC_SIZE       8192  //Rx Descriptors needed in the Descriptor pool/queue
+        #define RECEIVE_DESC_SIZE       8192   //Rx Descriptors needed in the Descriptor pool/queue
     #else
         #define TRANSMIT_DESC_SIZE      256   //Tx Descriptors needed in the Descriptor pool/queue
         #define RECEIVE_DESC_SIZE       512   //Rx Descriptors needed in the Descriptor pool/queue

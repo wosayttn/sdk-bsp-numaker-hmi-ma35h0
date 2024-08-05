@@ -15,11 +15,15 @@
 
 #include "NuMicro.h"
 #include <rtdevice.h>
-#include <dfs_file.h>
-#include <unistd.h>
+
+#if defined(RT_USING_DFS)
+    #include <dfs_file.h>
+    #include <unistd.h>
+    #include <sys/stat.h>
+    #include <sys/statfs.h>
+#endif
+
 #include <stdio.h>
-#include <sys/stat.h>
-#include <sys/statfs.h>
 #include "touch.h"
 //#include "drv_adc.h"
 #include "adc_touch.h"
@@ -489,6 +493,8 @@ const static S_COORDINATE_POINT sDispPoints[DEF_CAL_POINT_NUM] =
 };
 #endif
 
+#if defined(RT_USING_DFS)
+
 static int nu_adc_touch_readfile(void)
 {
     static int loaded = 0;
@@ -543,6 +549,7 @@ exit_nu_adc_touch_writefile:
 
     return -1;
 }
+#endif
 
 static void nu_touch_do_calibration(rt_device_t pdev)
 {
@@ -559,6 +566,8 @@ static void nu_touch_do_calibration(rt_device_t pdev)
         return;
     }
 
+    rt_kprintf("%s %d\n", __func__, __LINE__);
+
     result = rt_device_control(lcd_device, RTGRAPHIC_CTRL_GET_INFO, &info);
     if (result != RT_EOK)
     {
@@ -566,23 +575,33 @@ static void nu_touch_do_calibration(rt_device_t pdev)
         return;
     }
 
+    rt_kprintf("%s %d\n", __func__, __LINE__);
+
     result = rt_device_open(lcd_device, 0);
     if (result != RT_EOK)
     {
         rt_kprintf("opened?");
     }
 
+    rt_kprintf("%s %d\n", __func__, __LINE__);
+
     rt_device_control(lcd_device, RTGRAPHIC_CTRL_PAN_DISPLAY, info.framebuffer);
 
+    rt_kprintf("%s %d\n", __func__, __LINE__);
+
     rt_device_control(lcd_device, RTGRAPHIC_CTRL_POWERON, RT_NULL);
+
+    rt_kprintf("%s %d\n", __func__, __LINE__);
 
     for (i = 0; i < DEF_CAL_POINT_NUM; i++)
     {
         struct rt_touch_data sTouchPoint;
         int count = 0;
+        rt_kprintf("%s %d\n", __func__, __LINE__);
 
         /* Drain RX queue before doing calibrate. */
         while (adc_request_point(pdev, &sTouchPoint) == RT_EOK);
+        rt_kprintf("%s %d\n", __func__, __LINE__);
 
         rt_thread_mdelay(100);
 
@@ -628,7 +647,9 @@ static void nu_touch_do_calibration(rt_device_t pdev)
         /* Finally, update calibration matrix to drivers. */
         nu_adc_touch_update_calmat(&sCalMat);
 
+#if defined(RT_USING_DFS)
         nu_adc_touch_writefile(&sCalMat, sizeof(sCalMat));
+#endif
 
         for (i = 0; i < DEF_CAL_POINT_NUM; i++)
         {
@@ -697,7 +718,9 @@ static void adc_touch_entry(void *parameter)
             continue;
         }
 
+#if defined(RT_USING_DFS)
         nu_adc_touch_readfile();
+#endif
 
         if (adc_request_point(pdev, &touch_point) == RT_EOK)
         {

@@ -17,7 +17,9 @@
 #define FT_MAX_TOUCH             5
 #define FT5446_ADDRESS           0x38
 
-#pragma anon_unions
+#if defined(__CC_ARM)   /* ARMCC compiler */
+    #pragma anon_unions
+#endif
 
 typedef struct
 {
@@ -84,8 +86,10 @@ typedef struct
 
 } S_FT_TP;
 
+#if defined(__CC_ARM)   /* ARMCC compiler */
 #pragma pack(push)
 #pragma pack(4)
+#endif
 
 typedef struct
 {
@@ -126,7 +130,10 @@ typedef struct
     S_FT_TP m_sTP[FT_MAX_TOUCH];
 
 } S_FT_REGMAP;
+
+#if defined(__CC_ARM)   /* ARMCC compiler */
 #pragma pack(pop)
+#endif
 
 int rt_hw_ft5446_init(const char *name, struct rt_touch_config *cfg);
 

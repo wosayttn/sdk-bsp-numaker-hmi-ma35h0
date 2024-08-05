@@ -9,8 +9,6 @@
 #ifndef _NAND_H_
 #define _NAND_H_
 
-//#include <config.h>
-
 /*
  * All boards using a given driver must convert to self-init
  * at the same time, so do it here.  When all drivers are

@@ -42,7 +42,14 @@ INCBIN(vde_jpeg, PATH_JPEG_INCBIN);
 #define DEF_ROW     1
 #define DEF_COLUM   DEF_ROW
 #define DEF_MAX_DECODING_INSTANCE   1
-#define DEF_H264D_ONLY     1
+
+#define DEF_H264D_ONLY     0
+#if defined(DEF_H264D_ONLY) && (DEF_H264D_ONLY==1)
+    #define USE_PP      1
+#else
+    //#define USE_PP      0 // For rendering JPEG decoding directly
+    #define USE_PP      1
+#endif
 
 typedef struct
 {
@@ -56,7 +63,7 @@ typedef struct
 static int index = 0;
 static uint32_t fbsize, fbaddr, fbpicese;
 static rt_device_t psDevLcd = RT_NULL;
-static struct rt_device_graphic_info gfx_info;
+static struct rt_device_graphic_info s_GfxInfo;
 
 static int vde_save_file(const void *data, size_t size)
 {
@@ -94,10 +101,14 @@ exit_ccap_save_file:
     return wrote_size;
 }
 
-static void pp_pic_flush(void *buf_addr, uint32_t buf_size)
+static void pic_flush(VDE_FLUSH_CXT *psVDEFlushCtx)
 {
-    if (psDevLcd && buf_addr && buf_size)
-        rt_device_control(psDevLcd, RTGRAPHIC_CTRL_PAN_DISPLAY, buf_addr);
+    RT_ASSERT(psVDEFlushCtx != RT_NULL);
+
+    if (psDevLcd && psVDEFlushCtx->u32FrameBufAddr && psVDEFlushCtx->u32FrameBufSize)
+    {
+        rt_device_control(psDevLcd, RTGRAPHIC_CTRL_PAN_DISPLAY, (void *)psVDEFlushCtx->u32FrameBufAddr);
+    }
 }
 
 static void vde_decoder(void *parameter)
@@ -105,8 +116,6 @@ static void vde_decoder(void *parameter)
     int ret;
     uint8_t   *file_ptr;
     int   handle = -1;
-    struct pp_params pp = {0};
-
     S_VDE_VIWE_PARAM sVDEViewParam = *((S_VDE_VIWE_PARAM *)parameter);
 
     if (parameter)
@@ -114,28 +123,15 @@ static void vde_decoder(void *parameter)
         rt_free(parameter);
     }
 
-    pp.frame_buf_w = gfx_info.width;
-    pp.frame_buf_h = gfx_info.height;
-    pp.img_out_x = (gfx_info.width / sVDEViewParam.i32RowNum) * (sVDEViewParam.i32Index % sVDEViewParam.i32RowNum);
-    pp.img_out_y = (gfx_info.height / sVDEViewParam.i32ColumNum) * (sVDEViewParam.i32Index / sVDEViewParam.i32ColumNum);
-    pp.img_out_w = gfx_info.width / sVDEViewParam.i32RowNum;
-    pp.img_out_h = gfx_info.height / sVDEViewParam.i32ColumNum;
-#if 1
+#if USE_PP
+    struct pp_params pp = {0};
+    pp.frame_buf_w = s_GfxInfo.width;
+    pp.frame_buf_h = s_GfxInfo.height;
+    pp.img_out_x = (s_GfxInfo.width / sVDEViewParam.i32RowNum) * (sVDEViewParam.i32Index % sVDEViewParam.i32RowNum);
+    pp.img_out_y = (s_GfxInfo.height / sVDEViewParam.i32ColumNum) * (sVDEViewParam.i32Index / sVDEViewParam.i32ColumNum);
+    pp.img_out_w = s_GfxInfo.width / sVDEViewParam.i32RowNum;
+    pp.img_out_h = s_GfxInfo.height / sVDEViewParam.i32ColumNum;
     pp.img_out_fmt = VC8000_PP_F_NV12;
-#else
-    {
-        pp.img_out_fmt = VC8000_PP_F_RGB565;   // bad color
-        //pp.img_out_fmt = VC8000_PP_F_YUV422; // fail
-        //pp.img_out_fmt = VC8000_PP_F_NV12;   // fail
-        int pixfmt = RTGRAPHIC_PIXEL_FORMAT_RGB565;
-        ret = rt_device_control(psDevLcd, RTGRAPHIC_CTRL_SET_MODE, &pixfmt);
-        if (ret != RT_EOK)
-        {
-            LOG_E("Can't set mode %s", DEF_LAYER_NAME);
-            goto exit_vde_decoder;
-        }
-    }
-#endif
 
     pp.rotation = VC8000_PP_ROTATION_NONE;
     pp.pp_out_dst = fbaddr;
@@ -146,6 +142,7 @@ static void vde_decoder(void *parameter)
           sVDEViewParam.i32ColumNum,
           sVDEViewParam.i32Index,
           pp.img_out_x, pp.img_out_y, pp.img_out_w, pp.img_out_h, pp.pp_out_dst);
+#endif
 
     LOG_I("START decoding.");
 
@@ -156,11 +153,11 @@ static void vde_decoder(void *parameter)
 
         if (DEF_H264D_ONLY || sVDEViewParam.i32Index & 0x1)
         {
-            handle = VC8000_Open(VC8000_CODEC_H264, pp_pic_flush);
+            handle = VC8000_Open(VC8000_CODEC_H264, pic_flush);
         }
         else
         {
-            handle = VC8000_Open(VC8000_CODEC_JPEG, pp_pic_flush);
+            handle = VC8000_Open(VC8000_CODEC_JPEG, pic_flush);
         }
 
         if (handle < 0)
@@ -169,12 +166,14 @@ static void vde_decoder(void *parameter)
             goto exit_vde_decoder;
         }
 
+#if USE_PP
         ret = VC8000_PostProcess(handle, &pp);
         if (ret < 0)
         {
             LOG_E("VC8000_PostProcess failed! (%d)\n", ret);
             goto exit_vde_decoder;
         }
+#endif
 
         if (DEF_H264D_ONLY || sVDEViewParam.i32Index & 0x1)
         {
@@ -192,7 +191,7 @@ static void vde_decoder(void *parameter)
 
         do
         {
-            ret = VC8000_Decode(handle, file_ptr, bs_len, RT_NULL, &remain);
+            ret = VC8000_Decode(handle, file_ptr, bs_len, (USE_PP ? RT_NULL : (uint8_t *)fbaddr), &remain);
             if (ret != 0)
             {
                 LOG_E("VC8000_Decode error: %d\n", ret);
@@ -221,12 +220,14 @@ static void vde_decoder(void *parameter)
 
 exit_vde_decoder:
 
-
     if (handle >= 0)
     {
         VC8000_Close(handle);
         handle = -1;
     }
+
+    if (DEF_H264D_ONLY != 1)  // JPEG
+        rt_thread_mdelay(10000);
 
     if (psDevLcd)
         rt_device_close(psDevLcd);
@@ -256,23 +257,23 @@ static int vde_demo(void)
     }
 
     /* Get LCD Info */
-    ret = rt_device_control(psDevLcd, RTGRAPHIC_CTRL_GET_INFO, &gfx_info);
+    ret = rt_device_control(psDevLcd, RTGRAPHIC_CTRL_GET_INFO, &s_GfxInfo);
     if (ret != RT_EOK)
     {
         LOG_E("Can't get LCD info %s", DEF_LAYER_NAME);
         return -1;
     }
 
-    LOG_I("LCD Width: %d",   gfx_info.width);
-    LOG_I("LCD Height: %d",  gfx_info.height);
-    LOG_I("LCD bpp:%d",   gfx_info.bits_per_pixel);
-    LOG_I("LCD pixel format:%d",   gfx_info.pixel_format);
-    LOG_I("LCD frame buffer@0x%08x",   gfx_info.framebuffer);
-    LOG_I("LCD frame buffer size:%d",   gfx_info.smem_len);
+    LOG_I("LCD Width: %d",   s_GfxInfo.width);
+    LOG_I("LCD Height: %d",  s_GfxInfo.height);
+    LOG_I("LCD bpp:%d",   s_GfxInfo.bits_per_pixel);
+    LOG_I("LCD pixel format:%d",   s_GfxInfo.pixel_format);
+    LOG_I("LCD frame buffer@0x%08x",   s_GfxInfo.framebuffer);
+    LOG_I("LCD frame buffer size:%d",   s_GfxInfo.smem_len);
 
-    fbsize = (gfx_info.width * gfx_info.height * gfx_info.bits_per_pixel / 8);
-    fbpicese = gfx_info.smem_len / fbsize;
-    fbaddr = (uint32_t)gfx_info.framebuffer;
+    fbsize = (s_GfxInfo.width * s_GfxInfo.height * s_GfxInfo.bits_per_pixel / 8);
+    fbpicese = s_GfxInfo.smem_len / fbsize;
+    fbaddr = (uint32_t)s_GfxInfo.framebuffer;
 
     /* open lcd */
     ret = rt_device_open(psDevLcd, 0);

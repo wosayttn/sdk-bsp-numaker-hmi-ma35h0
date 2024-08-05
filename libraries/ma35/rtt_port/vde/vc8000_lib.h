@@ -58,8 +58,15 @@ extern "C"
 #define VC8000_PP_ROTATION_VER_FLIP   4 /*!< PP output image vertical flip */
 #define VC8000_PP_ROTATION_180        5 /*!< PP output image rotate 180 degree */
 
+typedef struct
+{
+    uint32_t u32ImgWidth;        /*!< width of frame buffer */
+    uint32_t u32ImgHeight;       /*!< height of frame buffer */
+    uint32_t u32FrameBufAddr;    /*!< start address of frame buffer */
+    uint32_t u32FrameBufSize;    /*!< size of frame buffer */
+} VDE_FLUSH_CXT;
 
-typedef void (*pfnPicFlush)(void *buf_addr, uint32_t buf_size);
+typedef void (*pfnPicFlush)(VDE_FLUSH_CXT* psVDEFlushCtx);
 
 struct pp_params
 {
@@ -119,17 +126,6 @@ int VC8000_Open(E_VC8000_CODEC codec, pfnPicFlush pic_flush);
   * @retval   < 0   Failed. Refer to error code definitions.
   */
 int VC8000_PostProcess(int handle, struct pp_params *pp);
-
-/**
-  * @brief    Set the YUV plane base address of JPEG decode output.
-  * @param[in]  handle  Handle of the VC8000 JPEG decode instance
-  * @param[in]  y_addr   Base address of JPEG decode output Y plane
-  * @param[in]  u_addr   Base address of JPEG decode output U plane
-  * @param[in]  v_addr   Base address of JPEG decode output V plane
-  * @retval   0     Success
-  * @retval   < 0   Failed. Refer to error code definitions.
-  */
-int VC8000_JPEG_Set_YUV_Address(int handle, uint32_t y_addr, uint32_t u_addr, uint32_t v_addr);
 
 /**
   * @brief    Perform decode. It will decode one frame and return

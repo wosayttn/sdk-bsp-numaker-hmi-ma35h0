@@ -29,6 +29,7 @@
 
 static rt_device_t s_psSndDev = RT_NULL;
 static rt_device_t s_psLcdDev = RT_NULL;
+static struct rt_device_graphic_info s_GfxInfo = {0};
 
 void
 Render_VideoFlush(
@@ -68,6 +69,8 @@ Render_Final(void)
         rt_device_close(s_psLcdDev);
     }
 
+    rt_memset(&s_GfxInfo, 0, sizeof(struct rt_device_graphic_info));
+
     s_psSndDev = RT_NULL;
     s_psLcdDev = RT_NULL;
 }
@@ -80,75 +83,83 @@ Render_Init(
 )
 {
     rt_err_t ret;
-    struct rt_audio_caps caps;
-    struct rt_device_graphic_info gfx_info;
 
-    s_psLcdDev = rt_device_find(LCD_DEVICE_NAME);
-    s_psSndDev = rt_device_find(SOUND_DEVICE_NAME);
-    if (s_psSndDev == RT_NULL || s_psLcdDev == RT_NULL)
-        return -1;
-
-    /* Get LCD Info */
-    if (rt_device_control(s_psLcdDev, RTGRAPHIC_CTRL_GET_INFO, &gfx_info) != RT_EOK)
+    /* Video */
+    if (psFlushVideoCtx)
     {
-        printf("Can't get LCD info %s\n", "lcd");
-        goto exit_Render_Init;
-    }
+        s_psLcdDev = rt_device_find(LCD_DEVICE_NAME);
+        if (s_psLcdDev == RT_NULL)
+            goto exit_Render_Init;
+
+        /* Get LCD Info */
+        if (rt_device_control(s_psLcdDev, RTGRAPHIC_CTRL_GET_INFO, &s_GfxInfo) != RT_EOK)
+        {
+            printf("Can't get LCD info %s\n", "lcd");
+            goto exit_Render_Init;
+        }
 
 #if 0
-    printf("LCD Width: %d\n",   gfx_info.width);
-    printf("LCD Height: %d\n",  gfx_info.height);
-    printf("LCD bpp:%d\n",   gfx_info.bits_per_pixel);
-    printf("LCD pixel format:%d\n",   gfx_info.pixel_format);
-    printf("LCD frame buffer@0x%08x\n",   gfx_info.framebuffer);
-    printf("LCD frame buffer size:%d\n",   gfx_info.smem_len);
+        printf("LCD Width: %d\n",   s_GfxInfo.width);
+        printf("LCD Height: %d\n",  s_GfxInfo.height);
+        printf("LCD bpp:%d\n",   s_GfxInfo.bits_per_pixel);
+        printf("LCD pixel format:%d\n",   s_GfxInfo.pixel_format);
+        printf("LCD frame buffer@0x%08x\n",   s_GfxInfo.framebuffer);
+        printf("LCD frame buffer size:%d\n",   s_GfxInfo.smem_len);
 #endif
 
-    //Setup video flush context
-    //psFlushVideoCtx->eVideoType = eNM_CTX_VIDEO_RGB888;
-    //psFlushVideoCtx->u32DataSize = gfx_info.width * gfx_info.height * 4; // for ARGB
+        //Setup video flush context
+        //psFlushVideoCtx->eVideoType = eNM_CTX_VIDEO_RGB888;
+        //psFlushVideoCtx->u32DataSize = s_GfxInfo.width * s_GfxInfo.height * 4; // for ARGB
 
-    psFlushVideoCtx->eVideoType = eNM_CTX_VIDEO_NV12;
-    psFlushVideoCtx->u32DataSize = gfx_info.width * gfx_info.height * 2; // for NV12
+        psFlushVideoCtx->eVideoType = eNM_CTX_VIDEO_NV12;
+        psFlushVideoCtx->u32DataSize = s_GfxInfo.width * s_GfxInfo.height * 2; // for NV12
 
-    psFlushVideoCtx->u32Width = gfx_info.width;
-    psFlushVideoCtx->u32Height = gfx_info.height;
-    psFlushVideoCtx->pu8DataBuf = gfx_info.framebuffer;
-    psFlushVideoCtx->u32DataLimit = gfx_info.smem_len;
+        psFlushVideoCtx->u32Width = s_GfxInfo.width;
+        psFlushVideoCtx->u32Height = s_GfxInfo.height;
+        psFlushVideoCtx->pu8DataBuf = s_GfxInfo.framebuffer;
+        psFlushVideoCtx->u32DataLimit = s_GfxInfo.smem_len;
 
-    int pixfmt = RTGRAPHIC_PIXEL_FORMAT_NV12;
+        int pixfmt = RTGRAPHIC_PIXEL_FORMAT_NV12;
 
-    if (rt_device_control(s_psLcdDev, RTGRAPHIC_CTRL_SET_MODE, &pixfmt) != RT_EOK)
-    {
-        printf("Can't get LCD info %s\n", "lcd");
-        goto exit_Render_Init;
+        if (rt_device_control(s_psLcdDev, RTGRAPHIC_CTRL_SET_MODE, &pixfmt) != RT_EOK)
+        {
+            printf("Can't get LCD info %s\n", "lcd");
+            goto exit_Render_Init;
+        }
+
+        /* open lcd */
+        if (rt_device_open(s_psLcdDev, 0) != RT_EOK)
+        {
+            goto exit_Render_Init;
+        }
     }
 
-    /* open lcd */
-    if (rt_device_open(s_psLcdDev, 0) != RT_EOK)
+    if (u32AudioChannel > 0)
     {
-        s_psLcdDev = NULL;
-        goto exit_Render_Init;
-    }
+        struct rt_audio_caps caps;
 
-    // Just play sound, so set write only.
-    ret = rt_device_open(s_psSndDev, RT_DEVICE_OFLAG_WRONLY);
-    if (ret != RT_EOK)
-    {
-        s_psSndDev = NULL;
-        goto exit_Render_Init;
-    }
+        s_psSndDev = rt_device_find(SOUND_DEVICE_NAME);
+        if (s_psSndDev == RT_NULL)
+            goto exit_Render_Init;
 
-    caps.main_type               = AUDIO_TYPE_OUTPUT;
-    caps.sub_type                = AUDIO_DSP_PARAM;
-    caps.udata.config.samplerate = u32AudioSampleRate;
-    caps.udata.config.channels   = u32AudioChannel;
-    caps.udata.config.samplebits = 16;
+        // Just play sound, so set write only.
+        ret = rt_device_open(s_psSndDev, RT_DEVICE_OFLAG_WRONLY);
+        if (ret != RT_EOK)
+        {
+            goto exit_Render_Init;
+        }
 
-    ret = rt_device_control(s_psSndDev, AUDIO_CTL_CONFIGURE, &caps);
-    if (ret != RT_EOK)
-    {
-        goto exit_Render_Init;
+        caps.main_type               = AUDIO_TYPE_OUTPUT;
+        caps.sub_type                = AUDIO_DSP_PARAM;
+        caps.udata.config.samplerate = u32AudioSampleRate;
+        caps.udata.config.channels   = u32AudioChannel;
+        caps.udata.config.samplebits = 16;
+
+        ret = rt_device_control(s_psSndDev, AUDIO_CTL_CONFIGURE, &caps);
+        if (ret != RT_EOK)
+        {
+            goto exit_Render_Init;
+        }
     }
 
     return 0;

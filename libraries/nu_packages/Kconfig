@@ -184,6 +184,58 @@ menu "Nuvoton Packages Config"
 
         endif
 
+    config NU_PKG_USING_LT7381
+        bool "LT7381 LCD Panel"
+        select BSP_USING_GPIO
+        default n
+
+        if NU_PKG_USING_LT7381
+
+            choice
+                prompt "Select LT7381 interface"
+
+                config NU_PKG_USING_LT7381_EBI
+                    select BSP_USING_EBI
+                    bool "LT7381_EBI"
+                help
+                    Choose this option if you the LT7381 device is with EBI interface.
+            endchoice
+
+            config NU_PKG_LT7381_WITH_OFFSCREEN_FRAMEBUFFER
+                bool "Create an offscreen framebuffer."
+                default n
+
+            if NU_PKG_LT7381_WITH_OFFSCREEN_FRAMEBUFFER
+                config NU_PKG_LT7381_LINE_BUFFER_NUMBER
+                    int "Allocate Line buffer number."
+                    range 16 480
+                    default  480
+            endif
+
+            config BSP_LCD_BPP
+                int
+                default 16     if NU_PKG_USING_LT7381
+
+            config BSP_LCD_WIDTH
+                int
+                default 800    if NU_PKG_USING_LT7381
+
+            config BSP_LCD_HEIGHT
+                int
+                default 480    if NU_PKG_USING_LT7381
+
+        endif
+
+    if BSP_USING_EBI
+        config NU_PKG_EBI_I80_CMD
+            hex "EBI I80 Command offset"
+            default 0x0
+
+        config NU_PKG_EBI_I80_DATA
+            hex "EBI I80 Data offset"
+            default 0x0
+    endif
+
     config NU_PKG_USING_TPC
         bool "Support Touch Panel Controller over I2C"
         select RT_USING_TOUCH
@@ -238,7 +290,7 @@ menu "Nuvoton Packages Config"
         if NU_PKG_USING_ADC_TOUCH_SERIAL
             config NU_PKG_SERIAL_TOUCH_DEVNAME
                 string "uart1"
-                default "uart1"     
+                default "uart1"
         endif
     endif
 
@@ -252,5 +304,48 @@ menu "Nuvoton Packages Config"
         bool "Using RV3032-C7 RTC."
         select RT_USING_RTC
         default n
+
+    if BSP_USING_DISP
+
+        config NU_PKG_USING_DISPLIB
+            bool "DISP Converter"
+            select BSP_USING_GPIO
+            select BSP_USING_I2C
+
+        if NU_PKG_USING_DISPLIB
+            choice
+                prompt "Select one DISP converter"
+
+                config NU_PKG_USING_DISPLIB_LT8918
+                    bool "RGB to MIPI(LT8918)"
+                    help
+                    Choose this option if you the LT8918 device.
+
+                config NU_PKG_USING_DISPLIB_LT8618
+                    bool "RGB to HDMI(LT8618)"
+                    help
+                    Choose this option if you the LT8618 device.
+
+                config NU_PKG_USING_DISPLIB_LT8718
+                    bool "RGB to eDP(LT8718)"
+                    help
+                    Choose this option if you the LT8718 device.
+            endchoice
+
+            config NU_PKG_USING_DISPLIB_I2C_DEVNAME
+                string "Specify I2C Name"
+                select RT_USING_I2C
+                default "i2c1"
+                help
+                    Specify I2C device name.
+
+            config NU_PKG_USING_DISPLIB_RST_IDXNUM
+                int "Specify Rst Pin Index Number"
+                select RT_USING_PIN
+                default 204
+                help
+                    Specify Reset Pin Index Number(Default: PM12).
+        endif
+    endif
 
 endmenu
