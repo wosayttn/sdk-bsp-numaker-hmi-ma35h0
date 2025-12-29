@@ -58,6 +58,7 @@
 #define RT_CONSOLEBUF_SIZE 4096
 #define RT_CONSOLE_DEVICE_NAME "uart0"
 #define RT_VER_NUM 0x50000
+#define RT_USING_CACHE
 #define ARCH_ARM
 #define RT_USING_CPU_FFS
 #define ARCH_ARM_CORTEX_A
@@ -211,16 +212,17 @@
 #define RT_LWIP_TCP
 #define RT_LWIP_RAW
 #define RT_MEMP_NUM_NETCONN 32
-#define RT_LWIP_PBUF_NUM 16384
+#define RT_LWIP_PBUF_NUM 4096
 #define RT_LWIP_RAW_PCB_NUM 32
 #define RT_LWIP_UDP_PCB_NUM 32
 #define RT_LWIP_TCP_PCB_NUM 32
-#define RT_LWIP_TCP_SEG_NUM 8192
+#define RT_LWIP_TCP_SEG_NUM 256
 #define RT_LWIP_TCP_SND_BUF 32768
-#define RT_LWIP_TCP_WND 16384
+#define RT_LWIP_TCP_WND 65535
 #define RT_LWIP_TCPTHREAD_PRIORITY 12
 #define RT_LWIP_TCPTHREAD_MBOX_SIZE 4096
 #define RT_LWIP_TCPTHREAD_STACKSIZE 4096
+#define LWIP_NO_RX_THREAD
 #define LWIP_NO_TX_THREAD
 #define RT_LWIP_ETHTHREAD_PRIORITY 10
 #define RT_LWIP_ETHTHREAD_STACKSIZE 4096
@@ -258,9 +260,6 @@
 #define RT_USING_UTEST
 #define UTEST_THR_STACK_SIZE 4096
 #define UTEST_THR_PRIORITY 20
-
-/* RT-Thread Utestcases */
-
 
 /* RT-Thread online packages */
 
@@ -304,11 +303,11 @@
 
 #define PKG_USING_LVGL
 #define PKG_LVGL_THREAD_PRIO 20
-#define PKG_LVGL_THREAD_STACK_SIZE 4096
+#define PKG_LVGL_THREAD_STACK_SIZE 8192
 #define PKG_LVGL_DISP_REFR_PERIOD 16
 #define PKG_LVGL_USING_DEMOS
-#define PKG_LVGL_USING_V08035
-#define PKG_LVGL_VER_NUM 0x080305
+#define PKG_LVGL_USING_V09010
+#define PKG_LVGL_VER_NUM 0x090100
 
 /* u8g2: a monochrome graphic library */
 
@@ -339,7 +338,16 @@
 /* STM32 HAL & SDK Drivers */
 
 
+/* Infineon HAL Packages */
+
+
 /* Kendryte SDK */
+
+
+/* WCH HAL & SDK Drivers */
+
+
+/* AT32 HAL & SDK Drivers */
 
 
 /* sensors drivers */
@@ -480,7 +488,5 @@
 #define NU_PKG_USING_ADC_TOUCH
 #define NU_PKG_USING_ADC_TOUCH_HW
 #define NU_PKG_USING_SPINAND
-#define UTEST_CMD_PREFIX "bsp.nuvoton.utest."
-#define BOARD_USE_UTEST
 
 #endif

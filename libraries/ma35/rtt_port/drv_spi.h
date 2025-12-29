@@ -1,27 +1,31 @@
 /**************************************************************************//**
 *
-* @copyright (C) 2020 Nuvoton Technology Corp. All rights reserved.
+* @copyright (C) 2024 Nuvoton Technology Corp. All rights reserved.
 *
 * SPDX-License-Identifier: Apache-2.0
 *
 * Change Logs:
-* Date            Author           Notes
-* 2020-2-7        Wayne            First version
+* Date            Author       Notes
+* 2024-4-1        Wayne        First version
 *
 ******************************************************************************/
 
 #ifndef __DRV_SPI_H__
 #define __DRV_SPI_H__
 
-#include <rtconfig.h>
+#include "rtconfig.h"
 
 #include <rtdevice.h>
 #include "NuMicro.h"
-#include <nu_bitutil.h>
-#include <drv_sys.h>
+#include "nu_bitutil.h"
+#include "drv_sys.h"
 
 #if defined(BSP_USING_SPI_PDMA)
     #include <drv_pdma.h>
+#endif
+
+#ifndef NU_SPI_USE_PDMA_MIN_THRESHOLD
+    #define NU_SPI_USE_PDMA_MIN_THRESHOLD (128)
 #endif
 
 struct nu_spi
@@ -30,13 +34,13 @@ struct nu_spi
     char *name;
     SPI_T *spi_base;
     uint32_t rstidx;
-    uint32_t dummy;
+    uint32_t* dummy;
 #if defined(BSP_USING_SPI_PDMA)
-    int16_t pdma_perp_tx;
-    int8_t  pdma_chanid_tx;
-    int16_t pdma_perp_rx;
-    int8_t  pdma_chanid_rx;
-    rt_sem_t m_psSemBus;
+    int32_t  pdma_perp_tx;
+    int32_t  pdma_chanid_tx;
+    int32_t  pdma_perp_rx;
+    int32_t  pdma_chanid_rx;
+    rt_sem_t  m_psSemBus;
 #endif
     struct rt_qspi_configuration  configuration;
 };

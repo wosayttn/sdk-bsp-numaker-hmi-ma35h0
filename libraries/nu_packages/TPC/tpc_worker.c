@@ -65,9 +65,9 @@ static void tpc_entry(void *parameter)
     rt_device_set_rx_indicate(dev, rx_callback);
 
     rt_device_control(dev, RT_TOUCH_CTRL_GET_INFO, &info);
-    rt_kprintf("range_x = %d \n",   info.range_x);
-    rt_kprintf("range_y = %d \n",   info.range_y);
-    rt_kprintf("point_num = %d \n", info.point_num);
+    //rt_kprintf("range_x = %d \n",   info.range_x);
+    //rt_kprintf("range_y = %d \n",   info.range_y);
+    //rt_kprintf("point_num = %d \n", info.point_num);
 
     read_data = (struct rt_touch_data *)rt_malloc(sizeof(struct rt_touch_data) * info.point_num);
     RT_ASSERT(read_data);

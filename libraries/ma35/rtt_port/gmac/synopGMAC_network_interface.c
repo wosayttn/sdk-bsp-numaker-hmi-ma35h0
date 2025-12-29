@@ -42,9 +42,14 @@ void synopGMAC_powerup_mac(synopGMACdevice *gmacdev)
 {
     gmacdev->GMAC_Power_down = 0;    // Let ISR know that MAC is out of power down now
     if (synopGMAC_is_magic_packet_received(gmacdev))
+    {
         TR("GMAC wokeup due to Magic Pkt Received\n");
+    }
     if (synopGMAC_is_wakeup_frame_received(gmacdev))
+    {
         TR("GMAC wokeup due to Wakeup Frame Received\n");
+    }
+
     //Disable the assertion of PMT interrupt
     synopGMAC_pmt_int_disable(gmacdev);
     //Enable the mac and Dma rx and tx paths
@@ -92,58 +97,6 @@ void synopGMAC_powerdown_mac(synopGMACdevice *gmacdev)
     return;
 }
 
-#if 0
-void synopGMAC_powerdown_mac(synopGMACdevice *gmacdev)
-{
-    TR0("Put the GMAC to power down mode..\n");
-    // Disable the Dma engines in tx path
-    GMAC_Power_down = 1;    // Let ISR know that Mac is going to be in the power down mode
-    synopGMAC_disable_dma_tx(gmacdev);
-    plat_delay(DEFAULT_LOOP_VARIABLE);      //allow any pending transmission to complete
-    // Disable the Mac for both tx and rx
-    synopGMAC_tx_disable(gmacdev);
-    synopGMAC_rx_disable(gmacdev);
-    plat_delay(DEFAULT_LOOP_VARIABLE);      //Allow any pending buffer to be read by host
-    //Disable the Dma in rx path
-    synopGMAC_disable_dma_rx(gmacdev);
-
-    //enable the power down mode
-    //synopGMAC_pmt_unicast_enable(gmacdev);
-
-    //prepare the gmac for magic packet reception and wake up frame reception
-    synopGMAC_magic_packet_enable(gmacdev);
-
-    //gate the application and transmit clock inputs to the code. This is not done in this driver :).
-
-    //enable the Mac for reception
-    synopGMAC_rx_enable(gmacdev);
-
-    //Enable the assertion of PMT interrupt
-    synopGMAC_pmt_int_enable(gmacdev);
-    //enter the power down mode
-    synopGMAC_power_down_enable(gmacdev);
-    return;
-}
-
-void synopGMAC_powerup_mac(synopGMACdevice *gmacdev)
-{
-    GMAC_Power_down = 0;    // Let ISR know that MAC is out of power down now
-    if (synopGMAC_is_magic_packet_received(gmacdev))
-        TR("GMAC wokeup due to Magic Pkt Received\n");
-    if (synopGMAC_is_wakeup_frame_received(gmacdev))
-        TR("GMAC wokeup due to Wakeup Frame Received\n");
-    //Disable the assertion of PMT interrupt
-    synopGMAC_pmt_int_disable(gmacdev);
-    //Enable the mac and Dma rx and tx paths
-    synopGMAC_rx_enable(gmacdev);
-    synopGMAC_enable_dma_rx(gmacdev);
-
-    synopGMAC_tx_enable(gmacdev);
-    synopGMAC_enable_dma_tx(gmacdev);
-    return;
-}
-#endif
-
 /**
   * This sets up the transmit Descriptor queue in ring or chain mode.
   * This function is tightly coupled to the platform and operating system
@@ -170,21 +123,22 @@ void synopGMAC_powerup_mac(synopGMACdevice *gmacdev)
 
 s32 synopGMAC_setup_tx_desc_queue(synopGMACdevice *gmacdev, DmaDesc *first_desc, u32 no_of_desc, u32 desc_mode)
 {
-    s32 i;
+    u32 i;
+    synopGAC_UNUSED(desc_mode);
 
     TR("Total size of memory required for Tx Descriptors in Ring Mode = 0x%08x\n", ((sizeof(DmaDesc) * no_of_desc)));
 
     gmacdev->TxDescCount = no_of_desc;
 
 #ifdef CACHE_ON
-    gmacdev->TxDesc      = (DmaDesc *)((u32)first_desc | UNCACHEABLE) ;
+    gmacdev->TxDesc      = (DmaDesc *)PA2VA(first_desc) ;
 #else
     gmacdev->TxDesc      = first_desc;
 #endif
 
     gmacdev->TxDescDma   = (dma_addr_t)first_desc;
 
-    for (i = 0; i < gmacdev -> TxDescCount; i++)
+    for (i = 0; i < gmacdev->TxDescCount; i++)
     {
         synopGMAC_tx_desc_init_ring((DmaDesc *)gmacdev->TxDesc + i, i == gmacdev->TxDescCount - 1);
 
@@ -236,13 +190,14 @@ s32 synopGMAC_setup_tx_desc_queue(synopGMACdevice *gmacdev, DmaDesc *first_desc,
   */
 s32 synopGMAC_setup_rx_desc_queue(synopGMACdevice *gmacdev, DmaDesc *first_desc, u32 no_of_desc, u32 desc_mode)
 {
-    s32 i;
+    u32 i;
+    synopGAC_UNUSED(desc_mode);
 
     TR("total size of memory required for Rx Descriptors in Ring Mode = 0x%08x\n", ((sizeof(DmaDesc) * no_of_desc)));
 
     gmacdev->RxDescCount = no_of_desc;
 #ifdef CACHE_ON
-    gmacdev->RxDesc      = (DmaDesc *)((u32)first_desc | UNCACHEABLE) ;
+    gmacdev->RxDesc      = (DmaDesc *)PA2VA(first_desc);
 #else
     gmacdev->RxDesc      = first_desc;
 #endif
@@ -250,7 +205,7 @@ s32 synopGMAC_setup_rx_desc_queue(synopGMACdevice *gmacdev, DmaDesc *first_desc,
 
     for (i = 0; i < gmacdev -> RxDescCount; i++)
     {
-        synopGMAC_rx_desc_init_ring((DmaDesc *)gmacdev->RxDesc + i, i == gmacdev->RxDescCount - 1);
+        synopGMAC_rx_desc_init_ring((DmaDesc *)gmacdev->RxDesc + i, (i == (gmacdev->RxDescCount - 1)));
         TR("%02d %08x \n", i, (unsigned int)(gmacdev->RxDesc + i));
     }
 
@@ -286,8 +241,11 @@ s32 synopGMAC_setup_rx_desc_queue(synopGMACdevice *gmacdev, DmaDesc *first_desc,
   */
 void synopGMAC_giveup_rx_desc_queue(synopGMACdevice *gmacdev, u32 desc_mode)
 {
+    synopGAC_UNUSED(desc_mode);
+
     gmacdev->RxDesc    = NULL;
     gmacdev->RxDescDma = 0;
+
     return;
 }
 
@@ -312,7 +270,7 @@ void synopGMAC_giveup_rx_desc_queue(synopGMACdevice *gmacdev, u32 desc_mode)
   */
 void synopGMAC_giveup_tx_desc_queue(synopGMACdevice *gmacdev, u32 desc_mode)
 {
-
+    synopGAC_UNUSED(desc_mode);
 
     gmacdev->TxDesc    = NULL;
     gmacdev->TxDescDma = 0;
@@ -459,7 +417,6 @@ void synop_handle_transmit_over(synopGMACdevice *gmacdev)
  * \return void.
  * \note This function runs in interrupt context.
  */
-extern DmaDesc *prevtx;   // for CRC test
 s32 synop_handle_received_data(synopGMACdevice *gmacdev, PKT_FRAME_T **ppsPktFrame)
 {
     u32 data1;
@@ -525,23 +482,25 @@ s32 synop_handle_received_data(synopGMACdevice *gmacdev, PKT_FRAME_T **ppsPktFra
             else     // No extended status. So relevant information is available in the status itself
             {
                 uint32_t u32Status;
-                static const char *s_szRxChkSumStatus[] =
-                {
-                    "IEEE 802.3 type frame Length field is Less than 0x0600",
-                    "Payload & Ip header checksum bypassed (unsuppported payload)",
-                    "Reserved",
-                    "Neither IPv4 nor IPV6. So checksum bypassed",
-                    "No IPv4/IPv6 Checksum error detected",
-                    "Payload checksum error detected for Ipv4/Ipv6 frames",
-                    "Ip header checksum error detected for Ipv4 frames",
-                    "Payload & Ip header checksum error detected for Ipv4/Ipv6 frames"
-                };
 
                 u32Status = synopGMAC_is_rx_checksum_error(gmacdev, status);
 
                 if (RxNoChkError != u32Status)
                 {
+#ifdef DEBUG
+                    static const char *s_szRxChkSumStatus[] =
+                    {
+                        "IEEE 802.3 type frame Length field is Less than 0x0600",
+                        "Payload & Ip header checksum bypassed (unsuppported payload)",
+                        "Reserved",
+                        "Neither IPv4 nor IPV6. So checksum bypassed",
+                        "No IPv4/IPv6 Checksum error detected",
+                        "Payload checksum error detected for Ipv4/Ipv6 frames",
+                        "Ip header checksum error detected for Ipv4 frames",
+                        "Payload & Ip header checksum error detected for Ipv4/Ipv6 frames"
+                    };
                     TR("%s %d\n", s_szRxChkSumStatus[u32Status], u32Status);
+#endif
                 }
 
                 switch (u32Status)

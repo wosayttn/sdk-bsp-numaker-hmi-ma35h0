@@ -34,7 +34,7 @@ menu "Hardware Drivers Config"
             select RT_USING_MTD_NAND
             default y
 
-        config BOARD_USING_STORAGE_SPIFLASH
+        config BOARD_USING_QSPI_FLASH
             bool "SPI NOR FLASH supporting(over qspi0)"
             select BSP_USING_QSPI
             select BSP_USING_QSPI0

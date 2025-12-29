@@ -18,6 +18,7 @@
 
 #if defined(BSP_USING_ADC_TOUCH)
     #include "touch.h"
+    #include "adc_touch.h"
 #endif
 
 typedef enum

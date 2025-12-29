@@ -6,7 +6,7 @@
 *
 * Change Logs:
 * Date            Author           Notes
-* 2020-11-11      Wayne            First version
+* 2024-3-1        Wayne            First version
 *
 ******************************************************************************/
 #include <rtconfig.h>
@@ -24,14 +24,9 @@
 #include <rtdevice.h>
 #include <rtdef.h>
 
-#include <drv_spi.h>
-
+#include "drv_spi.h"
 
 /* Private define ---------------------------------------------------------------*/
-
-#ifndef NU_SPI_USE_PDMA_MIN_THRESHOLD
-    #define NU_SPI_USE_PDMA_MIN_THRESHOLD (128)
-#endif
 
 enum
 {
@@ -194,7 +189,14 @@ static rt_err_t nu_spi_bus_configure(struct rt_spi_device *device,
     {
         rt_memcpy(&spi_bus->configuration, configuration, sizeof(*configuration));
 
-        SPI_Open(spi_bus->spi_base, SPI_MASTER, u32SPIMode, configuration->data_width, configuration->max_hz);
+        SPI_Open(spi_bus->spi_base,
+                 (configuration->mode & RT_SPI_SLAVE) ? SPI_SLAVE : SPI_MASTER,
+                 u32SPIMode,
+                 configuration->data_width,
+                 configuration->max_hz);
+
+        /* Disable Auto-selection function. */
+        SPI_DisableAutoSS(spi_bus->spi_base);
 
         if (configuration->mode & RT_SPI_CS_HIGH)
         {
@@ -247,10 +249,10 @@ exit_nu_spi_bus_configure:
 #if defined(BSP_USING_SPI_PDMA)
 static void nu_pdma_spi_rx_cb_event(void *pvUserData, uint32_t u32EventFilter)
 {
-    rt_err_t result = RT_EOK;
+    rt_err_t result;
     struct nu_spi *spi_bus = (struct nu_spi *)pvUserData;
 
-    RT_ASSERT(spi_bus != RT_NULL);
+    RT_ASSERT(spi_bus);
 
     result = rt_sem_release(spi_bus->m_psSemBus);
     RT_ASSERT(result == RT_EOK);
@@ -278,7 +280,7 @@ static rt_err_t nu_pdma_spi_rx_config(struct nu_spi *spi_bus, uint8_t *pu8Buf, i
 {
     struct nu_pdma_chn_cb sChnCB;
 
-    rt_err_t result = RT_EOK;
+    rt_err_t result;
     rt_uint8_t *dst_addr = NULL;
     nu_pdma_memctrl_t memctrl = eMemCtl_Undefined;
 
@@ -293,6 +295,7 @@ static rt_err_t nu_pdma_spi_rx_config(struct nu_spi *spi_bus, uint8_t *pu8Buf, i
     sChnCB.m_eCBType = eCBType_Event;
     sChnCB.m_pfnCBHandler = nu_pdma_spi_rx_cb_event;
     sChnCB.m_pvUserData = (void *)spi_bus;
+
     result = nu_pdma_callback_register(spi_pdma_rx_chid, &sChnCB);
     if (result != RT_EOK)
     {
@@ -312,7 +315,7 @@ static rt_err_t nu_pdma_spi_rx_config(struct nu_spi *spi_bus, uint8_t *pu8Buf, i
     if (pu8Buf == RT_NULL)
     {
         memctrl  = eMemCtl_SrcFix_DstFix;
-        dst_addr = (rt_uint8_t *) &spi_bus->dummy;
+        dst_addr = (rt_uint8_t *) &spi_bus->dummy[0];
     }
     else
     {
@@ -332,6 +335,7 @@ static rt_err_t nu_pdma_spi_rx_config(struct nu_spi *spi_bus, uint8_t *pu8Buf, i
                               (uint32_t)dst_addr,
                               i32RcvLen / bytes_per_word,
                               0);
+
 exit_nu_pdma_spi_rx_config:
 
     return result;
@@ -341,7 +345,7 @@ static rt_err_t nu_pdma_spi_tx_config(struct nu_spi *spi_bus, const uint8_t *pu8
 {
     struct nu_pdma_chn_cb sChnCB;
 
-    rt_err_t result = RT_EOK;
+    rt_err_t result;
     rt_uint8_t *src_addr = NULL;
     nu_pdma_memctrl_t memctrl = eMemCtl_Undefined;
 
@@ -352,9 +356,9 @@ static rt_err_t nu_pdma_spi_tx_config(struct nu_spi *spi_bus, const uint8_t *pu8
 
     if (pu8Buf == RT_NULL)
     {
-        spi_bus->dummy = 0;
+        spi_bus->dummy[0] = 0;
         memctrl = eMemCtl_SrcFix_DstFix;
-        src_addr = (rt_uint8_t *)&spi_bus->dummy;
+        src_addr = (rt_uint8_t *)&spi_bus->dummy[0];
     }
     else
     {
@@ -533,11 +537,11 @@ static void nu_spi_transmission_with_poll(struct nu_spi *spi_bus,
     // Read-only
     else if ((send_addr == RT_NULL) && (recv_addr != RT_NULL))
     {
-        spi_bus->dummy = 0;
+        spi_bus->dummy[0] = 0;
         while (length > 0)
         {
             /* Input data to SPI TX FIFO */
-            length -= nu_spi_write(spi_base, (const uint8_t *)&spi_bus->dummy, bytes_per_word);
+            length -= nu_spi_write(spi_base, (const uint8_t *)&spi_bus->dummy[0], bytes_per_word);
 
             /* Read data from RX FIFO */
             recv_addr += nu_spi_read(spi_base, recv_addr, bytes_per_word);
@@ -586,18 +590,26 @@ void nu_spi_transfer(struct nu_spi *spi_bus, uint8_t *tx, uint8_t *rx, int lengt
     RT_ASSERT(spi_bus != RT_NULL);
 
 #if defined(BSP_USING_SPI_PDMA)
-    /* DMA transfer constrains */
+    /* Slave role, always use PDMA to get higher performance. */
     if ((spi_bus->pdma_chanid_rx >= 0) &&
             !((uint32_t)tx % bytes_per_word) &&
             !((uint32_t)rx % bytes_per_word) &&
             (bytes_per_word != 3) &&
-            (length >= NU_SPI_USE_PDMA_MIN_THRESHOLD))
+            ((spi_bus->spi_base->CTL & SPI_CTL_SLAVE_Msk) || (length >= NU_SPI_USE_PDMA_MIN_THRESHOLD)))
+        /* DMA transfer constrains */
         nu_spi_pdma_transmit(spi_bus, tx, rx, length, bytes_per_word);
     else
-        nu_spi_transmission_with_poll(spi_bus, tx, rx, length, bytes_per_word);
-#else
-    nu_spi_transmission_with_poll(spi_bus, tx, rx, length, bytes_per_word);
 #endif
+    {
+        if (spi_bus->spi_base->CTL & SPI_CTL_SLAVE_Msk)
+        {
+            /* Slave role */
+            /* please use PDMA to get higher performance. */
+            RT_ASSERT(0);
+        }
+
+        nu_spi_transmission_with_poll(spi_bus, tx, rx, length, bytes_per_word);
+    }
 }
 
 static rt_uint32_t nu_spi_bus_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
@@ -627,6 +639,7 @@ static rt_uint32_t nu_spi_bus_xfer(struct rt_spi_device *device, struct rt_spi_m
     {
         if (message->cs_take && !(configuration->mode & RT_SPI_NO_CS))
         {
+
             if (pvUserData != RT_NULL)
             {
                 if (configuration->mode & RT_SPI_CS_HIGH)
@@ -704,18 +717,22 @@ static int rt_hw_spi_init(void)
     {
         nu_sys_ip_reset(nu_spi_arr[i].rstidx);
 
-        nu_spi_register_bus(&nu_spi_arr[i], nu_spi_arr[i].name);
 #if defined(BSP_USING_SPI_PDMA)
         nu_spi_arr[i].pdma_chanid_tx = -1;
         nu_spi_arr[i].pdma_chanid_rx = -1;
+
         if ((nu_spi_arr[i].pdma_perp_tx != NU_PDMA_UNUSED) && (nu_spi_arr[i].pdma_perp_rx != NU_PDMA_UNUSED))
         {
             if (nu_hw_spi_pdma_allocate(&nu_spi_arr[i]) != RT_EOK)
             {
-                LOG_W("Failed to allocate DMA channels for %s. We will use poll-mode for this bus.\n", nu_spi_arr[i].name);
+                LOG_I("Failed to allocate DMA channels for %s. We will use poll-mode for this bus.\n", nu_spi_arr[i].name);
             }
         }
+
+        nu_spi_arr[i].dummy = rt_malloc_align(RT_ALIGN_SIZE, RT_ALIGN_SIZE);
+        RT_ASSERT(nu_spi_arr[i].dummy);
 #endif
+        nu_spi_register_bus(&nu_spi_arr[i], nu_spi_arr[i].name);
     }
 
     return 0;

@@ -11,7 +11,7 @@
 #ifndef __MII_H__
 #define __MII_H__
 
-#include "synopGMAC_types.h"
+#include "synopGMAC_plat.h"
 
 #define MII_BMCR            0x00        /* Basic mode control register */
 #define MII_BMSR            0x01        /* Basic mode status register  */

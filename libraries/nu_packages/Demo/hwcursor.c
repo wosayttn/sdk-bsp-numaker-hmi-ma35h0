@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <sys/statfs.h>
+#include "drv_common.h"
 
 //#undef DBG_ENABLE
 #define DBG_LEVEL   LOG_LVL_INFO
@@ -26,7 +27,6 @@
 #define DBG_SECTION_NAME  "hwcursor"
 #include <rtdbg.h>
 
-/* Link to rtthread.bin in ma35-rtp folder. */
 #define PATH_ICON_INCBIN          ".//default.ico"
 INCBIN(cursor, PATH_ICON_INCBIN);
 

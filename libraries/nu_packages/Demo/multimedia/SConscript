@@ -1,0 +1,19 @@
+Import('RTT_ROOT')
+
+from building import *
+import os
+
+group = []
+
+if GetDepend('USE_MA35_AARCH32'):
+    cwd = GetCurrentDir()
+    src = Glob('*.c')
+    CPPPATH = [cwd]
+    group = DefineGroup('NU_PKG_USING_DEMO', src, depend = ['BSP_USING_VDE'], CPPPATH = CPPPATH)
+
+    list = os.listdir(cwd)
+    for item in list:
+        if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+            group = group + SConscript(os.path.join(item, 'SConscript'))
+
+Return('group')

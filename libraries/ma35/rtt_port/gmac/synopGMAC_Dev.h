@@ -37,7 +37,6 @@
 
 
 #include "synopGMAC_plat.h"
-#include "synopGMAC_types.h"
 
 /*SynopGMAC can support up to 32 phys*/
 
@@ -63,19 +62,10 @@ enum GMACPhyBase
 #define JUMBO_FRAME_PAYLOAD       9000  //Jumbo frame payload size
 #define NORMAL_FRAME_PAYLOAD      1492  //Normal frame payload size
 
+
 #if defined(DEF_ENABLE_JUMBO_FRAME)
-    #define TRANSMIT_DESC_SIZE      3072 //Tx Descriptors needed in the Descriptor pool/queue
-    #define RECEIVE_DESC_SIZE       1024 //Rx Descriptors needed in the Descriptor pool/queue
     #define MAX_ETHERNET_PAYLOAD    JUMBO_FRAME_PAYLOAD
 #else
-    #if defined(CONFIG_SOC_SERIES_MA35D1)
-        #define TRANSMIT_DESC_SIZE      4096   //Tx Descriptors needed in the Descriptor pool/queue
-        #define RECEIVE_DESC_SIZE       8192   //Rx Descriptors needed in the Descriptor pool/queue
-    #else
-        #define TRANSMIT_DESC_SIZE      256   //Tx Descriptors needed in the Descriptor pool/queue
-        #define RECEIVE_DESC_SIZE       512   //Rx Descriptors needed in the Descriptor pool/queue
-    #endif
-
     #define MAX_ETHERNET_PAYLOAD    NORMAL_FRAME_PAYLOAD
 #endif
 
@@ -113,8 +103,6 @@ typedef struct DmaDescStruct
     u32   reserved1;      /* Reserved word                                                                */
     u32   timestamplow;   /* Lower 32 bits of the 64 bit timestamp value                                  */
     u32   timestamphigh;  /* Higher 32 bits of the 64 bit timestamp value                                  */
-    //u32   data1;          /* This holds virtual address of buffer1, not used by DMA             */
-    //u32   data2;          /* This holds virtual address of buffer2, not used by DMA             */
 } DmaDesc;
 
 enum DescMode
@@ -1143,9 +1131,12 @@ enum InitialRegisters
     DmaIntTxNormMask        = DmaIntTxCompleted,        /* transmitter normal interrupt */
     DmaIntTxStoppedMask     = DmaIntTxStopped,          /* transmitter stopped */
 
+//    DmaIntEnable            = DmaIeNormal     | DmaIeAbnormal    | DmaIntErrorMask
+//                              | DmaIntRxAbnMask | DmaIntRxNormMask | DmaIntRxStoppedMask
+//                              | DmaIntTxAbnMask | DmaIntTxNormMask | DmaIntTxStoppedMask,
     DmaIntEnable            = DmaIeNormal     | DmaIeAbnormal    | DmaIntErrorMask
                               | DmaIntRxAbnMask | DmaIntRxNormMask | DmaIntRxStoppedMask
-                              | DmaIntTxAbnMask | DmaIntTxNormMask | DmaIntTxStoppedMask,
+                              | DmaIntTxAbnMask | DmaIntTxStoppedMask,
     DmaIntDisable           = 0,
 };
 

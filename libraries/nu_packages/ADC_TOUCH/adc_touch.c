@@ -305,8 +305,6 @@ int rt_hw_adc_touch_init(void)
 
     return (int)rt_hw_touch_register(&s_NuAdcTouch.dev, "adc_touch", RT_DEVICE_FLAG_INT_RX, RT_NULL);
 }
-INIT_DEVICE_EXPORT(rt_hw_adc_touch_init);
-
 
 static rt_thread_t  adc_touch_thread = RT_NULL;
 static rt_sem_t     adc_touch_sem = RT_NULL;
@@ -566,8 +564,6 @@ static void nu_touch_do_calibration(rt_device_t pdev)
         return;
     }
 
-    rt_kprintf("%s %d\n", __func__, __LINE__);
-
     result = rt_device_control(lcd_device, RTGRAPHIC_CTRL_GET_INFO, &info);
     if (result != RT_EOK)
     {
@@ -575,33 +571,23 @@ static void nu_touch_do_calibration(rt_device_t pdev)
         return;
     }
 
-    rt_kprintf("%s %d\n", __func__, __LINE__);
-
     result = rt_device_open(lcd_device, 0);
     if (result != RT_EOK)
     {
         rt_kprintf("opened?");
     }
 
-    rt_kprintf("%s %d\n", __func__, __LINE__);
-
     rt_device_control(lcd_device, RTGRAPHIC_CTRL_PAN_DISPLAY, info.framebuffer);
 
-    rt_kprintf("%s %d\n", __func__, __LINE__);
-
     rt_device_control(lcd_device, RTGRAPHIC_CTRL_POWERON, RT_NULL);
-
-    rt_kprintf("%s %d\n", __func__, __LINE__);
 
     for (i = 0; i < DEF_CAL_POINT_NUM; i++)
     {
         struct rt_touch_data sTouchPoint;
         int count = 0;
-        rt_kprintf("%s %d\n", __func__, __LINE__);
 
         /* Drain RX queue before doing calibrate. */
         while (adc_request_point(pdev, &sTouchPoint) == RT_EOK);
-        rt_kprintf("%s %d\n", __func__, __LINE__);
 
         rt_thread_mdelay(100);
 

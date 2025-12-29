@@ -90,7 +90,7 @@ enum
 
 struct nu_rxbuf_ctx
 {
-    void * pvRxBuf;
+    void *pvRxBuf;
     uint32_t bufsize;
     uint32_t wrote_offset;
     uint32_t reserved;
@@ -714,14 +714,14 @@ static uint32_t nu_uart_flush_sync(
     uint32_t count = 0;
 
     /* Copy bytes in Source's ring-buffer to Destination's ring-buffer. */
-    while ( count < sync_len )
+    while (count < sync_len)
     {
-        if ( dst_buf_put >= (dst_buf_start + bufsize) )
+        if (dst_buf_put >= (dst_buf_start + bufsize))
         {
             dst_buf_put = dst_buf_start;
         }
 
-        if ( src_buf_put >= (src_buf_start + bufsize) )
+        if (src_buf_put >= (src_buf_start + bufsize))
         {
             src_buf_put = src_buf_start;
         }
@@ -747,22 +747,22 @@ static uint32_t nu_uart_flush(nu_uart_t psNuUart, uint32_t pdma_new_rxsize)
     UART_DISABLE_INT(base, UART_INTEN_RXPDMAEN_Msk);
 
     /* Pick up RX bytes in PDMA RX BUFFER. */
-    if ( pdma_new_rxsize > 0 )
+    if (pdma_new_rxsize > 0)
     {
         nu_pdma_desc_t psDesc = nu_pdma_get_channel_desc(psNuUart->pdma_chanid_rx);
-        #if !defined(USE_MA35_RTP)
-            uint8_t *pu8DmaBuf_noncache = (uint8_t *)(psDesc->DA + UNCACHEABLE);
-        #else
-            uint8_t *pu8DmaBuf_noncache = (uint8_t *)(psDesc->DA);
-        #endif
+#if !defined(USE_MA35_RTP)
+        uint8_t *pu8DmaBuf_noncache = (uint8_t *)PA2VA(psDesc->DA);
+#else
+        uint8_t *pu8DmaBuf_noncache = (uint8_t *)(psDesc->DA);
+#endif
 
         /* Update wrote offset of user buffer. */
-        psNuUart->userbuf.wrote_offset += nu_uart_flush_sync( psNuUart->userbuf.pvRxBuf,
-                                                              (uint8_t *)psNuUart->userbuf.pvRxBuf + psNuUart->userbuf.wrote_offset,
-                                                              pu8DmaBuf_noncache,
-                                                              pu8DmaBuf_noncache + psNuUart->dmabuf.wrote_offset,
-                                                              psNuUart->userbuf.bufsize,
-                                                              pdma_new_rxsize );
+        psNuUart->userbuf.wrote_offset += nu_uart_flush_sync(psNuUart->userbuf.pvRxBuf,
+                                          (uint8_t *)psNuUart->userbuf.pvRxBuf + psNuUart->userbuf.wrote_offset,
+                                          pu8DmaBuf_noncache,
+                                          pu8DmaBuf_noncache + psNuUart->dmabuf.wrote_offset,
+                                          psNuUart->userbuf.bufsize,
+                                          pdma_new_rxsize);
         psNuUart->userbuf.wrote_offset %= psNuUart->userbuf.bufsize;
     }
 
@@ -772,17 +772,17 @@ static uint32_t nu_uart_flush(nu_uart_t psNuUart, uint32_t pdma_new_rxsize)
     {
         tempbuf[recv_len] = UART_READ(base);
         recv_len++;
-        RT_ASSERT( recv_len < sizeof(tempbuf) );
+        RT_ASSERT(recv_len < sizeof(tempbuf));
     }
-    if ( recv_len > 0 )
+    if (recv_len > 0)
     {
         /* Update wrote offset of user buffer. */
-        psNuUart->userbuf.wrote_offset += nu_uart_flush_sync( psNuUart->userbuf.pvRxBuf,
-                                                              psNuUart->userbuf.pvRxBuf + psNuUart->userbuf.wrote_offset,
-                                                              tempbuf,
-                                                              tempbuf,
-                                                              psNuUart->userbuf.bufsize,
-                                                              recv_len );
+        psNuUart->userbuf.wrote_offset += nu_uart_flush_sync(psNuUart->userbuf.pvRxBuf,
+                                          psNuUart->userbuf.pvRxBuf + psNuUart->userbuf.wrote_offset,
+                                          tempbuf,
+                                          tempbuf,
+                                          psNuUart->userbuf.bufsize,
+                                          recv_len);
         psNuUart->userbuf.wrote_offset %= psNuUart->userbuf.bufsize;
     }
 
@@ -791,19 +791,19 @@ static uint32_t nu_uart_flush(nu_uart_t psNuUart, uint32_t pdma_new_rxsize)
     if (recv_len > 0)
     {
         LOG_D("%d(Received) = %d(PDMA) + %d(FIFO)",
-                        recv_len - pdma_new_rxsize,
-                        pdma_new_rxsize,
-                        recv_len);
+              recv_len - pdma_new_rxsize,
+              pdma_new_rxsize,
+              recv_len);
 
         LOG_D("User: [%08x] bufsize=%d, wrote_offset=%d",
-                        psNuUart->userbuf.pvRxBuf,
-                        psNuUart->userbuf.bufsize,
-                        psNuUart->userbuf.wrote_offset);
+              psNuUart->userbuf.pvRxBuf,
+              psNuUart->userbuf.bufsize,
+              psNuUart->userbuf.wrote_offset);
 
         LOG_D("DMA: [%08x] bufsize=%d, put=%d",
-                        psNuUart->dmabuf.pvRxBuf,
-                        psNuUart->dmabuf.bufsize,
-                        psNuUart->dmabuf.wrote_offset);
+              psNuUart->dmabuf.pvRxBuf,
+              psNuUart->dmabuf.bufsize,
+              psNuUart->dmabuf.wrote_offset);
 
         rt_hw_serial_isr(&psNuUart->dev, RT_SERIAL_EVENT_RX_DMADONE | (recv_len << 8));
     }
@@ -985,11 +985,11 @@ static rt_size_t nu_uart_dma_transmit(struct rt_serial_device *serial, rt_uint8_
         else
         {
             result = nu_pdma_transfer(psNuUart->pdma_chanid_tx,
-                                  8,
-                                  (uint32_t)buf,
-                                  (uint32_t)base,
-                                  size,
-                                  0);  // wait-forever
+                                      8,
+                                      (uint32_t)buf,
+                                      (uint32_t)base,
+                                      size,
+                                      0);  // wait-forever
             // Start DMA TX transfer
             UART_ENABLE_INT(base, UART_INTEN_TXPDMAEN_Msk);
         }
@@ -1048,7 +1048,7 @@ int8_t nu_uart_get_rx_pdma_chnid(struct rt_serial_device *serial)
     return psNuUart->pdma_chanid_rx;
 }
 
-struct nu_rxbuf_ctx* nu_uart_get_rx_pdma_bufaddr(struct rt_serial_device *serial)
+struct nu_rxbuf_ctx *nu_uart_get_rx_pdma_bufaddr(struct rt_serial_device *serial)
 {
     nu_uart_t psNuUart = (nu_uart_t)serial;
 

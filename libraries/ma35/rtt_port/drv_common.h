@@ -89,4 +89,7 @@ extern void rt_hw_cpu_dcache_invalidate(void *addr, int size);
 #define REGION_MAXSIZE_DDR    (4*1024*1024-REGION_MAXSIZE_SRAM0)
 #define REGION_MAXSIZE_LIMIT  (REGION_MAXSIZE_SRAM0+REGION_MAXSIZE_DDR)
 
+#define VA2PA(x)              ((uint32_t)x & ~UNCACHEABLE)
+#define PA2VA(x)              ((uint32_t)x |  UNCACHEABLE)
+
 #endif /* __DRV_COMMON_H__ */

@@ -103,7 +103,7 @@ static int I2C_WriteNAU8822(uint8_t u8addr, uint16_t u16data)
 
     if (g_I2cBusDev && rt_i2c_transfer(g_I2cBusDev, &msg, 1) != 1)
     {
-        rt_kprintf("[Failed] addr=%x, data=%d\n", u8addr, u16data);
+        rt_kprintf("[Failed] addr=%d, data=%d\n", u8addr, u16data);
         return -RT_ERROR;
     }
 
@@ -340,15 +340,17 @@ static rt_err_t nau8822_init(void)
     I2C_WriteNAU8822(0x34, 0x13F);
     I2C_WriteNAU8822(0x35, 0x13F);
 
-    //I2C_WriteNAU8822(11,  0x100 | 204); // volume 80%
-    //I2C_WriteNAU8822(12,  0x100 | 204); // volume 80%
-    //I2C_WriteNAU8822(54,  0x100 | 50);  // volume 80%
-    //I2C_WriteNAU8822(55,  0x100 | 50);  // volume 80%
-
+#if 1
+    I2C_WriteNAU8822(11,  0x100 | 240);
+    I2C_WriteNAU8822(12,  0x100 | 240);
+    I2C_WriteNAU8822(54,  0x100 | 0x3B);
+    I2C_WriteNAU8822(55,  0x100 | 0x3B);
+#else
     I2C_WriteNAU8822(11,  0x100 | 255); // volume 95%
     I2C_WriteNAU8822(12,  0x100 | 255); // volume 95%
     I2C_WriteNAU8822(54,  0x100 | 0x3F);  // volume 95%
     I2C_WriteNAU8822(55,  0x100 | 0x3F);  // volume 95%
+#endif
 
     nu_acodec_ops_nau8822.config.samplerate = 16000;
     nu_acodec_ops_nau8822.config.channels = 2;

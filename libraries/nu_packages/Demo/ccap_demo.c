@@ -146,7 +146,7 @@ static void nu_ccap_event_hook(void *pvData, uint32_t u32EvtMask)
 static rt_device_t ccap_sensor_init(ccap_grabber_context_t psGrabberContext, ccap_grabber_param_t psGrabberParam)
 {
     rt_err_t ret;
-    ccap_view_info_t psViewInfo;
+    ccap_view_info_t psViewInfo = RT_NULL;
     sensor_mode_info *psSensorModeInfo;
     rt_device_t psDevSensor = RT_NULL;
     rt_device_t psDevCcap = RT_NULL;

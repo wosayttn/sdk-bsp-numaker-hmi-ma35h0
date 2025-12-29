@@ -469,7 +469,7 @@ int DISP_SetFBFmt(E_DISP_LAYER eLayer, E_FB_FMT eFbFmt, uint32_t u32Pitch)
 
         /* Set frame buffer address registers */
         DISP->FrameBufferSize0 = (u32ResHeight << DISP_FrameBufferSize0_HEIGHT_Pos) |
-                                 (u32Pitch << DISP_FrameBufferSize0_WIDTH_Pos);
+                                 (u32ResWidth << DISP_FrameBufferSize0_WIDTH_Pos);
 
         /* Set frame buffer address registers */
         // Y, RGB

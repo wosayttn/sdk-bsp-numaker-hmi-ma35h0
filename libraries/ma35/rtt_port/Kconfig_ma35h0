@@ -6,6 +6,7 @@ config SOC_FAMILY_NUMICRO
         select SOC_FAMILY_NUMICRO
         select RT_USING_COMPONENTS_INIT
         select RT_USING_USER_MAIN
+        select RT_USING_CACHE
         default y
 
     config BSP_CAPLL_FREQUENCY

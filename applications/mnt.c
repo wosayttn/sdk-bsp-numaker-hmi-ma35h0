@@ -34,12 +34,12 @@
 
 #if defined(PKG_USING_RAMDISK)
     #define RAMDISK_NAME         "rd0"
-    #define RAMDISK_SIZE         (16*1024*1024)
+    #define RAMDISK_SIZE         (8*1024*1024)
     //#define RAMDISK_UDC          "rd1"
     #define MOUNT_POINT_RAMDISK0 "/"
 #endif
 
-#if defined(BOARD_USING_STORAGE_SPIFLASH)
+#if defined(BOARD_USING_QSPI_FLASH)
     #include "fal_cfg.h"
     #define MOUNT_POINT_SPIFLASH0      "/mnt/"PARTITION_NAME_SF
 #endif
@@ -56,7 +56,7 @@ const void   *data;
 
 const struct dfs_mount_tbl mount_table[] =
 {
-#if defined(BOARD_USING_STORAGE_SPIFLASH)
+#if defined(BOARD_USING_QSPI_FLASH)
     { PARTITION_NAME_SF, MOUNT_POINT_SPIFLASH0, "elm", 0, RT_NULL },
 #endif
 
@@ -96,12 +96,12 @@ int ramdisk_device_init(void)
     rt_err_t result = RT_EOK;
 
     /* Create a 32MB RAMDISK */
-    result = ramdisk_init(RAMDISK_NAME, NULL, 512, 16 * 4096);
+    result = ramdisk_init(RAMDISK_NAME, NULL, 512, RAMDISK_SIZE / 512);
     RT_ASSERT(result == RT_EOK);
 
 #if defined(RAMDISK_UDC)
     /* Create a 32MB RAMDISK */
-    result = ramdisk_init(RAMDISK_UDC, NULL, 512, 16 * 4096);
+    result = ramdisk_init(RAMDISK_UDC, NULL, 512, RAMDISK_SIZE / 512);
     RT_ASSERT(result == RT_EOK);
 #endif
 
@@ -259,7 +259,7 @@ int filesystem_init(void)
             mkdir_p("/mnt/nfi", 0x777);
 #endif
 
-#if defined(BOARD_USING_STORAGE_SPIFLASH)
+#if defined(BOARD_USING_QSPI_FLASH)
             mkdir_p(MOUNT_POINT_SPIFLASH0, 0x777);
 #endif
 
@@ -275,7 +275,9 @@ int filesystem_init(void)
             mkdir_p("/mnt/sd1p1", 0x777);
 #endif
 
-            mkdir_p("/mnt/udisk", 0x777);
+#if defined(RT_USBH_MSTORAGE) && defined(UDISK_MOUNTPOINT)
+            mkdir_p(UDISK_MOUNTPOINT, 0x777);
+#endif
         }
         else
         {
@@ -303,7 +305,7 @@ int filesystem_init(void)
     }
 #endif
 
-#if defined(BOARD_USING_STORAGE_SPIFLASH)
+#if defined(BOARD_USING_QSPI_FLASH)
     {
         struct rt_device *psNorFlash = fal_blk_device_create(PARTITION_NAME_SF);
         if (!psNorFlash)

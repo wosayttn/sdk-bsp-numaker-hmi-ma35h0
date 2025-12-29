@@ -1,5 +1,6 @@
 /* ===================================================================================
  * Copyright (c) <2009> Synopsys, Inc.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software annotated with this license and associated documentation files
@@ -32,12 +33,11 @@
 #define SYNOP_GMAC_NETWORK_INTERFACE_H 1
 
 #include  "synopGMAC_Dev.h"
-#define CACHE_ON
 
 /** Tx/Rx buffer structure */
 typedef struct
 {
-    uint8_t au8Buf[PKT_FRAME_BUF_SIZE];
+    uint32_t au8Buf[PKT_FRAME_BUF_SIZE / sizeof(uint32_t)];
 } PKT_FRAME_T;
 
 s32 synopGMAC_setup_tx_desc_queue(synopGMACdevice *gmacdev, DmaDesc *first_desc, u32 no_of_desc, u32 desc_mode);

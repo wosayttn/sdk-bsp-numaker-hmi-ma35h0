@@ -417,7 +417,7 @@ static rt_err_t disp_layer_control(rt_device_t dev, int cmd, void *args)
             uint32_t u32BufPtr = (uint32_t)args;
             psDisp->last_commit = g_u32VSyncBlank;
 
-            u32BufPtr &= ~UNCACHEABLE; //Force to non-cacheable address.
+            u32BufPtr = VA2PA(u32BufPtr); //Force to non-cacheable address.
 
             /* Pan display */
             return (DISP_SetFBAddr(psDisp->layer, u32BufPtr) == 0) ? RT_EOK : -RT_ERROR;
@@ -520,7 +520,7 @@ int rt_hw_disp_init(void)
         else
         {
             /* Register non-cacheable DMA address to upper layer. */
-            psDisp->info.framebuffer = (rt_uint8_t *)((uint32_t)pu8FBDMABuf | UNCACHEABLE);
+            psDisp->info.framebuffer = (rt_uint8_t *)PA2VA(pu8FBDMABuf);
 
             uint32_t u32FBSize = psDisp->info.pitch * psDispLcdInstance->u32ResolutionHeight;
             psDisp->info.smem_len = u32FBSize * DEF_VPOST_BUFFER_NUMBER;

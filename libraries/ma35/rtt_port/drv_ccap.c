@@ -186,9 +186,10 @@ static rt_err_t ccap_pipe_configure(nu_ccap_t psNuCcap, ccap_view_info_t psViewI
     if (psCcapConf->sPipeInfo_Packet.pu8FarmAddr)
     {
         uint32_t u32WM, u32WN, u32HM, u32HN;
+        uint32_t u32PA = VA2PA(psCcapConf->sPipeInfo_Packet.pu8FarmAddr);
 
         /* Set System Memory Packet Base Address Register */
-        CCAP_SetPacketBuf(psNuCcap->base, (uint32_t)psCcapConf->sPipeInfo_Packet.pu8FarmAddr);
+        CCAP_SetPacketBuf(psNuCcap->base, u32PA);
 
         u32WM = u32WN = u32HM = u32HN = 0;
         /* Set Packet Scaling Vertical/Horizontal Factor Register */
@@ -221,6 +222,7 @@ static rt_err_t ccap_pipe_configure(nu_ccap_t psNuCcap, ccap_view_info_t psViewI
         uint32_t u32Offset = 0;
         uint32_t u32WM, u32WN, u32HM, u32HN;
         uint32_t u32Div = 0;
+        uint32_t u32PA = VA2PA(psCcapConf->sPipeInfo_Planar.pu8FarmAddr);
 
         if (psCcapConf->sPipeInfo_Planar.u32PixFmt  == CCAP_PAR_PLNFMT_YUV422)
         {
@@ -238,17 +240,17 @@ static rt_err_t ccap_pipe_configure(nu_ccap_t psNuCcap, ccap_view_info_t psViewI
         }
 
         /* Set System Memory Planar Y Base Address Register */
-        CCAP_SetPlanarYBuf(psNuCcap->base, (uint32_t)psCcapConf->sPipeInfo_Planar.pu8FarmAddr + u32Offset);
+        CCAP_SetPlanarYBuf(psNuCcap->base, u32PA + u32Offset);
 
         u32Offset = psCcapConf->sPipeInfo_Planar.u32Height * psCcapConf->sPipeInfo_Planar.u32Width;
 
         /* Set System Memory Planar U Base Address Register */
-        CCAP_SetPlanarUBuf(psNuCcap->base, (uint32_t)psCcapConf->sPipeInfo_Planar.pu8FarmAddr + u32Offset);
+        CCAP_SetPlanarUBuf(psNuCcap->base, u32PA + u32Offset);
 
         u32Offset += ((psCcapConf->sPipeInfo_Planar.u32Height * psCcapConf->sPipeInfo_Planar.u32Width) / u32Div);
 
         /* Set System Memory Planar V Base Address Register */
-        CCAP_SetPlanarVBuf(psNuCcap->base, (uint32_t)psCcapConf->sPipeInfo_Planar.pu8FarmAddr + u32Offset);
+        CCAP_SetPlanarVBuf(psNuCcap->base, u32PA + u32Offset);
 
         u32WM = u32WN = u32HM = u32HN = 0;
         /* Set Planar Scaling Vertical/Horizontal Factor Register */
@@ -420,7 +422,7 @@ static rt_err_t ccap_control(rt_device_t dev, int cmd, void *args)
         psCcapConf = (ccap_config_t)args;
 
         //Force to non-cacheable address.
-        u32BufPtr = (uint32_t)psCcapConf->sPipeInfo_Packet.pu8FarmAddr & ~UNCACHEABLE;
+        u32BufPtr = VA2PA(psCcapConf->sPipeInfo_Packet.pu8FarmAddr);
 
         /* Set System Memory Packet Base Address Register */
         if (u32BufPtr != 0)
@@ -433,7 +435,7 @@ static rt_err_t ccap_control(rt_device_t dev, int cmd, void *args)
         }
 
         //Force to non-cacheable address.
-        u32BufPtr = (uint32_t)psCcapConf->sPipeInfo_Planar.pu8FarmAddr & ~UNCACHEABLE;
+        u32BufPtr = VA2PA(psCcapConf->sPipeInfo_Planar.pu8FarmAddr);
 
         if (u32BufPtr != 0)
         {

@@ -33,12 +33,8 @@
 #define DBG_COLOR
 #include <rtdbg.h>
 
-/* Private define ---------------------------------------------------------------*/
-
 //#define NU_GMAC_DEBUG
 #if defined(NU_GMAC_DEBUG)
-    //#define NU_GMAC_RX_DUMP
-    //#define NU_GMAC_TX_DUMP
     #define NU_GMAC_TRACE         rt_kprintf
 #else
     #define NU_GMAC_TRACE(...)
@@ -61,17 +57,6 @@ enum
 #define cache_line_size()                  nu_cpu_dcache_line_size()
 
 /* Private typedef --------------------------------------------------------------*/
-
-struct nu_gmac_lwip_pbuf
-{
-    struct pbuf_custom p;  // lwip pbuf
-    PKT_FRAME_T *psPktFrameDataBuf; // gmac descriptor
-    synopGMACdevice *gmacdev;
-    const struct memp_desc *pool;
-};
-
-typedef struct nu_gmac_lwip_pbuf *nu_gmac_lwip_pbuf_t;
-
 struct nu_gmac
 {
     struct eth_device   eth;
@@ -81,19 +66,10 @@ struct nu_gmac
     rt_timer_t          link_timer;
     rt_uint8_t          mac_addr[8];
     synopGMACNetworkAdapter *adapter;
-    const struct memp_desc *memp_rx_pool;
 };
 typedef struct nu_gmac *nu_gmac_t;
 
 /* Private variables ------------------------------------------------------------*/
-#if defined(BSP_USING_GMAC0)
-    LWIP_MEMPOOL_DECLARE(gmac0_rx, RECEIVE_DESC_SIZE, sizeof(struct nu_gmac_lwip_pbuf), "GMAC0 RX PBUF pool");
-#endif
-
-#if defined(BSP_USING_GMAC1)
-    LWIP_MEMPOOL_DECLARE(gmac1_rx, RECEIVE_DESC_SIZE, sizeof(struct nu_gmac_lwip_pbuf), "GMAC1 RX PBUF pool");
-#endif
-
 static struct nu_gmac nu_gmac_arr[] =
 {
 #if defined(BSP_USING_GMAC0)
@@ -101,7 +77,6 @@ static struct nu_gmac nu_gmac_arr[] =
         .name            =  "e0",
         .base            =  GMAC0,
         .irqn            =  GMAC0RX_IRQn,
-        .memp_rx_pool    =  &memp_gmac0_rx
     },
 #endif
 #if defined(BSP_USING_GMAC1)
@@ -109,7 +84,6 @@ static struct nu_gmac nu_gmac_arr[] =
         .name            =  "e1",
         .base            =  GMAC1,
         .irqn            =  GMAC1RX_IRQn,
-        .memp_rx_pool    =  &memp_gmac1_rx
     },
 #endif
 };
@@ -151,7 +125,7 @@ static void nu_gmac_mdio_write(void *adapter, int addr, int reg, int data)
     synopGMAC_write_phy_reg(gmacdev->MacBase, addr, reg, data);
 }
 
-s32 synopGMAC_check_phy_init(synopGMACNetworkAdapter *adapter)
+static s32 synopGMAC_check_phy_init(synopGMACNetworkAdapter *adapter)
 {
     struct ethtool_cmd cmd;
     synopGMACdevice *gmacdev = adapter->m_gmacdev;
@@ -177,6 +151,54 @@ s32 synopGMAC_check_phy_init(synopGMACNetworkAdapter *adapter)
     return gmacdev->Speed | (gmacdev->DuplexMode << 4);
 }
 
+static void eth_rx_push(nu_gmac_t psNuGMAC)
+{
+    synopGMACNetworkAdapter *adapter = psNuGMAC->adapter;
+    synopGMACdevice *gmacdev = (synopGMACdevice *) adapter->m_gmacdev;
+    struct netif *netif = psNuGMAC->eth.netif;
+
+    while (1)
+    {
+        PKT_FRAME_T *psPktFrame = NULL;
+        struct pbuf *pbuf = RT_NULL;
+        err_t ret;
+
+        s32 s32PktLen = synop_handle_received_data(gmacdev, &psPktFrame);
+        if (s32PktLen <= 0)
+        {
+            break;
+        }
+
+        /* Allocate a pbuf chain of pbufs from the pool. */
+        if ((pbuf = pbuf_alloc(PBUF_RAW, s32PktLen, PBUF_POOL)) != NULL)
+        {
+#if defined(RT_USING_CACHE)
+            rt_hw_cpu_dcache_ops(RT_HW_CACHE_INVALIDATE, (void *)psPktFrame, s32PktLen);
+#endif
+            pbuf_take(pbuf, psPktFrame, s32PktLen);
+        }
+        else
+        {
+            //rt_kprintf("[%s] drop the packet %08x\n", psNuGMAC->name, psPktFrame);
+        }
+
+        /* Free or drop descriptor. */
+        synopGMAC_set_rx_qptr(gmacdev,
+                              (u32)psPktFrame,
+                              PKT_FRAME_BUF_SIZE,
+                              0);
+
+        if ((ret = netif->input(pbuf, netif)) != ERR_OK)
+        {
+            //rt_kprintf("[%s] input error %08x err_t:%08x\n", psNuGMAC->name, pbuf, ret);
+            pbuf_free(pbuf);
+            break;
+        }
+
+    } //while(1)
+
+}
+
 static void nu_gmac_isr(int irqno, void *param)
 {
     nu_gmac_t psNuGMAC = (nu_gmac_t)param;
@@ -187,7 +209,6 @@ static void nu_gmac_isr(int irqno, void *param)
     u32 interrupt, dma_status_reg;
     s32 status;
     u32 u32GmacIntSts;
-    u32 u32GmacDmaIE = DmaIntEnable;
 
     // Check GMAC interrupt
     u32GmacIntSts = synopGMACReadReg(gmacdev->MacBase, GmacInterruptStatus);
@@ -196,49 +217,52 @@ static void nu_gmac_isr(int irqno, void *param)
         gmacdev->synopGMACNetStats.ts_int = 1;
         status = synopGMACReadReg(gmacdev->MacBase, GmacTSStatus);
         if (!(status & (1 << 1)))
-            LOG_I("TS alarm flag not set??");
+        {
+            NU_GMAC_TRACE("TS alarm flag not set?\n");
+        }
         else
-            LOG_I("TS alarm!\n");
+        {
+            NU_GMAC_TRACE("TS alarm!\n");
+        }
     }
-
     synopGMACWriteReg(gmacdev->MacBase, GmacInterruptStatus, u32GmacIntSts);
+
 
     dma_status_reg = synopGMACReadReg(gmacdev->DmaBase, DmaStatus);
     if (dma_status_reg == 0)
     {
-        //LOG_I("dma_status ==0 \n");
+        NU_GMAC_TRACE("dma_status ==0\n");
         return;
     }
 
     if (dma_status_reg & GmacPmtIntr)
     {
-        //LOG_D("%s:: Interrupt due to PMT module\n", psNuGMAC->name);
+        NU_GMAC_TRACE("%s:: Interrupt due to PMT module", psNuGMAC->name);
         synopGMAC_powerup_mac(gmacdev);
     }
 
     if (dma_status_reg & GmacLineIntfIntr)
     {
-        LOG_I("%s: GMAC status reg is %08x mask is %08x\n",
-              psNuGMAC->name,
-              synopGMACReadReg(gmacdev->MacBase, GmacInterruptStatus),
-              synopGMACReadReg(gmacdev->MacBase, GmacInterruptMask));
+        NU_GMAC_TRACE("%s: GMAC status reg is %08x mask is %08x\n",
+                      psNuGMAC->name,
+                      synopGMACReadReg(gmacdev->MacBase, GmacInterruptStatus),
+                      synopGMACReadReg(gmacdev->MacBase, GmacInterruptMask));
 
         if (synopGMACReadReg(gmacdev->MacBase, GmacInterruptStatus) & GmacRgmiiIntSts)
         {
-            LOG_D("%s: GMAC RGMII status is %08x\n",
-                  psNuGMAC->name,
-                  synopGMACReadReg(gmacdev->MacBase, GmacRgmiiCtrlSts));
+            NU_GMAC_TRACE("%s: GMAC RGMII status is %08x\n",
+                          psNuGMAC->name,
+                          synopGMACReadReg(gmacdev->MacBase, GmacRgmiiCtrlSts));
             synopGMACReadReg(gmacdev->MacBase, GmacRgmiiCtrlSts);
         }
     }
 
     /* DMA status */
     interrupt = synopGMAC_get_interrupt_type(gmacdev);
-    //rt_kprintf("%s: 0x%08x@%08x\n", psNuGMAC->name, interrupt, dma_status_reg);
-
     if (interrupt & synopGMACDmaError)
     {
-        LOG_E("%s::Fatal Bus Error Inetrrupt Seen\n", psNuGMAC->name);
+        NU_GMAC_TRACE("%s: 0x%08x@%08x\n", psNuGMAC->name, interrupt, dma_status_reg);
+        NU_GMAC_TRACE("%s::Fatal Bus Error Interrupt Seen\n", psNuGMAC->name);
         synopGMAC_disable_dma_tx(gmacdev);
         synopGMAC_disable_dma_rx(gmacdev);
 
@@ -257,35 +281,30 @@ static void nu_gmac_isr(int irqno, void *param)
         synopGMAC_mac_init(gmacdev);
         synopGMAC_enable_dma_rx(gmacdev);
         synopGMAC_enable_dma_tx(gmacdev);
-
     }
 
     if ((interrupt & synopGMACDmaRxNormal) ||
             (interrupt & synopGMACDmaRxAbnormal))
     {
-        if (interrupt & synopGMACDmaRxNormal)
-        {
-            LOG_D("%s:: Rx Normal \n", psNuGMAC->name);
-            u32GmacDmaIE &= ~DmaIntRxNormMask;
+        eth_rx_push(psNuGMAC);
 
-        }
         if (interrupt & synopGMACDmaRxAbnormal)
         {
-            LOG_E("%s::Abnormal Rx Interrupt Seen %08x\n", psNuGMAC->name, dma_status_reg);
-
+            NU_GMAC_TRACE("%s: 0x%08x@%08x\n", psNuGMAC->name, interrupt, dma_status_reg);
+            NU_GMAC_TRACE("%s::Abnormal Rx Interrupt Seen %08x\n", psNuGMAC->name, dma_status_reg);
             if (gmacdev->GMAC_Power_down == 0)
             {
                 gmacdev->synopGMACNetStats.rx_over_errors++;
-                u32GmacDmaIE &= ~DmaIntRxAbnMask;
-                //synopGMAC_resume_dma_rx(gmacdev);
+                synopGMACWriteReg(gmacdev->DmaBase, DmaStatus, DmaIntRxNoBuffer);
+                synopGMAC_resume_dma_rx(gmacdev);
             }
         }
-        eth_device_ready(&psNuGMAC->eth);
     }
 
     if (interrupt & synopGMACDmaRxStopped)
     {
-        LOG_E("%s::Receiver stopped seeing Rx interrupts\n", psNuGMAC->name); //Receiver gone in to stopped state
+        NU_GMAC_TRACE("%s: 0x%08x@%08x\n", psNuGMAC->name, interrupt, dma_status_reg);
+        NU_GMAC_TRACE("%s::Receiver stopped seeing Rx interrupts\n", psNuGMAC->name); //Receiver gone in to stopped state
         if (gmacdev->GMAC_Power_down == 0)   // If Mac is not in powerdown
         {
             gmacdev->synopGMACNetStats.rx_over_errors++;
@@ -293,84 +312,93 @@ static void nu_gmac_isr(int irqno, void *param)
         }
     }
 
-    if (interrupt & synopGMACDmaTxNormal)
-    {
-        LOG_D("%s::Finished Normal Transmission \n", psNuGMAC->name);
-        synop_handle_transmit_over(gmacdev);//Do whatever you want after the transmission is over
-    }
+    //if (interrupt & synopGMACDmaTxNormal)
+    //{
+    //NU_GMAC_TRACE("%s::Finished Normal Transmission\n", psNuGMAC->name);
+    //synop_handle_transmit_over(gmacdev);//Do whatever you want after the transmission is over
+    //}
 
     if (interrupt & synopGMACDmaTxAbnormal)
     {
-        LOG_E("%s::Abnormal Tx Interrupt Seen\n", psNuGMAC->name);
-        if (gmacdev->GMAC_Power_down == 0)   // If Mac is not in powerdown
-        {
-            synop_handle_transmit_over(gmacdev);
-        }
+        NU_GMAC_TRACE("%s: 0x%08x@%08x\n", psNuGMAC->name, interrupt, dma_status_reg);
+        NU_GMAC_TRACE("%s::Abnormal Tx Interrupt Seen\n", psNuGMAC->name);
+        //if (gmacdev->GMAC_Power_down == 0)   // If Mac is not in powerdown
+        //{
+        //synop_handle_transmit_over(gmacdev);
+        //}
     }
 
     if (interrupt & synopGMACDmaTxStopped)
     {
-        LOG_E("%s::Transmitter stopped sending the packets\n", psNuGMAC->name);
+        NU_GMAC_TRACE("%s: 0x%08x@%08x\n", psNuGMAC->name, interrupt, dma_status_reg);
+        NU_GMAC_TRACE("%s::Transmitter stopped sending the packets\n", psNuGMAC->name);
         if (gmacdev->GMAC_Power_down == 0)    // If Mac is not in powerdown
         {
             synopGMAC_disable_dma_tx(gmacdev);
             synopGMAC_take_desc_ownership_tx(gmacdev);
             synopGMAC_enable_dma_tx(gmacdev);
-            LOG_I("%s::Transmission Resumed\n", psNuGMAC->name);
+            NU_GMAC_TRACE("%s::Transmission Resumed\n", psNuGMAC->name);
         }
     }
-
-    /* Enable the interrupt before returning from ISR*/
-    synopGMAC_enable_interrupt(gmacdev, u32GmacDmaIE);
 }
 
-void nu_gmac_link_monitor(void *pvData)
+static void nu_phy_monitor(void *pvData)
 {
     nu_gmac_t psNuGMAC = (nu_gmac_t)pvData;
-
     synopGMACNetworkAdapter *adapter = psNuGMAC->adapter;
     synopGMACdevice         *gmacdev = adapter->m_gmacdev;
-    if (!mii_link_ok(&adapter->m_mii))
+
+    LOG_D("Create %s link monitor timer.", psNuGMAC->name);
+    while (1)
     {
-        if (gmacdev->LinkState)
+        if (!mii_link_ok(&adapter->m_mii))
         {
-            eth_device_linkchange(&psNuGMAC->eth, RT_FALSE);
-            LOG_I("%s: No Link", psNuGMAC->name);
+            if (gmacdev->LinkState)
+            {
+                eth_device_linkchange(&psNuGMAC->eth, RT_FALSE);
+                LOG_I("%s: No Link", psNuGMAC->name);
+            }
+            gmacdev->DuplexMode = 0;
+            gmacdev->Speed = 0;
+            gmacdev->LoopBackMode = 0;
+            gmacdev->LinkState = 0;
         }
-        gmacdev->DuplexMode = 0;
-        gmacdev->Speed = 0;
-        gmacdev->LoopBackMode = 0;
-        gmacdev->LinkState = 0;
-    }
-    else
-    {
-        s32 data = synopGMAC_check_phy_init(adapter);
-        if (gmacdev->LinkState != data)
+        else
         {
-            gmacdev->LinkState = data;
-            synopGMAC_mac_init(gmacdev);
-            LOG_I("Link is up in %s mode", (gmacdev->DuplexMode == FULLDUPLEX) ? "FULL DUPLEX" : "HALF DUPLEX");
-            if (gmacdev->Speed == SPEED1000)
+            s32 data = synopGMAC_check_phy_init(adapter);
+            if (gmacdev->LinkState != data)
             {
-                LOG_I("Link is with 1000M Speed");
-                synopGMAC_set_mode(gmacdev, 0);
+                synopGMAC_mac_init(gmacdev);
+                LOG_I("Link is up in %s mode", (gmacdev->DuplexMode == FULLDUPLEX) ? "FULL DUPLEX" : "HALF DUPLEX");
+                if (gmacdev->Speed == SPEED1000)
+                {
+                    LOG_I("Link is with 1000M Speed");
+                    synopGMAC_set_mode(gmacdev, 0);
+                }
+                if (gmacdev->Speed == SPEED100)
+                {
+                    LOG_I("Link is with 100M Speed");
+                    synopGMAC_set_mode(gmacdev, 1);
+                }
+                if (gmacdev->Speed == SPEED10)
+                {
+                    LOG_I("Link is with 10M Speed");
+                    synopGMAC_set_mode(gmacdev, 2);
+                }
+
+                gmacdev->LinkState = data;
+                eth_device_linkchange(&psNuGMAC->eth, RT_TRUE);
             }
-            if (gmacdev->Speed == SPEED100)
-            {
-                LOG_I("Link is with 100M Speed");
-                synopGMAC_set_mode(gmacdev, 1);
-            }
-            if (gmacdev->Speed == SPEED10)
-            {
-                LOG_I("Link is with 10M Speed");
-                synopGMAC_set_mode(gmacdev, 2);
-            }
-            eth_device_linkchange(&psNuGMAC->eth, RT_TRUE);
         }
-    }
-    NU_GMAC_TRACE("%s: Interrupt enable: %08x, status:%08x\n", psNuGMAC->name, synopGMAC_get_ie(gmacdev), synopGMACReadReg(gmacdev->DmaBase, DmaStatus));
-    NU_GMAC_TRACE("%s: op:%08x\n", psNuGMAC->name, synopGMACReadReg(gmacdev->DmaBase, DmaControl));
-    NU_GMAC_TRACE("%s: debug:%08x\n", psNuGMAC->name, synopGMACReadReg(gmacdev->MacBase, GmacDebug));
+
+        //NU_GMAC_TRACE("%s: Interrupt enable: %08x, status:%08x\n", psNuGMAC->name, synopGMAC_get_ie(gmacdev), synopGMACReadReg(gmacdev->DmaBase, DmaStatus));
+        //NU_GMAC_TRACE("%s: op:%08x\n", psNuGMAC->name, synopGMACReadReg(gmacdev->DmaBase, DmaControl));
+        //NU_GMAC_TRACE("%s: debug:%08x\n", psNuGMAC->name, synopGMACReadReg(gmacdev->MacBase, GmacDebug));
+
+        rt_thread_mdelay(1000);
+
+    } //  while (1)
+
 }
 
 static void nu_memmgr_init(GMAC_MEMMGR_T *psMemMgr)
@@ -409,6 +437,19 @@ static void nu_mii_init(synopGMACNetworkAdapter *adapter)
     adapter->m_mii.supports_gmii = mii_check_gmii_support(&adapter->m_mii);
 }
 
+static void nu_phy_link_monitor(nu_gmac_t psNuGMAC)
+{
+    rt_thread_t threadCtx = rt_thread_create(psNuGMAC->name,
+                            nu_phy_monitor,
+                            psNuGMAC,
+                            1024,
+                            25,
+                            5);
+
+    if (threadCtx != RT_NULL)
+        rt_thread_startup(threadCtx);
+}
+
 static rt_err_t nu_gmac_init(rt_device_t device)
 {
     rt_err_t ret;
@@ -445,7 +486,7 @@ static rt_err_t nu_gmac_init(rt_device_t device)
     LOG_D("tx desc_queue");
     synopGMAC_setup_tx_desc_queue(gmacdev, &psgmacmemmgr->psTXDescs[0], TRANSMIT_DESC_SIZE, RINGMODE);
     synopGMAC_init_tx_desc_base(gmacdev);
-    LOG_D("DmaTxBaseAddr = %08x\n", synopGMACReadReg(gmacdev->DmaBase, DmaTxBaseAddr));
+    LOG_D("DmaTxBaseAddr = %08x", synopGMACReadReg(gmacdev->DmaBase, DmaTxBaseAddr));
 
     LOG_D("rx desc_queue");
     synopGMAC_setup_rx_desc_queue(gmacdev, &psgmacmemmgr->psRXDescs[0], RECEIVE_DESC_SIZE, RINGMODE);
@@ -460,7 +501,6 @@ static rt_err_t nu_gmac_init(rt_device_t device)
     gmacdev->Speed = SPEED1000;
     gmacdev->DuplexMode = FULLDUPLEX;
     synopGMAC_mac_init(gmacdev);
-    //synopGMAC_promisc_enable(gmacdev);
 
     synopGMAC_pause_control(gmacdev); // This enables the pause control in Full duplex mode of operation
     //synopGMAC_jumbo_frame_enable(gmacdev); // enable jumbo frame
@@ -498,17 +538,7 @@ static rt_err_t nu_gmac_init(rt_device_t device)
     synopGMAC_set_mac_addr(gmacdev, GmacAddr0High, GmacAddr0Low, &psNuGMAC->mac_addr[0]);
 
     synopGMAC_set_mode(gmacdev, 0);
-    LOG_D("Create %s link monitor timer.", psNuGMAC->name);
-    /* Create timer to monitor link status. */
-    psNuGMAC->link_timer = rt_timer_create("link_timer",
-                                           nu_gmac_link_monitor,
-                                           (void *)psNuGMAC,
-                                           RT_TICK_PER_SECOND,
-                                           RT_TIMER_FLAG_PERIODIC);
-    RT_ASSERT(psNuGMAC->link_timer);
-
-    ret = rt_timer_start(psNuGMAC->link_timer);
-    RT_ASSERT(ret == RT_EOK);
+    nu_phy_link_monitor(psNuGMAC);
 
     /* Install ISR */
     LOG_D("[%s] Install %s ISR.", __func__, psNuGMAC->name);
@@ -578,7 +608,7 @@ rt_err_t nu_gmac_tx(rt_device_t device, struct pbuf *p)
     u32 offload_needed;
     s32 status;
 
-    LOG_D("%s: Transmitting data(%08x-%d).\n", psNuGMAC->name, (u32)pu8PktData, p->tot_len);
+    LOG_D("%s: Transmitting data(%08x-%d) start.", psNuGMAC->name, (u32)pu8PktData, p->tot_len);
 
     /* Copy to TX data buffer. */
     for (q = p; q != NULL; q = q->next)
@@ -600,93 +630,20 @@ rt_err_t nu_gmac_tx(rt_device_t device, struct pbuf *p)
     status = synopGMAC_xmit_frames(gmacdev, (u8 *)pu8PktData, offset, offload_needed, 0);
     if (status != 0)
     {
-        LOG_E("%s No More Free Tx skb\n", __func__);
+        LOG_E("%s No More Free Tx skb", __func__);
         ret = -RT_ERROR;
         goto exit_nu_gmac_tx;
     }
+
+    synop_handle_transmit_over(gmacdev);
+
+    LOG_D("%s: Transmitting data(%08x-%d) done.", psNuGMAC->name, (u32)pu8PktData, p->tot_len);
 
     ret = RT_EOK;
 
 exit_nu_gmac_tx:
 
     return ret;
-}
-
-void nu_gmac_pbuf_free(struct pbuf *p)
-{
-    nu_gmac_lwip_pbuf_t my_buf = (nu_gmac_lwip_pbuf_t)p;
-    s32 status;
-
-    while (1)
-    {
-        status = synopGMAC_set_rx_qptr(my_buf->gmacdev, (u32)my_buf->psPktFrameDataBuf, PKT_FRAME_BUF_SIZE, 0);
-        if (status >= 0)
-        {
-            break;
-        }
-    }
-
-    SYS_ARCH_DECL_PROTECT(old_level);
-    SYS_ARCH_PROTECT(old_level);
-    memp_free_pool(my_buf->pool, my_buf);
-    SYS_ARCH_UNPROTECT(old_level);
-}
-
-struct pbuf *nu_gmac_rx(rt_device_t device)
-{
-    nu_gmac_t psNuGMAC = (nu_gmac_t)device;
-    synopGMACNetworkAdapter *adapter;
-    synopGMACdevice *gmacdev;
-    struct pbuf *pbuf = RT_NULL;
-    PKT_FRAME_T *psPktFrame;
-    s32  s32PktLen;
-
-    RT_ASSERT(device);
-
-    adapter = psNuGMAC->adapter;
-    RT_ASSERT(adapter);
-
-    gmacdev = (synopGMACdevice *) adapter->m_gmacdev;
-    RT_ASSERT(gmacdev);
-
-    s32PktLen = synop_handle_received_data(gmacdev, &psPktFrame);
-    if (s32PktLen > 0)
-    {
-        nu_gmac_lwip_pbuf_t my_pbuf  = (nu_gmac_lwip_pbuf_t)memp_malloc_pool(psNuGMAC->memp_rx_pool);
-        if (my_pbuf != RT_NULL)
-        {
-            my_pbuf->p.custom_free_function = nu_gmac_pbuf_free;
-            my_pbuf->psPktFrameDataBuf      = psPktFrame;
-            my_pbuf->gmacdev                = gmacdev;
-            my_pbuf->pool                   = psNuGMAC->memp_rx_pool;
-
-            invalidate_cpu_cache(psPktFrame, s32PktLen);
-            pbuf = pbuf_alloced_custom(PBUF_RAW,
-                                       s32PktLen,
-                                       PBUF_REF,
-                                       &my_pbuf->p,
-                                       psPktFrame,
-                                       PKT_FRAME_BUF_SIZE);
-            if (pbuf == RT_NULL)
-            {
-                LOG_E("%s: failed to alloced %08x\n", psNuGMAC->name, pbuf);
-            }
-        }
-        else
-        {
-            LOG_E("LWIP_MEMPOOL_ALLOC < 0!!\n");
-        }
-    }
-    else
-    {
-        //rt_kprintf("%s : fail to receive data.\n", psNuGMAC->name);
-        synopGMAC_enable_interrupt(gmacdev, DmaIntEnable);
-        goto exit_nu_gmac_rx;
-    }
-
-exit_nu_gmac_rx:
-
-    return pbuf;
 }
 
 static void nu_gmac_assign_macaddr(nu_gmac_t psNuGMAC)
@@ -779,7 +736,7 @@ int rt_hw_gmac_init(void)
         psNuGMAC->eth.parent.write      = nu_gmac_write;
         psNuGMAC->eth.parent.control    = nu_gmac_control;
         psNuGMAC->eth.parent.user_data  = psNuGMAC;
-        psNuGMAC->eth.eth_rx            = nu_gmac_rx;
+        psNuGMAC->eth.eth_rx            = RT_NULL;
         psNuGMAC->eth.eth_tx            = nu_gmac_tx;
 
         /* Set MAC address */
@@ -788,14 +745,10 @@ int rt_hw_gmac_init(void)
         /* Initial GMAC adapter */
         nu_gmac_adapter_init(psNuGMAC);
 
-        /* Initial zero_copy rx pool */
-        memp_init_pool(psNuGMAC->memp_rx_pool);
-
         /* Register eth device */
         ret = eth_device_init(&psNuGMAC->eth, psNuGMAC->name);
         RT_ASSERT(ret == RT_EOK);
     }
-
 
     return 0;
 }

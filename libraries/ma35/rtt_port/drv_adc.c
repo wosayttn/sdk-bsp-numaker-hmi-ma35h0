@@ -606,6 +606,9 @@ int rt_hw_adc_init(void)
 
     g_sNuADC.psRtTouchMenuTimer = rt_timer_create("TOUCH_SMPL_TIMER", nu_adc_touch_smpl, (void *)&g_sNuADC, DEF_ADC_TOUCH_SMPL_TICK, RT_TIMER_FLAG_PERIODIC);
     RT_ASSERT(g_sNuADC.psRtTouchMenuTimer);
+
+    result = rt_hw_adc_touch_init();
+    RT_ASSERT(result == RT_EOK);
 #endif
 
     rt_memset(&g_sNuADC.m_isr, 0, sizeof(g_sNuADC.m_isr));

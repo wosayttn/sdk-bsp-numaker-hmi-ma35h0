@@ -93,8 +93,10 @@ static void nu_pdma_i2s_rx_cb(void *pvUserData, uint32_t u32EventFilter)
 
     if (u32EventFilter & NU_PDMA_EVENT_TRANSFER_DONE)
     {
+        uint32_t u32VA = PA2VA(&psNuI2sDai->fifo[psNuI2sDai->fifo_block_idx * NU_I2S_DMA_BUF_BLOCK_SIZE]);
+
         /* Report uncacheable memory address to upper layer. */
-        rt_uint8_t *pbuf_old = (rt_uint8_t *)((uint32_t)&psNuI2sDai->fifo[psNuI2sDai->fifo_block_idx * NU_I2S_DMA_BUF_BLOCK_SIZE] | UNCACHEABLE) ;
+        rt_uint8_t *pbuf_old = (rt_uint8_t *)u32VA;
         psNuI2sDai->fifo_block_idx = (psNuI2sDai->fifo_block_idx + 1) % NU_I2S_DMA_BUF_BLOCK_NUMBER;
 
         /* Report upper layer. */
@@ -562,7 +564,7 @@ static void nu_i2s_buffer_info(struct rt_audio_device *audio, struct rt_audio_bu
     psNuI2s = (nu_i2s_t)audio;
 
     /* Report uncacheable memory address to upper layer. */
-    info->buffer = (rt_uint8_t *)((uint32_t)psNuI2s->i2s_dais[NU_I2S_DAI_PLAYBACK].fifo | UNCACHEABLE);
+    info->buffer = (rt_uint8_t *)PA2VA(psNuI2s->i2s_dais[NU_I2S_DAI_PLAYBACK].fifo);
     info->total_size = NU_I2S_DMA_FIFO_SIZE;
     info->block_size = NU_I2S_DMA_BUF_BLOCK_SIZE;
     info->block_count = NU_I2S_DMA_BUF_BLOCK_NUMBER;
