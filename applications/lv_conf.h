@@ -13,8 +13,8 @@
 
 #include "rtconfig.h"
 
-#define NU_PKG_LVGL_RENDERING_LAYER    "overlay"
-#define NU_OVERLAY_COLOR_KEY           0xFFFFFFFF
+//#define NU_PKG_LVGL_RENDERING_LAYER    "overlay"
+//#define NU_OVERLAY_COLOR_KEY           0xFFFFFFFF
 #define NU_PKG_LVGL_RENDERING_FULL_REFRESH     0
 
 #define LV_USE_DRAW_SW                  1

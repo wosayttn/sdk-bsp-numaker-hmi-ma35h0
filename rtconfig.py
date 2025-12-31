@@ -14,11 +14,11 @@ if os.getenv('RTT_ROOT'):
 # EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
 
 if  CROSS_TOOL == 'gcc':
-	PLATFORM = 'gcc'
-	EXEC_PATH = r'C:\Program Files (x86)\GNU Tools ARM Embedded\6 2017-q1-update\bin'
+    PLATFORM = 'gcc'
+    EXEC_PATH = r'C:\Program Files (x86)\GNU Tools ARM Embedded\6 2017-q1-update\bin'
 
 if os.getenv('RTT_EXEC_PATH'):
-	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+    EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 #BUILD = 'debug'
 BUILD = ''
@@ -42,7 +42,7 @@ if PLATFORM == 'gcc':
     STRIP = PREFIX + 'strip'
 
     DEVICE = ' -march=armv8-a -mfpu=neon-vfpv4 -ftree-vectorize -ffast-math -mfloat-abi=softfp -funwind-tables -fno-strict-aliasing -mno-unaligned-access '
-    CFLAGS = DEVICE + ' -Wall -fno-zero-initialized-in-bss -Wno-unused-variable -Wno-unused-function -Wno-unused-but-set-variable '
+    CFLAGS = DEVICE + ' -Wall -fno-zero-initialized-in-bss -Wno-stringop-truncation -Wno-unused-variable -Wno-unused-function -Wno-unused-but-set-variable '
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__ -I.'
     LFLAGS = DEVICE + ' -nostartfiles  -Wl,--gc-sections,-cref,-Map=' + MAP_FILE + ',-cref,-u,system_vectors' + ' -T ' + LINK_FILE
     CXXFLAGS = DEVICE + ' -std=c++11 '

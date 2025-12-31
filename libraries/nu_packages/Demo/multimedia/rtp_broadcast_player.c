@@ -51,45 +51,26 @@ static void rtp_broadcast_fini(void)
         rtp_fini(broadcast_rtp_pcb_a);
         broadcast_rtp_pcb_a = NULL;
     }
-
-    if (netif_default != NULL)
-    {
-        struct netif *netif = netif_default;
-    }
 }
 
 /* Public initialization function: create PCB, bind, join broadcast group */
 static int rtp_broadcast_init(uint16_t u16Port)
 {
-    err_t err;
-
-    if (!netif_default)
+    broadcast_rtp_pcb_v = rtp_init(u16Port, RTP_PT_H264);
+    if (broadcast_rtp_pcb_v == NULL)
     {
-        rt_kprintf("No default netif to join broadcast\n");
-
-        /* Keep running without IGMP join - maybe raw broadcast still arrives */
+        rt_kprintf("Failed to claim UDP port-%d\n", u16Port);
         goto exit_rtp_broadcast_init;
     }
-    else
+
+    broadcast_rtp_pcb_a = rtp_init(u16Port + 1, RTP_PT_PCMA);
+    if (broadcast_rtp_pcb_a == NULL)
     {
-        struct netif *netif = netif_default;
-
-        broadcast_rtp_pcb_v = rtp_init(u16Port, RTP_PT_H264);
-        if (broadcast_rtp_pcb_v == NULL)
-        {
-            rt_kprintf("Failed to claim UDP port-%d\n", u16Port);
-            goto exit_rtp_broadcast_init;
-        }
-
-        broadcast_rtp_pcb_a = rtp_init(u16Port + 1, RTP_PT_PCMA);
-        if (broadcast_rtp_pcb_a == NULL)
-        {
-            rt_kprintf("Failed to claim UDP port-%d\n", u16Port + 1);
-            goto exit_rtp_broadcast_init;
-        }
-
-        rt_kprintf("RTP broadcast initialized on port %d for H.264 and port %d for G711.\n", u16Port, u16Port + 1);
+        rt_kprintf("Failed to claim UDP port-%d\n", u16Port + 1);
+        goto exit_rtp_broadcast_init;
     }
+
+    rt_kprintf("RTP broadcast initialized on port %d for H.264 and port %d for G711.\n", u16Port, u16Port + 1);
 
     return 0;
 
@@ -117,8 +98,7 @@ static int rtp_broadcast_start(int argc, char **argv)
 
         if (argc > 1)
         {
-            u16StartPort = atoi(argv[2]);
-            rt_kprintf("%s: %d \n", __func__,  u16StartPort);
+            u16StartPort = atoi(argv[1]);
         }
 
         if (rtp_broadcast_init(u16StartPort) != 0)
@@ -132,5 +112,10 @@ static int rtp_broadcast_start(int argc, char **argv)
     return 0;
 }
 
-//INIT_APP_EXPORT(rtp_broadcast_start);
+static int rtp_broadcast_autostart(void)
+{
+    return rtp_broadcast_start(0, NULL);
+}
+
+//INIT_APP_EXPORT(rtp_broadcast_autostart);
 MSH_CMD_EXPORT(rtp_broadcast_start, start RTP broadcast player);

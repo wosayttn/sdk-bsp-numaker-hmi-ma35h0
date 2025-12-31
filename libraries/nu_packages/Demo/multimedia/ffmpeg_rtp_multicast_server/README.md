@@ -14,8 +14,8 @@ These scripts handle hardware capture, encoding (H.264 for video) and UDP packet
 |Script Name | Target Address | Features |
 | -- | -- | -- |
 | broadcast_rtp_720p.bat | 192.168.0.255 | Subnet-wide broadcast. High compatibility for local networks.|
-| multicast_rtp_720p.bat | 239.0.0.1 | Efficient multicast streaming. Requires IGMP support on the network.|
-| multicast_rtp_360p.bat | 239.0.0.1 | Low-bandwidth version (640x360) for faster processing on MCU/lwIP targets.|
+| multicast_rtp_720p.bat | 224.1.1.1 | Efficient multicast streaming. Requires IGMP support on the network.|
+| multicast_rtp_360p.bat | 224.1.1.1 | Low-bandwidth version (640x360) for faster processing on MCU/lwIP targets.|
 
 📄 Session Metadata
 
